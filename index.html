@@ -3,93 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Электро-Шабашка PRO</title>
+    <title>Электро-Шабашка PRO ⚡</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
     <style>
         :root { --primary: #f1c40f; --dark: #2c3e50; --light: #ecf0f1; --danger: #e74c3c; --success: #27ae60; --accent: #3498db; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--light); margin: 0; padding-bottom: 80px; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--light); margin: 0; padding: 10px; padding-bottom: 50px; }
+        .profile-bar { background: var(--dark); color: white; padding: 12px; border-radius: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+        .user-name { color: var(--primary); font-weight: bold; cursor: pointer; text-decoration: underline; }
+        .admin-badge { background: gold; color: black; padding: 2px 5px; border-radius: 4px; font-size: 10px; margin-left: 5px; font-weight: bold; }
         
-        /* Авторизация */
-        #authScreen { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; background: var(--dark); color: white; padding: 20px; position: fixed; width: 100%; top: 0; z-index: 2000; }
-        .auth-card { background: white; color: black; padding: 30px; border-radius: 20px; width: 100%; max-width: 350px; text-align: center; }
-        input:disabled { background: #eee !important; color: #777 !important; }
-
-        /* Анимации */
-        @keyframes urgent-pulse {
-            0% { border-color: var(--danger); box-shadow: 0 0 5px var(--danger); }
-            50% { border-color: #ff0000; box-shadow: 0 0 20px rgba(231, 76, 60, 0.5); transform: scale(1.01); }
-            100% { border-color: var(--danger); box-shadow: 0 0 5px var(--danger); }
-        }
-        .urgent-card { border: 3px solid var(--danger) !important; animation: urgent-pulse 1.5s infinite; background: #fff5f5 !important; }
-        .hot-order { border: 2px solid var(--primary) !important; }
-
-        /* Интерфейс */
-        .header { background: var(--dark); color: white; padding: 15px; position: sticky; top: 0; z-index: 100; text-align: center; font-weight: bold; }
-        .container { padding: 10px; max-width: 500px; margin: auto; }
-        .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 15px; position: relative; border-left: 5px solid var(--dark); }
+        .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px; border-left: 5px solid var(--dark); position: relative; }
+        .city-tabs { display: flex; overflow-x: auto; gap: 8px; margin-bottom: 15px; padding-bottom: 5px; }
+        .tab { background: white; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: bold; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 2px solid transparent; cursor: pointer; }
+        .tab.active { border-color: var(--accent); color: var(--accent); }
         
-        input { width: 100%; padding: 14px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; outline: none; }
-        button { width: 100%; padding: 14px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn-post { background: var(--dark); color: white; flex: 2; }
-        .btn-urgent { background: var(--danger); color: white; flex: 1; }
+        .order-item.taken { border-left-color: var(--accent); }
+        .order-item.completed { border-left-color: var(--success); opacity: 0.8; }
         
-        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 12px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1000; }
-        .nav-item { text-align: center; color: #bdc3c7; cursor: pointer; flex: 1; font-size: 12px; }
-        .nav-item.active { color: var(--accent); }
+        input, select { width: 100%; padding: 12px; margin: 4px 0 10px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+        button { width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .btn-post { background: var(--dark); color: white; }
+        .btn-accept { background: var(--primary); color: var(--dark); }
+        .btn-cancel { background: var(--danger); color: white; margin-top: 5px; }
         
-        .admin-box { background: #fff3cd; border: 1px dashed #fbc02d; padding: 10px; border-radius: 10px; margin-bottom: 15px; display: none; font-size: 12px; }
+        .btn-manage { width: auto; background: #eee; padding: 5px 10px; font-size: 12px; margin-left: 5px; border-radius: 4px; }
+        .btn-delete { color: var(--danger); }
+        
+        .phone-box { background: #e8f5e9; padding: 15px; margin-top: 10px; border-radius: 8px; text-align: center; border: 1px solid #c3e6cb; }
+        .reason-box { background: #fff3f3; color: #c0392b; padding: 8px; margin-top: 10px; border-radius: 6px; font-size: 12px; border-left: 3px solid var(--danger); }
+        .owner-tag { background: var(--primary); font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 5px; color: #000; }
     </style>
 </head>
 <body>
 
-<div id="authScreen">
-    <div class="auth-card">
-        <h2 style="margin:0">⚡ Вход</h2>
-        <p id="lockMsg" style="font-size: 10px; color: var(--danger); display: none;">Номер закреплен за устройством</p>
-        <input type="tel" id="userPhone" placeholder="+7 (___) ___-__-__" maxlength="18">
-        <input type="text" id="userName" placeholder="Имя мастера">
-        <button onclick="handleAuth()" style="background:var(--primary); margin-top:10px">ВОЙТИ</button>
+<div class="profile-bar">
+    <div>
+        <span id="userIdDisp" style="color:#888; font-size:10px"></span><br>
+        Мастер: <span class="user-name" id="userNameDisplay" onclick="changeName()">...</span>
+        <span id="adminBadge"></span>
     </div>
+    <button id="adminBtn" onclick="handleAdminAction()" style="width:auto; padding:5px 10px; background:transparent; border:1px solid #444; color:#888; font-size:11px; border-radius:5px;"></button>
 </div>
 
-<div id="mainApp" style="display:none;">
-    <div class="header">ЭЛЕКТРО-ШАБАШКА <span id="admTag" style="color:var(--primary)"></span></div>
-
-    <div class="container" id="page-orders">
-        <div id="adminTools" class="admin-box">
-            <b>АДМИН-ПАНЕЛЬ:</b><br>
-            <input type="tel" id="banNum" placeholder="Номер для БАНА" style="padding:5px; height:30px">
-            <button onclick="banUser()" style="padding:5px; background:var(--danger); color:white; height:35px">ЗАБАНИТЬ</button>
-        </div>
-
-        <div class="card">
-            <input type="text" id="tDesc" placeholder="Что нужно сделать?">
-            <input type="text" id="tAddr" placeholder="Адрес">
-            <input type="tel" id="tPhone" placeholder="Тел. клиента +7..." maxlength="18">
-            <div style="display:flex; gap:10px">
-                <button class="btn-post" onclick="sendTask(false)">ВЫЛОЖИТЬ</button>
-                <button class="btn-urgent" onclick="sendTask(true)">🚨 СРОЧНО</button>
-            </div>
-        </div>
-        <div id="ordersList"></div>
-    </div>
-
-    <div class="container" id="page-profile" style="display:none">
-        <div class="card" style="text-align:center">
-            <h2 id="pName"></h2>
-            <p id="pPhone" style="color:gray"></p>
-            <button onclick="askAdmin()" style="background:none; color:var(--accent); font-size:11px">Вход для администрации</button>
-        </div>
-    </div>
-
-    <div class="nav-bar">
-        <div class="nav-item active" onclick="showPage('orders', this)"><i>📋</i><br>Лента</div>
-        <div class="nav-item" onclick="showPage('profile', this)"><i>👤</i><br>Профиль</div>
-    </div>
+<div class="card">
+    <h3 style="margin:0 0 10px 0">⚡ Подать объявление</h3>
+    <select id="taskCity">
+        <option>Махачкала</option><option>Хасавюрт</option><option>Кизилюрт</option><option>Буйнакск</option>
+    </select>
+    <input type="text" id="taskDesc" placeholder="Что нужно сделать?">
+    <input type="text" id="taskAddr" placeholder="Адрес объекта">
+    <input type="tel" id="taskPhone" placeholder="Номер телефона">
+    <button class="btn-post" onclick="postTask()">ОПУБЛИКОВАТЬ</button>
 </div>
+
+<div class="city-tabs">
+    <div class="tab active" onclick="filterByCity('Все')">Все</div>
+    <div class="tab" onclick="filterByCity('Мои')">⭐ Мои</div>
+    <div class="tab" onclick="filterByCity('Махачкала')">Махачкала</div>
+    <div class="tab" onclick="filterByCity('Хасавюрт')">Хасавюрт</div>
+</div>
+
+<div id="ordersContainer"></div>
 
 <script>
     const firebaseConfig = {
@@ -104,128 +81,185 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    let user = JSON.parse(localStorage.getItem('master_user'));
+
+    let userId = localStorage.getItem('m_id') || 'ID' + Math.floor(Math.random()*9000+1000);
+    localStorage.setItem('m_id', userId);
+    let userName = localStorage.getItem('master_name') || "Мастер";
     let isAdmin = localStorage.getItem('is_admin') === 'true';
-    let lastCount = 0;
-    const snd = new Audio('https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3');
+    let currentFilter = "Все";
+    let isFirstLoad = true;
 
-    // Маска +7
-    const mask = (e) => {
-        let v = e.target.value.replace(/\D/g, '');
-        let r = '+7 ';
-        if (v.length > 1) r += '(' + v.substring(1, 4);
-        if (v.length >= 5) r += ') ' + v.substring(4, 7);
-        if (v.length >= 8) r += '-' + v.substring(7, 9);
-        if (v.length >= 10) r += '-' + v.substring(9, 11);
-        e.target.value = r;
-    };
+    // --- UI Init ---
+    document.getElementById('userIdDisp').innerText = userId;
+    document.getElementById('userNameDisplay').innerText = userName;
+    updateAdminButton();
 
-    document.getElementById('userPhone').addEventListener('input', mask);
-    document.getElementById('tPhone').addEventListener('input', mask);
+    if (Notification.permission !== "granted") Notification.requestPermission();
 
-    window.onload = () => {
-        if (user) {
-            document.getElementById('userPhone').value = user.phone;
-            document.getElementById('userPhone').disabled = true;
-            document.getElementById('userName').value = user.name;
-            document.getElementById('userName').disabled = true;
-            document.getElementById('lockMsg').style.display = 'block';
+    function notify(title, body) {
+        if (Notification.permission === "granted") {
+            new Notification(title, { body: body });
+            new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg').play();
         }
-    };
-
-    function handleAuth() {
-        const ph = document.getElementById('userPhone').value;
-        const nm = document.getElementById('userName').value.trim();
-        if (ph.length < 18 || !nm) return alert("Введите полный номер РФ!");
-
-        db.ref('blacklist').child(ph).once('value', s => {
-            if(s.val()) return alert("БАН!");
-            if (!user) {
-                user = { phone: ph, name: nm };
-                localStorage.setItem('master_user', JSON.stringify(user));
-            }
-            if ("Notification" in window) Notification.requestPermission();
-            showApp();
-        });
     }
 
-    function showApp() {
-        document.getElementById('authScreen').style.display = 'none';
-        document.getElementById('mainApp').style.display = 'block';
-        document.getElementById('pName').innerText = user.name;
-        document.getElementById('pPhone').innerText = user.phone;
-        if(isAdmin) {
-            document.getElementById('adminTools').style.display = 'block';
-            document.getElementById('admTag').innerText = '[ADMIN]';
-        }
+    // --- Firebase Sync ---
+    db.ref('tasks').on('value', (snapshot) => {
+        renderAll(snapshot.val());
+        isFirstLoad = false;
+    });
+
+    db.ref('tasks').on('child_added', (snap) => {
+        if (!isFirstLoad && snap.val().authorId !== userId) notify(`⚡ Новый заказ: ${snap.val().city}`, snap.val().desc);
+    });
+
+    // --- Actions ---
+    async function postTask() {
+        const banCheck = await db.ref(`blacklist/${userId}`).once('value');
+        if (banCheck.exists()) return alert("Вы заблокированы!");
+
+        const desc = document.getElementById('taskDesc').value.trim();
+        const addr = document.getElementById('taskAddr').value.trim();
+        const phone = document.getElementById('taskPhone').value.trim();
+        const city = document.getElementById('taskCity').value;
+
+        if (!desc || !addr || !phone) return alert("Заполни все поля!");
+
+        const newTaskRef = db.ref('tasks').push();
+        newTaskRef.set({
+            id: newTaskRef.key, authorId: userId, author: userName,
+            city, desc, addr, phone, status: 'active', takenBy: "",
+            reasons: [] // История отказов
+        });
         
-        db.ref('tasks').on('value', s => {
-            const tasks = s.val() || {};
-            const count = Object.keys(tasks).length;
-            if (lastCount !== 0 && count > lastCount) {
-                const latest = Object.values(tasks).pop();
-                if (latest.authorPhone !== user.phone) {
-                    snd.play();
-                    if (Notification.permission === "granted") new Notification("⚡ " + (latest.urgent ? "СРОЧНО: " : "Новый заказ: "), { body: latest.desc });
-                }
-            }
-            lastCount = count;
-            render(tasks);
-        });
+        ['taskDesc', 'taskAddr', 'taskPhone'].forEach(id => document.getElementById(id).value = '');
     }
 
-    function render(tasks) {
-        const list = document.getElementById('ordersList');
-        list.innerHTML = '';
-        const now = Date.now();
+    function renderAll(tasks) {
+        const container = document.getElementById('ordersContainer');
+        container.innerHTML = '';
+        if (!tasks) return;
 
-        Object.entries(tasks).reverse().forEach(([id, t]) => {
-            if(t.status === 'active') {
-                const isUrgent = t.urgent === true;
-                const isHot = (now - t.timestamp) < 1800000;
-                list.innerHTML += `
-                    <div class="card ${isUrgent ? 'urgent-card' : (isHot ? 'hot-order' : '')}">
-                        ${isUrgent ? '<b style="color:red">🚨 СРОЧНЫЙ ВЫЕЗД</b>' : ''}
-                        <p style="margin:5px 0"><b>${t.desc}</b></p>
-                        <small>📍 ${t.addr}</small><br>
-                        <small style="color:gray; font-size:10px">От: ${t.authorName} (${new Date(t.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})})</small>
-                        <button onclick="take('${id}', '${t.phone}')" style="background:${isUrgent ? 'red' : 'var(--primary)'}; color:${isUrgent ? 'white' : 'black'}; margin-top:10px">ПРИНЯТЬ</button>
-                        ${isAdmin ? `<button onclick="del('${id}')" style="background:none; color:gray; font-size:10px">Удалить</button>` : ''}
+        Object.values(tasks).reverse().forEach(task => {
+            const isMyTask = task.authorId === userId;
+            const amIWorker = task.takenBy === userName;
+
+            if (currentFilter === 'Мои') {
+                if (!isMyTask && !amIWorker) return;
+            } else if (currentFilter !== 'Все' && task.city !== currentFilter) return;
+
+            const div = document.createElement('div');
+            div.className = `card order-item ${task.status}`;
+            
+            // Кнопки управления для автора/админа
+            let controls = (isMyTask || isAdmin) ? `
+                <div style="position:absolute; top:10px; right:10px;">
+                    <span class="btn-manage" onclick="editTask('${task.id}', '${task.desc}')">✏️</span>
+                    <span class="btn-manage btn-delete" onclick="deleteTask('${task.id}')">🗑️</span>
+                </div>` : "";
+
+            // Сбор причин отказов
+            let reasonsHtml = "";
+            if (task.reasons) {
+                reasonsHtml = Object.values(task.reasons).map(r => `<div class="reason-box">⚠️ ${r}</div>`).join('');
+            }
+
+            let html = `
+                ${controls}
+                <div style="font-size:11px; color:gray">📍 ${task.city} | От: ${task.author} ${isMyTask ? '<span class="owner-tag">МОЙ</span>' : ''}</div>
+                <p><strong>${task.desc}</strong></p>
+                <div style="color:#2980b9; font-size:14px">📍 ${task.addr}</div>
+                ${reasonsHtml}
+            `;
+
+            if (task.status === 'active') {
+                html += `<button class="btn-accept" style="margin-top:10px" onclick="updateStatus('${task.id}', 'taken')">ПРИНЯТЬ</button>`;
+            } else if (task.status === 'taken') {
+                html += `
+                    <div class="phone-box">
+                        <small>В работе: <b>${task.takenBy}</b></small><br>
+                        <a href="tel:${task.phone}" style="font-size:20px; color:green; text-decoration:none; font-weight:bold">📞 ПОЗВОНИТЬ</a>
+                        ${amIWorker ? `
+                            <button onclick="updateStatus('${task.id}', 'completed')" style="background:var(--success); color:white; margin-top:10px">ЗАВЕРШИЛ ✅</button>
+                            <button class="btn-cancel" onclick="cancelTask('${task.id}')">ОТКАЗАТЬСЯ</button>
+                        ` : ''}
                     </div>`;
+            } else {
+                html += `<div style="text-align:center; color:green; font-weight:bold; margin-top:10px; border-top:1px solid #eee; padding-top:10px">✅ РАБОТА ВЫПОЛНЕНА</div>`;
             }
+
+            if (isAdmin && !isMyTask) {
+                html += `<button onclick="banUser('${task.authorId}')" style="background:#000; color:red; font-size:10px; margin-top:10px">ЗАБАНИТЬ ПОЛЬЗОВАТЕЛЯ</button>`;
+            }
+
+            div.innerHTML = html;
+            container.appendChild(div);
         });
     }
 
-    function sendTask(isUrgent) {
-        const d = document.getElementById('tDesc').value;
-        const a = document.getElementById('tAddr').value;
-        const p = document.getElementById('tPhone').value;
-        if(!d || !a || p.length < 18) return alert("Заполни всё!");
-
-        db.ref('tasks').push({
-            desc: d, addr: a, phone: p, authorPhone: user.phone, authorName: user.name,
-            status: 'active', urgent: isUrgent, timestamp: firebase.database.ServerValue.TIMESTAMP
-        });
-        document.getElementById('tDesc').value = ''; document.getElementById('tAddr').value = ''; document.getElementById('tPhone').value = '';
+    function updateStatus(id, stat) {
+        db.ref(`tasks/${id}`).update({ status: stat, takenBy: stat === 'taken' ? userName : "" });
     }
 
-    function take(id, phone) {
-        if(confirm("Принять заказ? Тел: " + phone)) {
-            db.ref('tasks/' + id).update({ status: 'taken', taker: user.phone });
-            window.location.href = "tel:" + phone;
+    function cancelTask(id) {
+        const reason = prompt("Укажите причину отказа (её увидят другие мастера):");
+        if (reason && reason.trim() !== "") {
+            const fullReason = `${userName}: ${reason}`;
+            db.ref(`tasks/${id}/reasons`).push(fullReason);
+            updateStatus(id, 'active');
+            alert("Вы отказались от заказа. Он снова доступен в ленте.");
+        } else {
+            alert("Отказ отменен. Чтобы отказаться, нужно указать причину.");
         }
     }
 
-    function askAdmin() { if(prompt("Пароль:")==='01122'){ localStorage.setItem('is_admin','true'); location.reload(); } }
-    function banUser() { const n = document.getElementById('banNum').value; if(n) db.ref('blacklist').child(n).set(true); }
-    function del(id) { if(confirm("Удалить?")) db.ref('tasks/'+id).remove(); }
-    function showPage(p, el) {
-        document.querySelectorAll('.container').forEach(c => c.style.display = 'none');
-        document.getElementById('page-'+p).style.display = 'block';
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        el.classList.add('active');
+    // --- Admin & Utils ---
+    function handleAdminAction() {
+        if (isAdmin) {
+            if (confirm("Выйти из режима админа?")) {
+                localStorage.removeItem('is_admin');
+                location.reload();
+            }
+        } else {
+            if (prompt("Пароль:") === '01122') {
+                localStorage.setItem('is_admin', 'true');
+                location.reload();
+            }
+        }
     }
-    if (user) showApp();
+
+    function updateAdminButton() {
+        const btn = document.getElementById('adminBtn');
+        if (isAdmin) {
+            btn.innerText = "Выход (Админ)";
+            btn.style.color = "var(--danger)";
+            document.getElementById('adminBadge').innerHTML = '<span class="admin-badge">ADMIN</span>';
+        } else {
+            btn.innerText = "Вход";
+        }
+    }
+
+    function deleteTask(id) { if(confirm("Удалить навсегда?")) db.ref(`tasks/${id}`).remove(); }
+    
+    function editTask(id, old) {
+        const val = prompt("Изменить описание:", old);
+        if(val) db.ref(`tasks/${id}`).update({ desc: val });
+    }
+
+    function banUser(uid) {
+        if(confirm(`Забанить мастера ${uid}?`)) db.ref(`blacklist/${uid}`).set(true);
+    }
+
+    function filterByCity(c) {
+        currentFilter = c;
+        document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.innerText.includes(c)));
+        db.ref('tasks').once('value', s => renderAll(s.val()));
+    }
+
+    function changeName() {
+        const n = prompt("Ваше имя:", userName);
+        if(n && n.trim()) { localStorage.setItem('master_name', n); location.reload(); }
+    }
 </script>
 </body>
 </html>
