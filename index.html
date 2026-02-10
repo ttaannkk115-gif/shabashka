@@ -3,64 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Электро-Шабашка PRO ⚡</title>
+    <title>Электро-Шабашка PRO</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
     <style>
         :root { --primary: #f1c40f; --dark: #2c3e50; --light: #ecf0f1; --danger: #e74c3c; --success: #27ae60; --accent: #3498db; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--light); margin: 0; padding: 10px; padding-bottom: 50px; }
-        .profile-bar { background: var(--dark); color: white; padding: 12px; border-radius: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .user-name { color: var(--primary); font-weight: bold; cursor: pointer; text-decoration: underline; }
-        .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px; border-left: 5px solid var(--dark); position: relative; }
-        .city-tabs { display: flex; overflow-x: auto; gap: 8px; margin-bottom: 15px; padding-bottom: 5px; scrollbar-width: none; }
-        .tab { background: white; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: bold; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 2px solid transparent; cursor: pointer; }
-        .tab.active { border-color: var(--accent); color: var(--accent); }
-        .order-item.active { border-left-color: var(--primary); }
-        .order-item.taken { border-left-color: var(--accent); }
-        .order-item.completed { border-left-color: var(--success); opacity: 0.8; background: #fdfdfd; }
-        input, select { width: 100%; padding: 12px; margin: 4px 0 10px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
-        button { width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 5px; }
-        .btn-post { background: var(--dark); color: white; }
-        .btn-accept { background: var(--primary); color: var(--dark); }
-        .btn-done { background: var(--success); color: white; margin-top: 10px; }
-        .btn-cancel { background: var(--danger); color: white; margin-top: 5px; }
-        .btn-delete { width: auto; background: none; color: var(--danger); position: absolute; top: 10px; right: 10px; font-size: 18px; }
-        .phone-box { background: #e8f5e9; padding: 15px; margin-top: 10px; border-radius: 8px; text-align: center; border: 1px solid #c3e6cb; }
-        .reason-item { background: #fff3f3; color: #c0392b; padding: 6px; margin-bottom: 4px; border-radius: 4px; font-size: 12px; border-left: 2px solid var(--danger); }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--light); margin: 0; padding-bottom: 80px; }
+        
+        /* Авторизация */
+        #authScreen { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; background: var(--dark); color: white; padding: 20px; position: fixed; width: 100%; top: 0; z-index: 2000; }
+        .auth-card { background: white; color: black; padding: 30px; border-radius: 20px; width: 100%; max-width: 350px; text-align: center; }
+        input:disabled { background: #eee !important; color: #777 !important; }
+
+        /* Анимации */
+        @keyframes urgent-pulse {
+            0% { border-color: var(--danger); box-shadow: 0 0 5px var(--danger); }
+            50% { border-color: #ff0000; box-shadow: 0 0 20px rgba(231, 76, 60, 0.5); transform: scale(1.01); }
+            100% { border-color: var(--danger); box-shadow: 0 0 5px var(--danger); }
+        }
+        .urgent-card { border: 3px solid var(--danger) !important; animation: urgent-pulse 1.5s infinite; background: #fff5f5 !important; }
+        .hot-order { border: 2px solid var(--primary) !important; }
+
+        /* Интерфейс */
+        .header { background: var(--dark); color: white; padding: 15px; position: sticky; top: 0; z-index: 100; text-align: center; font-weight: bold; }
+        .container { padding: 10px; max-width: 500px; margin: auto; }
+        .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 15px; position: relative; border-left: 5px solid var(--dark); }
+        
+        input { width: 100%; padding: 14px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; outline: none; }
+        button { width: 100%; padding: 14px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-post { background: var(--dark); color: white; flex: 2; }
+        .btn-urgent { background: var(--danger); color: white; flex: 1; }
+        
+        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 12px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1000; }
+        .nav-item { text-align: center; color: #bdc3c7; cursor: pointer; flex: 1; font-size: 12px; }
+        .nav-item.active { color: var(--accent); }
+        
+        .admin-box { background: #fff3cd; border: 1px dashed #fbc02d; padding: 10px; border-radius: 10px; margin-bottom: 15px; display: none; font-size: 12px; }
     </style>
 </head>
 <body>
 
-<div class="profile-bar">
-    <div>Мастер: <span class="user-name" id="userNameDisplay" onclick="changeName()">...</span></div>
-    <div style="font-size: 10px;">🟢 ONLINE</div>
+<div id="authScreen">
+    <div class="auth-card">
+        <h2 style="margin:0">⚡ Вход</h2>
+        <p id="lockMsg" style="font-size: 10px; color: var(--danger); display: none;">Номер закреплен за устройством</p>
+        <input type="tel" id="userPhone" placeholder="+7 (___) ___-__-__" maxlength="18">
+        <input type="text" id="userName" placeholder="Имя мастера">
+        <button onclick="handleAuth()" style="background:var(--primary); margin-top:10px">ВОЙТИ</button>
+    </div>
 </div>
 
-<div class="card">
-    <h3 style="margin:0 0 10px 0">⚡ Подать объявление</h3>
-    <select id="taskCity">
-        <option>Махачкала</option><option>Хасавюрт</option><option>Кизилюрт</option><option>Буйнакск</option>
-    </select>
-    <input type="text" id="taskDesc" placeholder="Что нужно сделать?">
-    <input type="text" id="taskAddr" placeholder="Адрес объекта">
-    <input type="tel" id="taskPhone" placeholder="Номер телефона">
-    <button class="btn-post" onclick="postTask()">ОПУБЛИКОВАТЬ</button>
-</div>
+<div id="mainApp" style="display:none;">
+    <div class="header">ЭЛЕКТРО-ШАБАШКА <span id="admTag" style="color:var(--primary)"></span></div>
 
-<div class="city-tabs">
-    <div class="tab active" onclick="filterByCity('Все')">Все</div>
-    <div class="tab" onclick="filterByCity('Махачкала')">Махачкала</div>
-    <div class="tab" onclick="filterByCity('Хасавюрт')">Хасавюрт</div>
-    <div class="tab" onclick="filterByCity('Кизилюрт')">Кизилюрт</div>
-    <div class="tab" onclick="filterByCity('Буйнакск')">Буйнакск</div>
-</div>
+    <div class="container" id="page-orders">
+        <div id="adminTools" class="admin-box">
+            <b>АДМИН-ПАНЕЛЬ:</b><br>
+            <input type="tel" id="banNum" placeholder="Номер для БАНА" style="padding:5px; height:30px">
+            <button onclick="banUser()" style="padding:5px; background:var(--danger); color:white; height:35px">ЗАБАНИТЬ</button>
+        </div>
 
-<div id="ordersContainer"></div>
+        <div class="card">
+            <input type="text" id="tDesc" placeholder="Что нужно сделать?">
+            <input type="text" id="tAddr" placeholder="Адрес">
+            <input type="tel" id="tPhone" placeholder="Тел. клиента +7..." maxlength="18">
+            <div style="display:flex; gap:10px">
+                <button class="btn-post" onclick="sendTask(false)">ВЫЛОЖИТЬ</button>
+                <button class="btn-urgent" onclick="sendTask(true)">🚨 СРОЧНО</button>
+            </div>
+        </div>
+        <div id="ordersList"></div>
+    </div>
+
+    <div class="container" id="page-profile" style="display:none">
+        <div class="card" style="text-align:center">
+            <h2 id="pName"></h2>
+            <p id="pPhone" style="color:gray"></p>
+            <button onclick="askAdmin()" style="background:none; color:var(--accent); font-size:11px">Вход для администрации</button>
+        </div>
+    </div>
+
+    <div class="nav-bar">
+        <div class="nav-item active" onclick="showPage('orders', this)"><i>📋</i><br>Лента</div>
+        <div class="nav-item" onclick="showPage('profile', this)"><i>👤</i><br>Профиль</div>
+    </div>
+</div>
 
 <script>
-    // Твои настройки Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyAjoW4lVBACbjp3a9LZTLUtjsNpFLeXArk",
         authDomain: "shabashka-8e433.firebaseapp.com",
@@ -73,121 +104,128 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    let user = JSON.parse(localStorage.getItem('master_user'));
+    let isAdmin = localStorage.getItem('is_admin') === 'true';
+    let lastCount = 0;
+    const snd = new Audio('https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3');
 
-    let userName = localStorage.getItem('master_name') || "";
-    let currentFilter = "Все";
+    // Маска +7
+    const mask = (e) => {
+        let v = e.target.value.replace(/\D/g, '');
+        let r = '+7 ';
+        if (v.length > 1) r += '(' + v.substring(1, 4);
+        if (v.length >= 5) r += ') ' + v.substring(4, 7);
+        if (v.length >= 8) r += '-' + v.substring(7, 9);
+        if (v.length >= 10) r += '-' + v.substring(9, 11);
+        e.target.value = r;
+    };
 
-    if (!userName) {
-        userName = prompt("Добро пожаловать! Введите ваше имя:", "Мастер") || "Мастер";
-        localStorage.setItem('master_name', userName);
-    }
-    document.getElementById('userNameDisplay').innerText = userName;
+    document.getElementById('userPhone').addEventListener('input', mask);
+    document.getElementById('tPhone').addEventListener('input', mask);
 
-    // Слушаем базу в реальном времени
-    db.ref('tasks').on('value', (snapshot) => {
-        renderAll(snapshot.val());
-    });
+    window.onload = () => {
+        if (user) {
+            document.getElementById('userPhone').value = user.phone;
+            document.getElementById('userPhone').disabled = true;
+            document.getElementById('userName').value = user.name;
+            document.getElementById('userName').disabled = true;
+            document.getElementById('lockMsg').style.display = 'block';
+        }
+    };
 
-    function postTask() {
-        const desc = document.getElementById('taskDesc').value.trim();
-        const addr = document.getElementById('taskAddr').value.trim();
-        const phone = document.getElementById('taskPhone').value.trim();
-        const city = document.getElementById('taskCity').value;
+    function handleAuth() {
+        const ph = document.getElementById('userPhone').value;
+        const nm = document.getElementById('userName').value.trim();
+        if (ph.length < 18 || !nm) return alert("Введите полный номер РФ!");
 
-        if (!desc || !addr || !phone) return alert("Заполните все поля!");
-
-        const newTaskRef = db.ref('tasks').push();
-        newTaskRef.set({
-            id: newTaskRef.key,
-            author: userName,
-            city, desc, addr, phone,
-            status: 'active',
-            takenBy: "",
-            reasons: []
-        });
-
-        document.getElementById('taskDesc').value = '';
-        document.getElementById('taskAddr').value = '';
-        document.getElementById('taskPhone').value = '';
-    }
-
-    function renderAll(tasks) {
-        const container = document.getElementById('ordersContainer');
-        container.innerHTML = '';
-        if (!tasks) return;
-
-        Object.values(tasks).reverse().forEach(task => {
-            if (currentFilter !== 'Все' && task.city !== currentFilter) return;
-
-            const div = document.createElement('div');
-            div.className = `card order-item ${task.status}`;
-            
-            let reasonsHtml = "";
-            if (task.reasons) {
-                reasonsHtml = Object.values(task.reasons).map(r => `<div class="reason-item">⚠️ ${r}</div>`).join('');
+        db.ref('blacklist').child(ph).once('value', s => {
+            if(s.val()) return alert("БАН!");
+            if (!user) {
+                user = { phone: ph, name: nm };
+                localStorage.setItem('master_user', JSON.stringify(user));
             }
-
-            let html = `
-                <button class="btn-delete" onclick="deleteTask('${task.id}')">🗑️</button>
-                <div style="font-size:11px; color:gray">📍 ${task.city} | От: ${task.author}</div>
-                <p style="margin:10px 0 5px 0"><strong>${task.desc}</strong></p>
-                <div style="color:#2980b9; font-weight:bold; font-size:14px">📍 ${task.addr}</div>
-                <div style="margin-top:5px">${reasonsHtml}</div>
-            `;
-
-            if (task.status === 'active') {
-                html += `<button class="btn-accept" onclick="updateStatus('${task.id}', 'taken')">ПРИНЯТЬ</button>`;
-            } else if (task.status === 'taken') {
-                html += `
-                    <div class="phone-box">
-                        <p style="margin:0 0 10px 0; font-size:12px">Взял в работу: <b>${task.takenBy}</b></p>
-                        <a href="tel:${task.phone}" style="font-size:20px; color:green; text-decoration:none; font-weight:bold">📞 ПОЗВОНИТЬ</a>
-                        ${task.takenBy === userName ? `
-                            <button class="btn-done" onclick="updateStatus('${task.id}', 'completed')">ЗАВЕРШИЛ ✅</button>
-                            <button class="btn-cancel" onclick="cancelTask('${task.id}')">ОТКАЗАТЬСЯ</button>
-                        ` : ''}
-                    </div>`;
-            } else {
-                html += `<div style="text-align:center; color:green; font-weight:bold; margin-top:10px; border-top:1px solid #eee; padding-top:10px">✅ РАБОТА ВЫПОЛНЕНА (${task.takenBy})</div>`;
-            }
-
-            div.innerHTML = html;
-            container.appendChild(div);
+            if ("Notification" in window) Notification.requestPermission();
+            showApp();
         });
     }
 
-    function updateStatus(id, newStatus, reason = "") {
-        const updateData = { status: newStatus };
-        if (newStatus === 'taken') updateData.takenBy = userName;
+    function showApp() {
+        document.getElementById('authScreen').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+        document.getElementById('pName').innerText = user.name;
+        document.getElementById('pPhone').innerText = user.phone;
+        if(isAdmin) {
+            document.getElementById('adminTools').style.display = 'block';
+            document.getElementById('admTag').innerText = '[ADMIN]';
+        }
         
-        db.ref(`tasks/${id}`).update(updateData);
-        if (reason) {
-            db.ref(`tasks/${id}/reasons`).push(`${userName}: ${reason}`);
+        db.ref('tasks').on('value', s => {
+            const tasks = s.val() || {};
+            const count = Object.keys(tasks).length;
+            if (lastCount !== 0 && count > lastCount) {
+                const latest = Object.values(tasks).pop();
+                if (latest.authorPhone !== user.phone) {
+                    snd.play();
+                    if (Notification.permission === "granted") new Notification("⚡ " + (latest.urgent ? "СРОЧНО: " : "Новый заказ: "), { body: latest.desc });
+                }
+            }
+            lastCount = count;
+            render(tasks);
+        });
+    }
+
+    function render(tasks) {
+        const list = document.getElementById('ordersList');
+        list.innerHTML = '';
+        const now = Date.now();
+
+        Object.entries(tasks).reverse().forEach(([id, t]) => {
+            if(t.status === 'active') {
+                const isUrgent = t.urgent === true;
+                const isHot = (now - t.timestamp) < 1800000;
+                list.innerHTML += `
+                    <div class="card ${isUrgent ? 'urgent-card' : (isHot ? 'hot-order' : '')}">
+                        ${isUrgent ? '<b style="color:red">🚨 СРОЧНЫЙ ВЫЕЗД</b>' : ''}
+                        <p style="margin:5px 0"><b>${t.desc}</b></p>
+                        <small>📍 ${t.addr}</small><br>
+                        <small style="color:gray; font-size:10px">От: ${t.authorName} (${new Date(t.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})})</small>
+                        <button onclick="take('${id}', '${t.phone}')" style="background:${isUrgent ? 'red' : 'var(--primary)'}; color:${isUrgent ? 'white' : 'black'}; margin-top:10px">ПРИНЯТЬ</button>
+                        ${isAdmin ? `<button onclick="del('${id}')" style="background:none; color:gray; font-size:10px">Удалить</button>` : ''}
+                    </div>`;
+            }
+        });
+    }
+
+    function sendTask(isUrgent) {
+        const d = document.getElementById('tDesc').value;
+        const a = document.getElementById('tAddr').value;
+        const p = document.getElementById('tPhone').value;
+        if(!d || !a || p.length < 18) return alert("Заполни всё!");
+
+        db.ref('tasks').push({
+            desc: d, addr: a, phone: p, authorPhone: user.phone, authorName: user.name,
+            status: 'active', urgent: isUrgent, timestamp: firebase.database.ServerValue.TIMESTAMP
+        });
+        document.getElementById('tDesc').value = ''; document.getElementById('tAddr').value = ''; document.getElementById('tPhone').value = '';
+    }
+
+    function take(id, phone) {
+        if(confirm("Принять заказ? Тел: " + phone)) {
+            db.ref('tasks/' + id).update({ status: 'taken', taker: user.phone });
+            window.location.href = "tel:" + phone;
         }
     }
 
-    function cancelTask(id) {
-        const r = prompt("Укажите причину отказа:");
-        if (r && r.trim()) updateStatus(id, 'active', r);
+    function askAdmin() { if(prompt("Пароль:")==='01122'){ localStorage.setItem('is_admin','true'); location.reload(); } }
+    function banUser() { const n = document.getElementById('banNum').value; if(n) db.ref('blacklist').child(n).set(true); }
+    function del(id) { if(confirm("Удалить?")) db.ref('tasks/'+id).remove(); }
+    function showPage(p, el) {
+        document.querySelectorAll('.container').forEach(c => c.style.display = 'none');
+        document.getElementById('page-'+p).style.display = 'block';
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        el.classList.add('active');
     }
-
-    function deleteTask(id) {
-        if (confirm("Удалить этот заказ навсегда?")) db.ref(`tasks/${id}`).remove();
-    }
-
-    function filterByCity(city) {
-        currentFilter = city;
-        document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.innerText === city));
-        db.ref('tasks').once('value', s => renderAll(s.val()));
-    }
-
-    function changeName() {
-        const n = prompt("Новое имя:", userName);
-        if (n && n.trim()) {
-            localStorage.setItem('master_name', n);
-            location.reload();
-        }
-    }
+    if (user) showApp();
 </script>
 </body>
 </html>
