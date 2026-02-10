@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Электро-Шабашка PRO ⚡</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <style>
+        :root { --primary: #f1c40f; --dark: #2c3e50; --light: #ecf0f1; --danger: #e74c3c; --success: #27ae60; --accent: #3498db; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--light); margin: 0; padding: 10px; padding-bottom: 50px; }
+        .profile-bar { background: var(--dark); color: white; padding: 12px; border-radius: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .user-name { color: var(--primary); font-weight: bold; cursor: pointer; text-decoration: underline; }
+        .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px; border-left: 5px solid var(--dark); position: relative; }
+        .city-tabs { display: flex; overflow-x: auto; gap: 8px; margin-bottom: 15px; padding-bottom: 5px; scrollbar-width: none; }
+        .tab { background: white; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: bold; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 2px solid transparent; cursor: pointer; }
+        .tab.active { border-color: var(--accent); color: var(--accent); }
+        .order-item.active { border-left-color: var(--primary); }
+        .order-item.taken { border-left-color: var(--accent); }
+        .order-item.completed { border-left-color: var(--success); opacity: 0.8; background: #fdfdfd; }
+        input, select { width: 100%; padding: 12px; margin: 4px 0 10px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+        button { width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 5px; }
+        .btn-post { background: var(--dark); color: white; }
+        .btn-accept { background: var(--primary); color: var(--dark); }
+        .btn-done { background: var(--success); color: white; margin-top: 10px; }
+        .btn-cancel { background: var(--danger); color: white; margin-top: 5px; }
+        .btn-delete { width: auto; background: none; color: var(--danger); position: absolute; top: 10px; right: 10px; font-size: 18px; }
+        .phone-box { background: #e8f5e9; padding: 15px; margin-top: 10px; border-radius: 8px; text-align: center; border: 1px solid #c3e6cb; }
+        .reason-item { background: #fff3f3; color: #c0392b; padding: 6px; margin-bottom: 4px; border-radius: 4px; font-size: 12px; border-left: 2px solid var(--danger); }
+    </style>
+</head>
+<body>
+
+<div class="profile-bar">
+    <div>Мастер: <span class="user-name" id="userNameDisplay" onclick="changeName()">...</span></div>
+    <div style="font-size: 10px;">🟢 ONLINE</div>
+</div>
+
+<div class="card">
+    <h3 style="margin:0 0 10px 0">⚡ Подать объявление</h3>
+    <select id="taskCity">
+        <option>Махачкала</option><option>Хасавюрт</option><option>Кизилюрт</option><option>Буйнакск</option>
+    </select>
+    <input type="text" id="taskDesc" placeholder="Что нужно сделать?">
+    <input type="text" id="taskAddr" placeholder="Адрес объекта">
+    <input type="tel" id="taskPhone" placeholder="Номер телефона">
+    <button class="btn-post" onclick="postTask()">ОПУБЛИКОВАТЬ</button>
+</div>
+
+<div class="city-tabs">
+    <div class="tab active" onclick="filterByCity('Все')">Все</div>
+    <div class="tab" onclick="filterByCity('Махачкала')">Махачкала</div>
+    <div class="tab" onclick="filterByCity('Хасавюрт')">Хасавюрт</div>
+    <div class="tab" onclick="filterByCity('Кизилюрт')">Кизилюрт</div>
+    <div class="tab" onclick="filterByCity('Буйнакск')">Буйнакск</div>
+</div>
+
+<div id="ordersContainer"></div>
+
+<script>
+    // Твои настройки Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyAjoW4lVBACbjp3a9LZTLUtjsNpFLeXArk",
+        authDomain: "shabashka-8e433.firebaseapp.com",
+        databaseURL: "https://shabashka-8e433-default-rtdb.firebaseio.com",
+        projectId: "shabashka-8e433",
+        storageBucket: "shabashka-8e433.firebasestorage.app",
+        messagingSenderId: "207884970827",
+        appId: "1:207884970827:web:9c7e998b6625df092616ce"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let userName = localStorage.getItem('master_name') || "";
+    let currentFilter = "Все";
+
+    if (!userName) {
+        userName = prompt("Добро пожаловать! Введите ваше имя:", "Мастер") || "Мастер";
+        localStorage.setItem('master_name', userName);
+    }
+    document.getElementById('userNameDisplay').innerText = userName;
+
+    // Слушаем базу в реальном времени
+    db.ref('tasks').on('value', (snapshot) => {
+        renderAll(snapshot.val());
+    });
+
+    function postTask() {
+        const desc = document.getElementById('taskDesc').value.trim();
+        const addr = document.getElementById('taskAddr').value.trim();
+        const phone = document.getElementById('taskPhone').value.trim();
+        const city = document.getElementById('taskCity').value;
+
+        if (!desc || !addr || !phone) return alert("Заполните все поля!");
+
+        const newTaskRef = db.ref('tasks').push();
+        newTaskRef.set({
+            id: newTaskRef.key,
+            author: userName,
+            city, desc, addr, phone,
+            status: 'active',
+            takenBy: "",
+            reasons: []
+        });
+
+        document.getElementById('taskDesc').value = '';
+        document.getElementById('taskAddr').value = '';
+        document.getElementById('taskPhone').value = '';
+    }
+
+    function renderAll(tasks) {
+        const container = document.getElementById('ordersContainer');
+        container.innerHTML = '';
+        if (!tasks) return;
+
+        Object.values(tasks).reverse().forEach(task => {
+            if (currentFilter !== 'Все' && task.city !== currentFilter) return;
+
+            const div = document.createElement('div');
+            div.className = `card order-item ${task.status}`;
+            
+            let reasonsHtml = "";
+            if (task.reasons) {
+                reasonsHtml = Object.values(task.reasons).map(r => `<div class="reason-item">⚠️ ${r}</div>`).join('');
+            }
+
+            let html = `
+                <button class="btn-delete" onclick="deleteTask('${task.id}')">🗑️</button>
+                <div style="font-size:11px; color:gray">📍 ${task.city} | От: ${task.author}</div>
+                <p style="margin:10px 0 5px 0"><strong>${task.desc}</strong></p>
+                <div style="color:#2980b9; font-weight:bold; font-size:14px">📍 ${task.addr}</div>
+                <div style="margin-top:5px">${reasonsHtml}</div>
+            `;
+
+            if (task.status === 'active') {
+                html += `<button class="btn-accept" onclick="updateStatus('${task.id}', 'taken')">ПРИНЯТЬ</button>`;
+            } else if (task.status === 'taken') {
+                html += `
+                    <div class="phone-box">
+                        <p style="margin:0 0 10px 0; font-size:12px">Взял в работу: <b>${task.takenBy}</b></p>
+                        <a href="tel:${task.phone}" style="font-size:20px; color:green; text-decoration:none; font-weight:bold">📞 ПОЗВОНИТЬ</a>
+                        ${task.takenBy === userName ? `
+                            <button class="btn-done" onclick="updateStatus('${task.id}', 'completed')">ЗАВЕРШИЛ ✅</button>
+                            <button class="btn-cancel" onclick="cancelTask('${task.id}')">ОТКАЗАТЬСЯ</button>
+                        ` : ''}
+                    </div>`;
+            } else {
+                html += `<div style="text-align:center; color:green; font-weight:bold; margin-top:10px; border-top:1px solid #eee; padding-top:10px">✅ РАБОТА ВЫПОЛНЕНА (${task.takenBy})</div>`;
+            }
+
+            div.innerHTML = html;
+            container.appendChild(div);
+        });
+    }
+
+    function updateStatus(id, newStatus, reason = "") {
+        const updateData = { status: newStatus };
+        if (newStatus === 'taken') updateData.takenBy = userName;
+        
+        db.ref(`tasks/${id}`).update(updateData);
+        if (reason) {
+            db.ref(`tasks/${id}/reasons`).push(`${userName}: ${reason}`);
+        }
+    }
+
+    function cancelTask(id) {
+        const r = prompt("Укажите причину отказа:");
+        if (r && r.trim()) updateStatus(id, 'active', r);
+    }
+
+    function deleteTask(id) {
+        if (confirm("Удалить этот заказ навсегда?")) db.ref(`tasks/${id}`).remove();
+    }
+
+    function filterByCity(city) {
+        currentFilter = city;
+        document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.innerText === city));
+        db.ref('tasks').once('value', s => renderAll(s.val()));
+    }
+
+    function changeName() {
+        const n = prompt("Новое имя:", userName);
+        if (n && n.trim()) {
+            localStorage.setItem('master_name', n);
+            location.reload();
+        }
+    }
+</script>
+</body>
+</html>
