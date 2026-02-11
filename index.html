@@ -11,41 +11,74 @@
     <style>
         :root { --primary: #f1c40f; --dark: #2c3e50; --light: #ecf0f1; --danger: #e74c3c; --success: #27ae60; --accent: #3498db; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--light); margin: 0; padding: 10px; padding-bottom: 50px; }
+        
+        #authOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark); z-index: 1000; display: flex; align-items: center; justify-content: center; }
+        .auth-card { background: white; padding: 25px; border-radius: 12px; width: 85%; max-width: 350px; text-align: center; }
+
         .profile-bar { background: var(--dark); color: white; padding: 12px; border-radius: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
-        .user-name { color: var(--primary); font-weight: bold; cursor: pointer; text-decoration: underline; }
+        .user-name { color: var(--primary); font-weight: bold; }
         .admin-badge { background: gold; color: black; padding: 2px 5px; border-radius: 4px; font-size: 10px; margin-left: 5px; font-weight: bold; }
         
         .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px; border-left: 5px solid var(--dark); position: relative; }
+        .card.urgent { border-left-color: var(--danger); background: #fff5f5; border-left-width: 8px; }
+        .urgent-badge { background: var(--danger); color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.5; } }
+
+        .admin-panel { background: #fee; border: 2px solid var(--danger); padding: 15px; border-radius: 12px; margin-bottom: 15px; }
+        .stats-row { display: flex; gap: 10px; margin-bottom: 15px; }
+        .stat-card { background: white; padding: 10px; border-radius: 8px; flex: 1; text-align: center; border: 1px solid #ddd; }
+        .stat-val { display: block; font-size: 18px; font-weight: bold; color: var(--accent); }
+        .appeal-item { background: white; padding: 10px; border-radius: 8px; margin-top: 10px; border: 1px solid #ddd; font-size: 13px; }
+
         .city-tabs { display: flex; overflow-x: auto; gap: 8px; margin-bottom: 15px; padding-bottom: 5px; }
         .tab { background: white; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: bold; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 2px solid transparent; cursor: pointer; }
         .tab.active { border-color: var(--accent); color: var(--accent); }
         
-        .order-item.taken { border-left-color: var(--accent); }
-        .order-item.completed { border-left-color: var(--success); opacity: 0.8; }
-        
         input, select { width: 100%; padding: 12px; margin: 4px 0 10px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+        .urgent-row { display: flex; align-items: center; gap: 10px; margin: 5px 0 15px 0; font-weight: bold; color: var(--danger); cursor: pointer; }
         button { width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .btn-post { background: var(--dark); color: white; }
         .btn-accept { background: var(--primary); color: var(--dark); }
-        .btn-cancel { background: var(--danger); color: white; margin-top: 5px; }
-        
-        .btn-manage { width: auto; background: #eee; padding: 5px 10px; font-size: 12px; margin-left: 5px; border-radius: 4px; }
-        .btn-delete { color: var(--danger); }
-        
+        .btn-cancel { background: var(--danger); color: white; margin-top: 10px; }
+        .btn-manage { width: auto; background: #f0f2f5; padding: 6px 10px; font-size: 14px; margin-left: 5px; border-radius: 6px; display: inline-block; cursor: pointer; }
+        .btn-report { background: none; border: 1px solid var(--danger); color: var(--danger); font-size: 10px; padding: 4px 8px; width: auto; margin-top: 5px; }
+        .btn-adm-action { background: var(--danger); color: white; padding: 5px 10px; width: auto; font-size: 11px; margin-top: 5px; margin-right: 5px; }
+
         .phone-box { background: #e8f5e9; padding: 15px; margin-top: 10px; border-radius: 8px; text-align: center; border: 1px solid #c3e6cb; }
-        .reason-box { background: #fff3f3; color: #c0392b; padding: 8px; margin-top: 10px; border-radius: 6px; font-size: 12px; border-left: 3px solid var(--danger); }
+        .time-tag { font-size: 10px; color: #95a5a6; margin-bottom: 5px; display: block; }
         .owner-tag { background: var(--primary); font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 5px; color: #000; }
+        .notif-settings { background: #fff; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 12px; border: 1px dashed var(--accent); display: flex; align-items: center; justify-content: space-between; }
+        .notif-settings select { width: auto; margin: 0; padding: 5px; }
     </style>
 </head>
 <body>
 
+<div id="authOverlay" style="display: none;">
+    <div class="auth-card">
+        <h2 style="margin-top:0">⚡ Вход в Систему</h2>
+        <input type="text" id="regName" placeholder="Ваше Имя">
+        <input type="tel" id="regPhone" placeholder="+7 (900) 000-00-00" value="+7">
+        <button class="btn-post" onclick="saveAuth()">ВОЙТИ</button>
+        <p style="font-size: 12px; margin-top:15px">Проблемы со входом? <a href="javascript:void(0)" onclick="sendAppeal()" style="color:var(--accent)">Обжаловать бан</a></p>
+    </div>
+</div>
+
 <div class="profile-bar">
     <div>
         <span id="userIdDisp" style="color:#888; font-size:10px"></span><br>
-        Мастер: <span class="user-name" id="userNameDisplay" onclick="changeName()">...</span>
+        Мастер: <span class="user-name" id="userNameDisplay">...</span>
         <span id="adminBadge"></span>
     </div>
-    <button id="adminBtn" onclick="handleAdminAction()" style="width:auto; padding:5px 10px; background:transparent; border:1px solid #444; color:#888; font-size:11px; border-radius:5px;"></button>
+    <button id="adminBtn" onclick="handleAdminAction()" style="width:auto; padding:5px 10px; background:transparent; border:1px solid #444; color:#888; font-size:11px; border-radius:5px;">ВХОД</button>
+</div>
+
+<div id="adminArea" style="display:none" class="admin-panel">
+    <h3 style="margin:0 0 10px 0; color:var(--danger); font-size: 16px;">📊 Статистика и Апелляции</h3>
+    <div class="stats-row">
+        <div class="stat-card">Регистраций <span id="statRegs" class="stat-val">0</span></div>
+        <div class="stat-card">В сети <span id="statOnline" class="stat-val">0</span></div>
+    </div>
+    <div id="appealsContainer"><small>Загрузка апелляций...</small></div>
 </div>
 
 <div class="card">
@@ -55,13 +88,27 @@
     </select>
     <input type="text" id="taskDesc" placeholder="Что нужно сделать?">
     <input type="text" id="taskAddr" placeholder="Адрес объекта">
-    <input type="tel" id="taskPhone" placeholder="Номер телефона">
-    <button class="btn-post" onclick="postTask()">ОПУБЛИКОВАТЬ</button>
+    <input type="tel" id="taskPhone" placeholder="Номер клиента (+7...)">
+    
+    <label class="urgent-row">
+        <input type="checkbox" id="isUrgent"> 🔥 СРОЧНЫЙ ЗАКАЗ
+    </label>
+
+    <button class="btn-post" id="postBtn" onclick="postTask()">ОПУБЛИКОВАТЬ</button>
+</div>
+
+<div class="notif-settings">
+    <span>🔔 Оповещать в:</span>
+    <select id="notifCity">
+        <option value="Все">Все города</option>
+        <option>Махачкала</option><option>Хасавюрт</option><option>Кизилюрт</option><option>Буйнакск</option>
+    </select>
 </div>
 
 <div class="city-tabs">
     <div class="tab active" onclick="filterByCity('Все')">Все</div>
     <div class="tab" onclick="filterByCity('Мои')">⭐ Мои</div>
+    <div class="tab" onclick="filterByCity('Архив')">📦 Архив</div>
     <div class="tab" onclick="filterByCity('Махачкала')">Махачкала</div>
     <div class="tab" onclick="filterByCity('Хасавюрт')">Хасавюрт</div>
 </div>
@@ -82,183 +129,251 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    let userId = localStorage.getItem('m_id') || 'ID' + Math.floor(Math.random()*9000+1000);
-    localStorage.setItem('m_id', userId);
-    let userName = localStorage.getItem('master_name') || "Мастер";
+    let userId = localStorage.getItem('m_id');
+    let userName = localStorage.getItem('master_name');
+    let userPhone = localStorage.getItem('master_phone');
     let isAdmin = localStorage.getItem('is_admin') === 'true';
     let currentFilter = "Все";
     let isFirstLoad = true;
 
-    // --- UI Init ---
-    document.getElementById('userIdDisp').innerText = userId;
-    document.getElementById('userNameDisplay').innerText = userName;
-    updateAdminButton();
+    window.onload = function() {
+        if (!userName || !userPhone) document.getElementById('authOverlay').style.display = 'flex';
+        else initApp();
+    };
 
-    if (Notification.permission !== "granted") Notification.requestPermission();
+    async function initApp() {
+        document.getElementById('userNameDisplay').innerText = userName;
+        document.getElementById('userIdDisp').innerText = userId;
+        updateAdminButton();
+        setupPresence();
+        
+        if (isAdmin) {
+            document.getElementById('adminArea').style.display = 'block';
+            loadStats();
+            loadAppeals();
+        }
 
-    function notify(title, body) {
-        if (Notification.permission === "granted") {
-            new Notification(title, { body: body });
-            new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg').play();
+        if (Notification.permission !== "granted") Notification.requestPermission();
+
+        // Авто-архивация старых заказов (старше 24 часов)
+        db.ref('tasks').once('value', s => {
+            const tasks = s.val();
+            if (tasks) {
+                const NOW = Date.now();
+                const DAY_MS = 24 * 60 * 60 * 1000;
+                Object.values(tasks).forEach(t => {
+                    if (t.status === 'active' && t.serverTime && (NOW - t.serverTime > DAY_MS)) {
+                        db.ref(`tasks/${t.id}`).update({ status: 'completed' });
+                    }
+                });
+            }
+        });
+
+        // Слушатель для рендера
+        db.ref('tasks').on('value', (s) => { 
+            renderAll(s.val()); 
+            isFirstLoad = false; 
+        });
+
+        // Слушатель для уведомлений
+        db.ref('tasks').on('child_added', (snap) => {
+            if (isFirstLoad) return;
+            const t = snap.val();
+            const sc = document.getElementById('notifCity').value;
+            if (t.authorId !== userId && (sc === "Все" || t.city === sc)) {
+                new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg').play().catch(()=>{});
+                if (Notification.permission === "granted") {
+                    new Notification(`⚡ Новый заказ: ${t.city}`, { body: t.desc });
+                }
+            }
+        });
+    }
+
+    // --- ОНЛАЙН СТАТУС И СТАТИСТИКА ---
+    function setupPresence() {
+        const myStatusRef = db.ref(`status/${userId}`);
+        const connectedRef = db.ref('.info/connected');
+        connectedRef.on('value', snap => {
+            if (snap.val() === true) {
+                myStatusRef.onDisconnect().remove();
+                myStatusRef.set({ name: userName, lastChanged: firebase.database.ServerValue.TIMESTAMP });
+            }
+        });
+    }
+
+    function loadStats() {
+        db.ref('users').on('value', s => { document.getElementById('statRegs').innerText = s.numChildren(); });
+        db.ref('status').on('value', s => { document.getElementById('statOnline').innerText = s.numChildren(); });
+    }
+
+    // --- АДМИНКА И БАНЫ ---
+    function loadAppeals() {
+        db.ref('appeals').on('value', s => {
+            const container = document.getElementById('appealsContainer');
+            container.innerHTML = '';
+            const data = s.val();
+            if (!data) return container.innerHTML = '<small>Апелляций нет</small>';
+            Object.keys(data).forEach(key => {
+                const a = data[key];
+                container.innerHTML += `
+                    <div class="appeal-item">
+                        <b>ID: ${a.senderId}</b>: ${a.message} <br>
+                        <button class="btn-adm-action" style="background:var(--success)" onclick="unbanUser('${a.senderId}', '${key}')">РАЗБАН</button>
+                    </div>`;
+            });
+        });
+    }
+
+    function banUser(id) {
+        if (confirm(`Заблокировать мастера ${id}?`)) {
+            db.ref(`blacklist/${id}`).set(true).then(() => alert("Бан активирован"));
         }
     }
 
-    // --- Firebase Sync ---
-    db.ref('tasks').on('value', (snapshot) => {
-        renderAll(snapshot.val());
-        isFirstLoad = false;
-    });
+    function unbanUser(id, key) {
+        db.ref(`blacklist/${id}`).remove();
+        db.ref(`appeals/${key}`).remove();
+        alert("Пользователь разблокирован");
+    }
 
-    db.ref('tasks').on('child_added', (snap) => {
-        if (!isFirstLoad && snap.val().authorId !== userId) notify(`⚡ Новый заказ: ${snap.val().city}`, snap.val().desc);
-    });
+    function sendAppeal() {
+        const id = prompt("Введите ваш ID:");
+        const msg = prompt("Сообщение админу:");
+        if (id && msg) db.ref('appeals').push({ senderId: id, message: msg }).then(() => alert("Отправлено"));
+    }
 
-    // --- Actions ---
+    // --- ЛОГИКА ЗАДАЧ ---
     async function postTask() {
-        const banCheck = await db.ref(`blacklist/${userId}`).once('value');
-        if (banCheck.exists()) return alert("Вы заблокированы!");
+        const ban = await db.ref(`blacklist/${userId}`).once('value');
+        if (ban.exists()) return alert("Вы заблокированы!");
 
         const desc = document.getElementById('taskDesc').value.trim();
         const addr = document.getElementById('taskAddr').value.trim();
         const phone = document.getElementById('taskPhone').value.trim();
         const city = document.getElementById('taskCity').value;
+        const isUrgent = document.getElementById('isUrgent').checked;
 
-        if (!desc || !addr || !phone) return alert("Заполни все поля!");
+        if (!desc || !addr || phone.length < 10) return alert("Заполни все поля правильно!");
 
-        const newTaskRef = db.ref('tasks').push();
-        newTaskRef.set({
-            id: newTaskRef.key, authorId: userId, author: userName,
-            city, desc, addr, phone, status: 'active', takenBy: "",
-            reasons: [] // История отказов
+        const btn = document.getElementById('postBtn');
+        btn.disabled = true;
+
+        const ref = db.ref('tasks').push();
+        ref.set({ 
+            id: ref.key, authorId: userId, author: userName, city, desc, addr, phone, isUrgent,
+            serverTime: firebase.database.ServerValue.TIMESTAMP,
+            timestamp: new Date().toLocaleString('ru-RU', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}),
+            status: 'active', takenBy: "", takenById: "" 
+        }).then(() => {
+            ['taskDesc', 'taskAddr', 'taskPhone'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('isUrgent').checked = false;
+            btn.disabled = false;
         });
-        
-        ['taskDesc', 'taskAddr', 'taskPhone'].forEach(id => document.getElementById(id).value = '');
     }
 
     function renderAll(tasks) {
         const container = document.getElementById('ordersContainer');
         container.innerHTML = '';
         if (!tasks) return;
+        Object.values(tasks).reverse().forEach(t => {
+            const isMy = t.authorId === userId;
+            const isWorker = t.takenById === userId;
+            const isCompleted = t.status === 'completed';
 
-        Object.values(tasks).reverse().forEach(task => {
-            const isMyTask = task.authorId === userId;
-            const amIWorker = task.takenBy === userName;
-
-            if (currentFilter === 'Мои') {
-                if (!isMyTask && !amIWorker) return;
-            } else if (currentFilter !== 'Все' && task.city !== currentFilter) return;
+            if (currentFilter === 'Архив' && !isCompleted) return;
+            if (currentFilter === 'Мои' && (!isMy && !isWorker)) return;
+            if (currentFilter !== 'Все' && currentFilter !== 'Мои' && currentFilter !== 'Архив' && t.city !== currentFilter) return;
+            if (currentFilter === 'Все' && isCompleted) return;
 
             const div = document.createElement('div');
-            div.className = `card order-item ${task.status}`;
+            div.className = `card ${t.isUrgent ? 'urgent' : ''}`;
             
-            // Кнопки управления для автора/админа
-            let controls = (isMyTask || isAdmin) ? `
-                <div style="position:absolute; top:10px; right:10px;">
-                    <span class="btn-manage" onclick="editTask('${task.id}', '${task.desc}')">✏️</span>
-                    <span class="btn-manage btn-delete" onclick="deleteTask('${task.id}')">🗑️</span>
-                </div>` : "";
-
-            // Сбор причин отказов
-            let reasonsHtml = "";
-            if (task.reasons) {
-                reasonsHtml = Object.values(task.reasons).map(r => `<div class="reason-box">⚠️ ${r}</div>`).join('');
-            }
-
             let html = `
-                ${controls}
-                <div style="font-size:11px; color:gray">📍 ${task.city} | От: ${task.author} ${isMyTask ? '<span class="owner-tag">МОЙ</span>' : ''}</div>
-                <p><strong>${task.desc}</strong></p>
-                <div style="color:#2980b9; font-size:14px">📍 ${task.addr}</div>
-                ${reasonsHtml}
+                ${(isMy || isAdmin) ? `<div style="position:absolute; top:10px; right:10px;"><span class="btn-manage" onclick="editTask('${t.id}')">📝</span><span class="btn-manage" style="color:red" onclick="deleteTask('${t.id}')">🗑️</span></div>` : ""}
+                <span class="time-tag">${t.timestamp || ''} ${t.isUrgent ? '<span class="urgent-badge">🔥 СРОЧНО</span>' : ''}</span>
+                <div style="font-size:11px; color:gray">📍 ${t.city} | От: ${t.author} ${isMy ? '<span class="owner-tag">МОЙ</span>' : ''}</div>
+                <p><strong>${t.desc}</strong></p>
+                <div style="color:#2980b9; font-size:14px">🏠 ${t.addr}</div>
             `;
 
-            if (task.status === 'active') {
-                html += `<button class="btn-accept" style="margin-top:10px" onclick="updateStatus('${task.id}', 'taken')">ПРИНЯТЬ</button>`;
-            } else if (task.status === 'taken') {
-                html += `
-                    <div class="phone-box">
-                        <small>В работе: <b>${task.takenBy}</b></small><br>
-                        <a href="tel:${task.phone}" style="font-size:20px; color:green; text-decoration:none; font-weight:bold">📞 ПОЗВОНИТЬ</a>
-                        ${amIWorker ? `
-                            <button onclick="updateStatus('${task.id}', 'completed')" style="background:var(--success); color:white; margin-top:10px">ЗАВЕРШИЛ ✅</button>
-                            <button class="btn-cancel" onclick="cancelTask('${task.id}')">ОТКАЗАТЬСЯ</button>
-                        ` : ''}
-                    </div>`;
+            if (t.status === 'active') {
+                html += `<button class="btn-accept" onclick="takeTask('${t.id}')">ПРИНЯТЬ ЗАКАЗ</button>`;
+                if (!isMy) html += `<button class="btn-report" onclick="sendReport('${t.authorId}', '${t.desc}')">⚠️ ПОЖАЛОВАТЬСЯ</button>`;
+            } else if (t.status === 'taken') {
+                html += `<div class="phone-box">
+                    <small>В работе у: <b>${t.takenBy}</b></small><br>
+                    <a href="tel:${t.phone}" style="font-size:22px; color:green; text-decoration:none; font-weight:bold">📞 ${t.phone}</a>
+                    ${isWorker ? `<button onclick="updateStatus('${t.id}', 'completed')" style="background:var(--success); color:white; width:100%; margin-top:10px; padding:10px; border-radius:8px;">ЗАВЕРШИЛ ✅</button>
+                    <button class="btn-cancel" onclick="cancelTask('${t.id}')">ОТКАЗАТЬСЯ</button>` : ''}
+                </div>`;
             } else {
-                html += `<div style="text-align:center; color:green; font-weight:bold; margin-top:10px; border-top:1px solid #eee; padding-top:10px">✅ РАБОТА ВЫПОЛНЕНА</div>`;
+                html += `<div style="text-align:center; color:green; font-weight:bold; margin-top:10px; border-top:1px solid #eee; padding-top:10px">✅ ВЫПОЛНЕНО</div>`;
             }
 
-            if (isAdmin && !isMyTask) {
-                html += `<button onclick="banUser('${task.authorId}')" style="background:#000; color:red; font-size:10px; margin-top:10px">ЗАБАНИТЬ ПОЛЬЗОВАТЕЛЯ</button>`;
-            }
+            if (isAdmin) html += `<button class="btn-adm-action" onclick="banUser('${t.authorId}')">БАН АВТОРА</button>`;
 
             div.innerHTML = html;
             container.appendChild(div);
         });
     }
 
-    function updateStatus(id, stat) {
-        db.ref(`tasks/${id}`).update({ status: stat, takenBy: stat === 'taken' ? userName : "" });
+    function saveAuth() {
+        const name = document.getElementById('regName').value.trim();
+        const phone = document.getElementById('regPhone').value.trim();
+        if (name.length < 2 || phone.length < 10) return alert("Введите данные!");
+        const id = 'ID' + Math.floor(Math.random()*9000+1000);
+        localStorage.setItem('m_id', id);
+        localStorage.setItem('master_name', name);
+        localStorage.setItem('master_phone', phone);
+        db.ref(`users/${id}`).set({ name, phone });
+        location.reload();
+    }
+
+    function takeTask(id) { 
+        if(confirm("Берете этот заказ?")) {
+            db.ref(`tasks/${id}`).update({ status: 'taken', takenBy: userName, takenById: userId }); 
+        }
     }
 
     function cancelTask(id) {
-        const reason = prompt("Укажите причину отказа (её увидят другие мастера):");
-        if (reason && reason.trim() !== "") {
-            const fullReason = `${userName}: ${reason}`;
-            db.ref(`tasks/${id}/reasons`).push(fullReason);
-            updateStatus(id, 'active');
-            alert("Вы отказались от заказа. Он снова доступен в ленте.");
-        } else {
-            alert("Отказ отменен. Чтобы отказаться, нужно указать причину.");
+        if(confirm("Отказаться от заказа? Он снова станет доступен всем.")) {
+            db.ref(`tasks/${id}`).update({ status: 'active', takenBy: "", takenById: "" });
         }
     }
 
-    // --- Admin & Utils ---
+    function editTask(id) {
+        db.ref(`tasks/${id}`).once('value', s => {
+            const t = s.val();
+            const nD = prompt("Что изменить в описании?", t.desc);
+            const nA = prompt("Изменить адрес?", t.addr);
+            if(nD && nA) db.ref(`tasks/${id}`).update({ desc: nD, addr: nA });
+        });
+    }
+
+    function sendReport(tid, desc) {
+        const r = prompt("Опишите причину жалобы:");
+        if(r) db.ref('reports').push({ from: userId, targetId: tid, reason: r, taskDesc: desc });
+    }
+
+    function updateStatus(id, s) { db.ref(`tasks/${id}`).update({ status: s }); }
+    function deleteTask(id) { if(confirm("Удалить безвозвратно?")) db.ref(`tasks/${id}`).remove(); }
+    
     function handleAdminAction() {
-        if (isAdmin) {
-            if (confirm("Выйти из режима админа?")) {
-                localStorage.removeItem('is_admin');
-                location.reload();
-            }
-        } else {
-            if (prompt("Пароль:") === '01122') {
-                localStorage.setItem('is_admin', 'true');
-                location.reload();
-            }
-        }
+        if(isAdmin) { localStorage.removeItem('is_admin'); location.reload(); }
+        else if(prompt("Пароль:") === '01122') { localStorage.setItem('is_admin', 'true'); location.reload(); }
     }
 
     function updateAdminButton() {
-        const btn = document.getElementById('adminBtn');
         if (isAdmin) {
-            btn.innerText = "Выход (Админ)";
-            btn.style.color = "var(--danger)";
             document.getElementById('adminBadge').innerHTML = '<span class="admin-badge">ADMIN</span>';
-        } else {
-            btn.innerText = "Вход";
+            document.getElementById('adminBtn').innerText = "ВЫХОД";
         }
-    }
-
-    function deleteTask(id) { if(confirm("Удалить навсегда?")) db.ref(`tasks/${id}`).remove(); }
-    
-    function editTask(id, old) {
-        const val = prompt("Изменить описание:", old);
-        if(val) db.ref(`tasks/${id}`).update({ desc: val });
-    }
-
-    function banUser(uid) {
-        if(confirm(`Забанить мастера ${uid}?`)) db.ref(`blacklist/${uid}`).set(true);
     }
 
     function filterByCity(c) {
         currentFilter = c;
         document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.innerText.includes(c)));
         db.ref('tasks').once('value', s => renderAll(s.val()));
-    }
-
-    function changeName() {
-        const n = prompt("Ваше имя:", userName);
-        if(n && n.trim()) { localStorage.setItem('master_name', n); location.reload(); }
     }
 </script>
 </body>
