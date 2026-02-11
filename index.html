@@ -78,15 +78,6 @@
         <div class="stat-card">Регистраций <span id="statRegs" class="stat-val">0</span></div>
         <div class="stat-card">В сети <span id="statOnline" class="stat-val">0</span></div>
     </div>
-
-    <div class="appeal-item" style="border: 2px solid var(--danger); margin-bottom: 10px;">
-        <b>🚫 Управление баном (по ID)</b>
-        <div style="display: flex; gap: 5px; margin-top: 5px;">
-            <input type="text" id="manualBanId" placeholder="ID (напр. ID1234)" style="margin:0; font-size: 12px; height: 35px;">
-            <button class="btn-adm-action" onclick="manualBan()" style="height: 35px;">БАН</button>
-            <button class="btn-adm-action" style="background:var(--success); height: 35px;" onclick="manualUnban()">РАЗБАН</button>
-        </div>
-    </div>
     <div id="appealsContainer"><small>Загрузка апелляций...</small></div>
 </div>
 
@@ -243,38 +234,6 @@
         db.ref(`blacklist/${id}`).remove();
         db.ref(`appeals/${key}`).remove();
         alert("Пользователь разблокирован");
-// Найдите функцию unbanUser и после неё добавьте эти:
-
-function unbanUser(id, key) {
-    db.ref(`blacklist/${id}`).remove();
-    if(key) db.ref(`appeals/${key}`).remove(); // Добавил проверку на ключ
-    alert("Пользователь разблокирован");
-}
-
-// ВСТАВИТЬ ЭТИ ДВЕ ФУНКЦИИ НИЖЕ:
-
-function manualBan() {
-    const id = document.getElementById('manualBanId').value.trim();
-    if (!id) return alert("Введите ID мастера");
-    
-    if (confirm(`Заблокировать пользователя ${id}?`)) {
-        db.ref(`blacklist/${id}`).set(true).then(() => {
-            alert(`Пользователь ${id} заблокирован`);
-            document.getElementById('manualBanId').value = '';
-        });
-    }
-}
-
-function manualUnban() {
-    const id = document.getElementById('manualBanId').value.trim();
-    if (!id) return alert("Введите ID мастера");
-
-    db.ref(`blacklist/${id}`).remove().then(() => {
-        alert(`Пользователь ${id} разблокирован`);
-        document.getElementById('manualBanId').value = '';
-    });
-}
-
     }
 
     function sendAppeal() {
