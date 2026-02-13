@@ -19,9 +19,10 @@
         .user-name { color: var(--primary); font-weight: bold; }
         .admin-badge { background: gold; color: black; padding: 2px 5px; border-radius: 4px; font-size: 10px; margin-left: 5px; font-weight: bold; }
         
+        /* Статистика */
         .stats-row { display: flex; gap: 10px; margin-bottom: 10px; }
-        .stat-item { flex: 1; background: white; padding: 5px; border-radius: 8px; text-align: center; font-size: 11px; border: 1px solid #ddd; }
-        .stat-item b { color: var(--accent); font-size: 14px; }
+        .stat-item { flex: 1; background: white; padding: 8px; border-radius: 8px; text-align: center; font-size: 11px; border: 1px solid #ddd; }
+        .stat-item b { color: var(--accent); font-size: 16px; display: block; }
 
         .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px; border-left: 5px solid var(--dark); position: relative; }
         .card.urgent { border-left-color: var(--danger); background: #fff5f5; border-left-width: 8px; }
@@ -55,7 +56,7 @@
 
         .phone-box { background: #e8f5e9; padding: 15px; margin-top: 10px; border-radius: 8px; text-align: center; border: 1px solid #c3e6cb; }
         .time-tag { font-size: 10px; color: #95a5a6; margin-bottom: 5px; display: block; }
-        .worker-box { font-size: 12px; margin-top: 8px; padding: 8px; background: #f8f9fa; border-radius: 6px; border: 1px solid #eee; }
+        .worker-card { background: #f0f2f5; padding: 8px; border-radius: 6px; margin-top: 10px; font-size: 12px; border: 1px solid #ddd; }
     </style>
 </head>
 <body>
@@ -81,8 +82,8 @@
 <div id="adminArea" style="display:none" class="admin-panel">
     <h3 style="margin:0 0 10px 0; color:var(--danger); font-size: 14px;">📊 ПАНЕЛЬ УПРАВЛЕНИЯ</h3>
     <div class="stats-row">
-        <div class="stat-item">Всего мастеров: <br><b id="statTotal">0</b></div>
-        <div class="stat-item">Сейчас в сети: <br><b id="statOnline">0</b></div>
+        <div class="stat-item">Всего мастеров: <b id="statTotal">0</b></div>
+        <div class="stat-item">Мастеров онлайн: <b id="statOnline" style="color:var(--success)">0</b></div>
     </div>
     <div id="adminReportsContainer"></div>
 </div>
@@ -153,12 +154,13 @@
             listenAdminStats();
         }
 
-        // Presence system
+        // Система онлайн-статуса
         const myStatusRef = db.ref(`presence/${userId}`);
-        myStatusRef.set({ name: userName, lastActive: firebase.database.ServerValue.TIMESTAMP });
+        myStatusRef.set({ name: userName, status: 'online' });
         myStatusRef.onDisconnect().remove();
 
         db.ref('tasks').on('value', (s) => renderAll(s.val()));
+        filterByCity('Все');
     }
 
     function listenAdminStats() {
@@ -178,9 +180,7 @@
         if (phone.startsWith('8')) phone = '7' + phone.slice(1);
         if (phone.length === 10) phone = '7' + phone;
 
-        if (desc.length < 3 || addr.length < 3 || phone.length !== 11) {
-            return alert("Заполните всё верно!");
-        }
+        if (desc.length < 3 || addr.length < 3 || phone.length !== 11) return alert("Заполните всё верно!");
 
         const data = {
             city: document.getElementById('taskCity').value,
@@ -219,12 +219,14 @@
             const div = document.createElement('div');
             div.className = `card ${t.isUrgent ? 'urgent' : ''}`;
             
+            // История отказов
             let historyHtml = t.rejectionHistory ? `<div class="rej-history"><span class="rej-title">История отказов:</span>${t.rejectionHistory.map(r => `• ${r.master}: ${r.reason}`).join('<br>')}</div>` : "";
 
-            let workerInfo = "";
+            // Инфо о мастере (для админа и автора)
+            let workerBlock = "";
             if (t.status === 'taken') {
-                const showWorkerPhone = (isMy || isAdmin) ? ` (${t.takenByPhone || '???'})` : "";
-                workerInfo = `<div class="worker-box">👷 Исполнитель: <b>${t.takenBy}</b>${showWorkerPhone}</div>`;
+                const showPhone = (isAdmin || isMy) ? ` (📞 ${t.takenByPhone || '???'})` : "";
+                workerBlock = `<div class="worker-card">👷 Исполнитель: <b>${t.takenBy}</b>${showPhone}</div>`;
             }
 
             let html = `
@@ -238,7 +240,7 @@
                 <div style="font-size:11px; color:gray">📍 ${t.city} | От: ${t.author}</div>
                 <p><strong>${t.desc}</strong></p>
                 <div style="font-size:14px; color:#2c3e50;">🏠 ${t.addr}</div>
-                ${workerInfo}
+                ${workerBlock}
                 ${historyHtml}
             `;
 
@@ -249,10 +251,10 @@
                 const canSeePhone = isWorker || isMy || isAdmin;
                 html += `<div class="phone-box">
                     ${canSeePhone ? 
-                        `<a href="tel:${t.phone}" style="font-size:22px; color:green; text-decoration:none; font-weight:bold">📞 ${t.phone}</a>` : 
+                        `<a href="tel:${t.phone}" style="font-size:22px; color:green; text-decoration:none; font-weight:bold">📞 ${t.phone}</a>` :
                         `<div style="color:red; font-size:12px; font-weight:bold;">🔒 Номер скрыт (занят другим)</div>`
                     }
-                    ${isWorker ? `<button onclick="updateStatus('${t.id}', 'completed')" style="background:var(--success); color:white; width:100%; margin-top:10px;">ЗАВЕРШИЛ ✅</button>
+                    ${isWorker ? `<button onclick="updateStatus('${t.id}', 'completed')" style="background:var(--success); color:white; width:100%; margin-top:10px; padding:10px; border-radius:8px;">ЗАВЕРШИЛ ✅</button>
                     <button class="btn-cancel" onclick="cancelTask('${t.id}')">ОТКАЗАТЬСЯ</button>` : ''}
                 </div>`;
             } else {
@@ -281,10 +283,10 @@
     function saveAuth() {
         const n = document.getElementById('regName').value.trim();
         let p = document.getElementById('regPhone').value.trim().replace(/\D/g, '');
-        if (n.length < 2 || p.length < 10) return alert("Введите данные!");
+        if (n.length < 2 || p.length < 10) return alert("Введите данные корректно!");
         if (p.startsWith('8')) p = '7' + p.slice(1);
         if (p.length === 10) p = '7' + p;
-        
+
         const id = 'ID' + Math.floor(Math.random()*9000+1000);
         localStorage.setItem('m_id', id);
         localStorage.setItem('master_name', n);
@@ -329,12 +331,13 @@
     function filterByCity(c) {
         currentFilter = c;
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.getElementById('tab-' + c).classList.add('active');
+        const tab = document.getElementById('tab-' + c);
+        if(tab) tab.classList.add('active');
         db.ref('tasks').once('value', s => renderAll(s.val()));
     }
 
     function updateStatus(id, s) { db.ref(`tasks/${id}`).update({ status: s }); }
-    function deleteTask(id) { if(confirm("Удалить?")) db.ref(`tasks/${id}`).remove(); }
+    function deleteTask(id) { if(confirm("Удалить этот заказ?")) db.ref(`tasks/${id}`).remove(); }
     
     async function cancelTask(id) {
         const r = prompt("Причина отказа:");
@@ -357,14 +360,14 @@
             if (s.val()) Object.entries(s.val()).forEach(([key, r]) => {
                 const div = document.createElement('div');
                 div.className = 'report-item';
-                div.innerHTML = `🚩 <b>${r.from}</b> жалуется на <b>${r.targetName}</b><br>Причина: <i>${r.reason}</i><br><button class="btn-report" onclick="db.ref('reports/${key}').remove()">УДАЛИТЬ</button><button class="btn-ban" onclick="banUser('${r.targetId}', '${r.targetName}')">БАН</button>`;
+                div.innerHTML = `🚩 Жалоба на <b>${r.targetName}</b><br>Причина: <i>${r.reason}</i><br><button class="btn-report" onclick="db.ref('reports/${key}').remove()">УДАЛИТЬ</button> <button class="btn-ban" onclick="banUser('${r.targetId}', '${r.targetName}')">БАН</button>`;
                 container.appendChild(div);
             });
         });
     }
 
     function banUser(id, name) {
-        if (confirm("Бан " + name + "?")) db.ref(`blacklist/${id}`).set({ name, date: new Date().toLocaleString() });
+        if (confirm("Забанить " + name + "?")) db.ref(`blacklist/${id}`).set({ name, date: new Date().toLocaleString() });
     }
 </script>
 </body>
