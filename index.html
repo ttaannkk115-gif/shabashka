@@ -19,6 +19,10 @@
         .user-name { color: var(--primary); font-weight: bold; }
         .admin-badge { background: gold; color: black; padding: 2px 5px; border-radius: 4px; font-size: 10px; margin-left: 5px; font-weight: bold; }
         
+        .stats-row { display: flex; gap: 10px; margin-bottom: 10px; }
+        .stat-item { flex: 1; background: white; padding: 5px; border-radius: 8px; text-align: center; font-size: 11px; border: 1px solid #ddd; }
+        .stat-item b { color: var(--accent); font-size: 14px; }
+
         .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px; border-left: 5px solid var(--dark); position: relative; }
         .card.urgent { border-left-color: var(--danger); background: #fff5f5; border-left-width: 8px; }
         .urgent-badge { background: var(--danger); color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; animation: blink 1s infinite; }
@@ -51,6 +55,7 @@
 
         .phone-box { background: #e8f5e9; padding: 15px; margin-top: 10px; border-radius: 8px; text-align: center; border: 1px solid #c3e6cb; }
         .time-tag { font-size: 10px; color: #95a5a6; margin-bottom: 5px; display: block; }
+        .worker-box { font-size: 12px; margin-top: 8px; padding: 8px; background: #f8f9fa; border-radius: 6px; border: 1px solid #eee; }
     </style>
 </head>
 <body>
@@ -74,7 +79,11 @@
 </div>
 
 <div id="adminArea" style="display:none" class="admin-panel">
-    <h3 style="margin:0; color:var(--danger); font-size: 14px;">📊 ПАНЕЛЬ УПРАВЛЕНИЯ</h3>
+    <h3 style="margin:0 0 10px 0; color:var(--danger); font-size: 14px;">📊 ПАНЕЛЬ УПРАВЛЕНИЯ</h3>
+    <div class="stats-row">
+        <div class="stat-item">Всего мастеров: <br><b id="statTotal">0</b></div>
+        <div class="stat-item">Сейчас в сети: <br><b id="statOnline">0</b></div>
+    </div>
     <div id="adminReportsContainer"></div>
 </div>
 
@@ -123,49 +132,51 @@
 
     let userId = localStorage.getItem('m_id');
     let userName = localStorage.getItem('master_name');
+    let userPhone = localStorage.getItem('master_phone');
     let isAdmin = localStorage.getItem('is_admin') === 'true';
     let currentFilter = "Все";
     let editId = null;
 
     window.onload = function() {
-        if (!userName) document.getElementById('authOverlay').style.display = 'flex';
+        if (!userName || !userPhone) document.getElementById('authOverlay').style.display = 'flex';
         else initApp();
     };
 
     function initApp() {
         document.getElementById('userNameDisplay').innerText = userName;
         document.getElementById('userIdDisp').innerText = userId || '';
+        
         if (isAdmin) {
             document.getElementById('adminArea').style.display = 'block';
             document.getElementById('adminBadge').innerHTML = '<span class="admin-badge">ADMIN</span>';
             document.getElementById('adminBtn').innerText = "ВЫХОД";
-            listenReports();
+            listenAdminStats();
         }
+
+        // Presence system
+        const myStatusRef = db.ref(`presence/${userId}`);
+        myStatusRef.set({ name: userName, lastActive: firebase.database.ServerValue.TIMESTAMP });
+        myStatusRef.onDisconnect().remove();
+
         db.ref('tasks').on('value', (s) => renderAll(s.val()));
-        filterByCity('Все');
     }
 
-    function handleAdminAction() {
-        if (isAdmin) {
-            if(confirm("Выйти из режима администратора?")) {
-                localStorage.removeItem('is_admin');
-                location.reload();
-            }
-        } else {
-            if (prompt("Пароль:") === '01122') {
-                localStorage.setItem('is_admin', 'true');
-                location.reload();
-            }
-        }
+    function listenAdminStats() {
+        db.ref('users').on('value', s => document.getElementById('statTotal').innerText = s.numChildren());
+        db.ref('presence').on('value', s => document.getElementById('statOnline').innerText = s.numChildren());
+        listenReports();
     }
 
     async function postTask() {
         const ban = await db.ref(`blacklist/${userId}`).once('value');
-        if (ban.exists()) return alert("Вы заблокированы за нарушения!");
+        if (ban.exists()) return alert("Вы заблокированы!");
 
         const desc = document.getElementById('taskDesc').value.trim();
         const addr = document.getElementById('taskAddr').value.trim();
-        const phone = document.getElementById('taskPhone').value.trim().replace(/\D/g, '');
+        let phone = document.getElementById('taskPhone').value.trim().replace(/\D/g, '');
+
+        if (phone.startsWith('8')) phone = '7' + phone.slice(1);
+        if (phone.length === 10) phone = '7' + phone;
 
         if (desc.length < 3 || addr.length < 3 || phone.length !== 11) {
             return alert("Заполните всё верно!");
@@ -208,13 +219,12 @@
             const div = document.createElement('div');
             div.className = `card ${t.isUrgent ? 'urgent' : ''}`;
             
-            let historyHtml = "";
-            if (t.rejectionHistory) {
-                historyHtml = `
-                    <div class="rej-history">
-                        <span class="rej-title">История отказов:</span>
-                        ${t.rejectionHistory.map(r => `• ${r.master}: ${r.reason}`).join('<br>')}
-                    </div>`;
+            let historyHtml = t.rejectionHistory ? `<div class="rej-history"><span class="rej-title">История отказов:</span>${t.rejectionHistory.map(r => `• ${r.master}: ${r.reason}`).join('<br>')}</div>` : "";
+
+            let workerInfo = "";
+            if (t.status === 'taken') {
+                const showWorkerPhone = (isMy || isAdmin) ? ` (${t.takenByPhone || '???'})` : "";
+                workerInfo = `<div class="worker-box">👷 Исполнитель: <b>${t.takenBy}</b>${showWorkerPhone}</div>`;
             }
 
             let html = `
@@ -228,6 +238,7 @@
                 <div style="font-size:11px; color:gray">📍 ${t.city} | От: ${t.author}</div>
                 <p><strong>${t.desc}</strong></p>
                 <div style="font-size:14px; color:#2c3e50;">🏠 ${t.addr}</div>
+                ${workerInfo}
                 ${historyHtml}
             `;
 
@@ -235,10 +246,13 @@
                 html += `<button class="btn-accept" onclick="takeTask('${t.id}')">ПРИНЯТЬ ЗАКАЗ</button>`;
                 if (!isMy) html += `<button class="btn-report" onclick="sendReport('${t.authorId}', '${t.author}', '${t.desc}')">⚠️ ПОЖАЛОВАТЬСЯ</button>`;
             } else if (t.status === 'taken') {
+                const canSeePhone = isWorker || isMy || isAdmin;
                 html += `<div class="phone-box">
-                    <small>В работе у: <b>${t.takenBy}</b></small><br>
-                    <a href="tel:${t.phone}" style="font-size:22px; color:green; text-decoration:none; font-weight:bold">📞 ${t.phone}</a>
-                    ${isWorker ? `<button onclick="updateStatus('${t.id}', 'completed')" style="background:var(--success); color:white; width:100%; margin-top:10px; padding:10px; border-radius:8px;">ЗАВЕРШИЛ ✅</button>
+                    ${canSeePhone ? 
+                        `<a href="tel:${t.phone}" style="font-size:22px; color:green; text-decoration:none; font-weight:bold">📞 ${t.phone}</a>` : 
+                        `<div style="color:red; font-size:12px; font-weight:bold;">🔒 Номер скрыт (занят другим)</div>`
+                    }
+                    ${isWorker ? `<button onclick="updateStatus('${t.id}', 'completed')" style="background:var(--success); color:white; width:100%; margin-top:10px;">ЗАВЕРШИЛ ✅</button>
                     <button class="btn-cancel" onclick="cancelTask('${t.id}')">ОТКАЗАТЬСЯ</button>` : ''}
                 </div>`;
             } else {
@@ -250,32 +264,42 @@
         });
     }
 
-    function sendReport(tId, tName, tDesc) {
-        const r = prompt("Причина жалобы на " + tName + ":");
-        if (r) db.ref('reports').push({ from: userName, targetId: tId, targetName: tName, task: tDesc, reason: r, time: new Date().toLocaleString() });
-    }
-
-    function listenReports() {
-        db.ref('reports').on('value', s => {
-            const container = document.getElementById('adminReportsContainer');
-            container.innerHTML = '';
-            if (s.val()) Object.entries(s.val()).forEach(([key, r]) => {
-                const div = document.createElement('div');
-                div.className = 'report-item';
-                div.innerHTML = `🚩 <b>${r.from}</b> жалуется на <b>${r.targetName}</b><br>
-                                 Причина: <i>${r.reason}</i><br>
-                                 Заказ: ${r.task}<br><br>
-                                 <button class="btn-report" onclick="db.ref('reports/${key}').remove()">УДАЛИТЬ ЖАЛОБУ</button>
-                                 <button class="btn-ban" onclick="banUser('${r.targetId}', '${r.targetName}')">🚫 БЛОКИРОВАТЬ</button>`;
-                container.appendChild(div);
-            });
+    function takeTask(id) {
+        db.ref(`tasks/${id}`).transaction((task) => {
+            if (task && task.status === 'active') {
+                task.status = 'taken';
+                task.takenBy = userName;
+                task.takenById = userId;
+                task.takenByPhone = userPhone;
+            }
+            return task;
+        }, (err, committed) => {
+            if (!committed) alert("Заказ уже занят!");
         });
     }
 
-    function banUser(id, name) {
-        if (confirm("Заблокировать мастера " + name + "?")) {
-            db.ref(`blacklist/${id}`).set({ name: name, date: new Date().toLocaleString() });
-            alert("Пользователь заблокирован!");
+    function saveAuth() {
+        const n = document.getElementById('regName').value.trim();
+        let p = document.getElementById('regPhone').value.trim().replace(/\D/g, '');
+        if (n.length < 2 || p.length < 10) return alert("Введите данные!");
+        if (p.startsWith('8')) p = '7' + p.slice(1);
+        if (p.length === 10) p = '7' + p;
+        
+        const id = 'ID' + Math.floor(Math.random()*9000+1000);
+        localStorage.setItem('m_id', id);
+        localStorage.setItem('master_name', n);
+        localStorage.setItem('master_phone', '+' + p);
+        db.ref(`users/${id}`).set({ name: n, phone: '+' + p });
+        location.reload();
+    }
+
+    function handleAdminAction() {
+        if (isAdmin) {
+            localStorage.removeItem('is_admin');
+            location.reload();
+        } else if (prompt("Пароль:") === '01122') {
+            localStorage.setItem('is_admin', 'true');
+            location.reload();
         }
     }
 
@@ -305,14 +329,12 @@
     function filterByCity(c) {
         currentFilter = c;
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        const activeTab = document.getElementById('tab-' + c);
-        if(activeTab) activeTab.classList.add('active');
+        document.getElementById('tab-' + c).classList.add('active');
         db.ref('tasks').once('value', s => renderAll(s.val()));
     }
 
-    function takeTask(id) { db.ref(`tasks/${id}`).update({ status: 'taken', takenBy: userName, takenById: userId }); }
     function updateStatus(id, s) { db.ref(`tasks/${id}`).update({ status: s }); }
-    function deleteTask(id) { if(confirm("Удалить этот заказ?")) db.ref(`tasks/${id}`).remove(); }
+    function deleteTask(id) { if(confirm("Удалить?")) db.ref(`tasks/${id}`).remove(); }
     
     async function cancelTask(id) {
         const r = prompt("Причина отказа:");
@@ -320,15 +342,29 @@
         const snap = await db.ref(`tasks/${id}`).once('value');
         const history = snap.val().rejectionHistory || [];
         history.push({ master: userName, reason: r });
-        db.ref(`tasks/${id}`).update({ status: 'active', takenBy: "", takenById: "", rejectionHistory: history });
+        db.ref(`tasks/${id}`).update({ status: 'active', takenBy: "", takenById: "", takenByPhone: "", rejectionHistory: history });
     }
 
-    function saveAuth() {
-        const n = document.getElementById('regName').value.trim();
-        if (n.length < 2) return;
-        localStorage.setItem('m_id', 'ID' + Math.floor(Math.random()*9000+1000));
-        localStorage.setItem('master_name', n);
-        location.reload();
+    function sendReport(tId, tName, tDesc) {
+        const r = prompt("Причина жалобы:");
+        if (r) db.ref('reports').push({ from: userName, targetId: tId, targetName: tName, task: tDesc, reason: r, time: new Date().toLocaleString() });
+    }
+
+    function listenReports() {
+        db.ref('reports').on('value', s => {
+            const container = document.getElementById('adminReportsContainer');
+            container.innerHTML = '';
+            if (s.val()) Object.entries(s.val()).forEach(([key, r]) => {
+                const div = document.createElement('div');
+                div.className = 'report-item';
+                div.innerHTML = `🚩 <b>${r.from}</b> жалуется на <b>${r.targetName}</b><br>Причина: <i>${r.reason}</i><br><button class="btn-report" onclick="db.ref('reports/${key}').remove()">УДАЛИТЬ</button><button class="btn-ban" onclick="banUser('${r.targetId}', '${r.targetName}')">БАН</button>`;
+                container.appendChild(div);
+            });
+        });
+    }
+
+    function banUser(id, name) {
+        if (confirm("Бан " + name + "?")) db.ref(`blacklist/${id}`).set({ name, date: new Date().toLocaleString() });
     }
 </script>
 </body>
