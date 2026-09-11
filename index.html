@@ -1,19 +1,379 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Загрузка калькулятора...</title>
+    <title>МЕГАВОЛЬТ — Каталог</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        body { margin: 0; padding: 0; background-color: #000; display: flex; justify-content: center; align-items: center; height: 100vh; color: white; font-family: sans-serif; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background-color: #f4f4f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Мобильный контейнер */
+        .mobile-container {
+            width: 100%;
+            max-width: 480px;
+            min-height: 100vh;
+            background-color: #ffffff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Шапка */
+        .header {
+            background: #f8f9fa;
+            border-bottom: 2px solid #e0e0e0;
+            padding: 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        /* Логотип */
+        .logo-text {
+            font-size: 30px;
+            font-weight: 900;
+            color: #d32f2f;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-shadow: 
+                1px 1px 0px #9a0007,
+                2px 2px 0px #9a0007,
+                3px 3px 0px #9a0007,
+                4px 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .letter-o {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lightning-bolt {
+            position: absolute;
+            width: 10px;
+            height: 16px;
+            background-color: #1a1a1a;
+            clip-path: polygon(55% 0%, 100% 0%, 40% 45%, 75% 45%, 0% 100%, 25% 50%, 0% 50%);
+        }
+
+        .tagline {
+            margin-top: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #ffffff;
+            background-color: #212121;
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* Компактный блок контактов в одну строку */
+        .header-contacts {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .address-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: #333;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Круглая кнопка вызова */
+        .call-btn {
+            width: 32px;
+            height: 32px;
+            background-color: #d32f2f;
+            color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 14px;
+            box-shadow: 0 2px 5px rgba(211, 47, 47, 0.4);
+            flex-shrink: 0;
+            transition: transform 0.1s;
+        }
+
+        .call-btn:active {
+            transform: scale(0.9);
+            background-color: #9a0007;
+        }
+
+        /* Контент каталога */
+        .content {
+            padding: 15px;
+            flex: 1;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: #212121;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            border-left: 4px solid #d32f2f;
+            padding-left: 8px;
+        }
+
+        /* Сетка каталога */
+        .catalog-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .catalog-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            padding: 14px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #333;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .catalog-item:active {
+            background-color: #fce8e8;
+            border-color: #d32f2f;
+        }
+
+        .catalog-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .catalog-icon {
+            font-size: 18px;
+            width: 32px;
+            height: 32px;
+            background: #fbe9e7;
+            color: #d32f2f;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .catalog-name {
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .arrow-icon {
+            color: #b0bec5;
+            font-size: 16px;
+            font-weight: bold;
+        }
     </style>
-    <meta http-equiv="refresh" content="0; url=https://ttaannkk115-gif.github.io/kalculator/">
 </head>
 <body>
-    <script>
-        // Дополнительный метод перенаправления через JavaScript для надежности
-        window.location.href = "https://ttaannkk115-gif.github.io/kalculator/";
-    </script>
-    <p>Загрузка...</p>
+
+    <div class="mobile-container">
+        <!-- Шапка -->
+        <header class="header">
+            <div class="logo-text">
+                МЕГАВ<span class="letter-o">О<span class="lightning-bolt"></span></span>ЛЬТ
+            </div>
+            <br>
+            <div class="tagline">⚡ Электрика и свет ⚡</div>
+
+            <!-- Компактная строка контактов -->
+            <div class="header-contacts">
+                <a href="https://yandex.ru/maps/?text=Махачкала+ул.+Дахадаева+50" target="_blank" class="address-link">
+                    📍 г. Махачкала, ул. Дахадаева, 50
+                </a>
+                <a href="tel:+79034981000" class="call-btn" title="Позвонить">
+                    📞
+                </a>
+            </div>
+        </header>
+
+        <!-- Каталог -->
+        <main class="content">
+            <div class="section-title">Каталог товаров</div>
+            
+            <div class="catalog-grid">
+                <a href="#" class="catalog-item">
+                    <div class="catalog-info">
+                        <span class="catalog-icon">🛡️</span>
+                        <span class="catalog-name">Щиты</span>
+                    </div>
+                    <span class="arrow-icon">❯</span>
+                </a>
+
+                <a href="#" class="catalog-item">
+                    <div class="catalog-info">
+                        <span class="catalog-icon">⚙️</span>
+                        <span class="catalog-name">Щитовое оборудование</span>
+                    </div>
+                    <span class="arrow-icon">❯</span>
+                </a>
+
+                <a href="#" class="catalog-item">
+                    <div class="catalog-info">
+                        <span class="catalog-icon">🕹️</span>
+                        <span class="catalog-name">Модульное оборудование и автоматика</span>
+                    </div>
+                    <span class="arrow-icon">❯</span>
+                </a>
+
+                <a href="#" class="catalog-item">
+                    <div class="catalog-info">
+                        <span class="catalog-icon">🔌</span>
+                        <span class="catalog-name">Провода</span>
+                    </div>
+                    <span class="arrow-icon">❯</span>
+                </a>
+
+                <a href="#" class="catalog-item">
+                    <div class="catalog-info">
+                        <span class="catalog-icon">💡</span>
+                        <span class="catalog-name">Освещение</span>
+                    </div>
+                    <span class="arrow-icon">❯</span>
+                </a>
+
+                <a href="#" class="catalog-item">
+                    <div class="catalog-info">
+                        <span class="catalog-icon">✨</span>
+                        <span class="catalog-name">Лента LED / Блоки питания</span>
+                    </div>
+                    <span class="arrow-icon">❯</span>
+                </a>
+
+                <a href="#" class="catalog-item">
+                    <div class="catalog-info">
+                        <span class="catalog-icon">🔌</span>
+                        <span class="catalog-name">Вилки и розетки</span>
+                    </div>
+                    <span class="arrow-icon">❯</span>
+                </a>
+
+                <a href="#" class="catalog-item">
+                    <div class="catalog-info">
+                        <span class="catalog-icon">📦</span>
+                        <span class="catalog-name">Коробки распределительные</span>
+                    </div>
+                    <span class="arrow-icon">❯</span>
+                </a>
+
+                <a href="#" class="catalog-item">
+                    <div class="catalog-info">
+                        <span class="catalog-icon">⚡</span>
+                        <span class="catalog-name">Стабилизаторы</span>
+                    </div>
+                    <span class="arrow-icon">❯</span>
+                </a>
+
+                <a href="#" class="catalog-item">
+                    <div class="catalog-info">
+                        <span class="catalog-icon">🔄</span>
+                        <span class="catalog-name">Инверторы</span>
+                    </div>
+                    <span class="arrow-icon">❯</span>
+                </a>
+
+                <a href="#" class="catalog-item">
+                    <div class="catalog-info">
+                        <span class="catalog-icon">🎛️</span>
+                        <span class="catalog-name">ЛАТР (Автотрансформаторы)</span>
+                    </div>
+                    <span class="arrow-icon">❯</span>
+                </a>
+
+                <a href="#" class="catalog-item">
+                    <div class="catalog-info">
+                        <span class="catalog-icon">📊</span>
+                        <span class="catalog-name">Частотный преобразователь</span>
+                    </div>
+                    <span class="arrow-icon">❯</span>
+                </a>
+
+                <a href="#" class="catalog-item">
+                    <div class="catalog-info">
+                        <span class="catalog-icon">📻</span>
+                        <span class="catalog-name">Радио/Wi-Fi Электроника и электротовары</span>
+                    </div>
+                    <span class="arrow-icon">❯</span>
+                </a>
+
+                <a href="#" class="catalog-item">
+                    <div class="catalog-info">
+                        <span class="catalog-icon">🔘</span>
+                        <span class="catalog-name">Кнопки, концевики, переключатели</span>
+                    </div>
+                    <span class="arrow-icon">❯</span>
+                </a>
+
+                <a href="#" class="catalog-item">
+                    <div class="catalog-info">
+                        <span class="catalog-icon">🔗</span>
+                        <span class="catalog-name">Клеммы, сжимы и кабельные наконечники</span>
+                    </div>
+                    <span class="arrow-icon">❯</span>
+                </a>
+
+                <a href="#" class="catalog-item">
+                    <div class="catalog-info">
+                        <span class="catalog-icon">🧪</span>
+                        <span class="catalog-name">Термотрубки</span>
+                    </div>
+                    <span class="arrow-icon">❯</span>
+                </a>
+
+                <a href="#" class="catalog-item">
+                    <div class="catalog-info">
+                        <span class="catalog-icon">🔥</span>
+                        <span class="catalog-name">Паяльники, Горелки, Приблуды</span>
+                    </div>
+                    <span class="arrow-icon">❯</span>
+                </a>
+
+                <a href="#" class="catalog-item">
+                    <div class="catalog-info">
+                        <span class="catalog-icon">🧹</span>
+                        <span class="catalog-name">Хоз товары</span>
+                    </div>
+                    <span class="arrow-icon">❯</span>
+                </a>
+            </div>
+        </main>
+    </div>
+
 </body>
 </html>
