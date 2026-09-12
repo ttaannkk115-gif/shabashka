@@ -2,378 +2,1316 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>МЕГАВОЛЬТ — Каталог</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VoltMaster - Смета 2026</title>
     <style>
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            background-color: #f4f4f6;
+            background-color: #f4f5f7;
             color: #333;
+            padding-bottom: 120px;
+            overflow-x: hidden;
+        }
+
+        /* ----- ВЕРХНИЙ БАР ----- */
+        .top-header {
+            background-color: #2b6be8;
+            padding: 16px 14px 14px 14px;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .top-header-row {
             display: flex;
-            justify-content: center;
-        }
-
-        /* Мобильный контейнер */
-        .mobile-container {
-            width: 100%;
-            max-width: 480px;
-            min-height: 100vh;
-            background-color: #ffffff;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Шапка */
-        .header {
-            background: #f8f9fa;
-            border-bottom: 2px solid #e0e0e0;
-            padding: 15px;
-            text-align: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        /* Логотип */
-        .logo-text {
-            font-size: 30px;
-            font-weight: 900;
-            color: #d32f2f;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            display: inline-flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            text-shadow: 
-                1px 1px 0px #9a0007,
-                2px 2px 0px #9a0007,
-                3px 3px 0px #9a0007,
-                4px 4px 6px rgba(0, 0, 0, 0.3);
-        }
-
-        .letter-o {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .lightning-bolt {
-            position: absolute;
-            width: 10px;
-            height: 16px;
-            background-color: #1a1a1a;
-            clip-path: polygon(55% 0%, 100% 0%, 40% 45%, 75% 45%, 0% 100%, 25% 50%, 0% 50%);
-        }
-
-        .tagline {
-            margin-top: 6px;
-            font-size: 11px;
-            font-weight: 700;
-            color: #ffffff;
-            background-color: #212121;
-            display: inline-block;
-            padding: 3px 12px;
-            border-radius: 20px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        /* Компактный блок контактов в одну строку */
-        .header-contacts {
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .address-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            color: #333;
-            text-decoration: none;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        /* Круглая кнопка вызова */
-        .call-btn {
-            width: 32px;
-            height: 32px;
-            background-color: #d32f2f;
-            color: #ffffff;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            font-size: 14px;
-            box-shadow: 0 2px 5px rgba(211, 47, 47, 0.4);
-            flex-shrink: 0;
-            transition: transform 0.1s;
-        }
-
-        .call-btn:active {
-            transform: scale(0.9);
-            background-color: #9a0007;
-        }
-
-        /* Контент каталога */
-        .content {
-            padding: 15px;
-            flex: 1;
-        }
-
-        .section-title {
-            font-size: 16px;
-            font-weight: 800;
-            color: #212121;
             margin-bottom: 12px;
-            text-transform: uppercase;
-            border-left: 4px solid #d32f2f;
-            padding-left: 8px;
         }
 
-        /* Сетка каталога */
-        .catalog-grid {
+        .app-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: 0.5px;
+        }
+
+        .header-actions {
             display: flex;
-            flex-direction: column;
+            align-items: center;
             gap: 8px;
         }
 
-        .catalog-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #ffffff;
-            padding: 14px;
+        .btn-hdr {
+            border: none;
             border-radius: 10px;
-            text-decoration: none;
-            color: #333;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
-
-        .catalog-item:active {
-            background-color: #fce8e8;
-            border-color: #d32f2f;
-        }
-
-        .catalog-info {
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
             display: flex;
             align-items: center;
+            justify-content: center;
+            transition: opacity 0.2s;
+        }
+
+        .btn-hdr:active {
+            opacity: 0.8;
+        }
+
+        .btn-archive {
+            background-color: #6a35a6;
+            color: white;
+            padding: 10px 14px;
+        }
+
+        .btn-box {
+            background-color: #538ee8;
+            padding: 8px 11px;
+            font-size: 1.2rem;
+        }
+
+        .btn-reset {
+            background-color: #d94943;
+            color: white;
+            padding: 10px 14px;
+        }
+
+        /* ----- БЛОК ПОИСКА С КРЕСТИКОМ ----- */
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 12px 38px 12px 16px;
+            border-radius: 12px;
+            border: none;
+            font-size: 1.05rem;
+            outline: none;
+            background-color: #ffffff;
+            color: #333;
+        }
+
+        .search-container input::placeholder {
+            color: #a0a0a0;
+        }
+
+        .btn-clear-search {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            color: #999;
+            cursor: pointer;
+            display: none;
+            padding: 4px;
+            font-weight: bold;
+        }
+
+        .btn-clear-search:hover {
+            color: #333;
+        }
+
+        .main-content {
+            padding: 10px;
+        }
+
+        /* ----- ГЛАВНЫЙ АККОРДЕОН «МАТЕРИАЛ» ----- */
+        .main-material-section {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+            margin-bottom: 15px;
+        }
+
+        .main-material-header {
+            background: #ffffff;
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            font-weight: 800;
+            font-size: 1.05rem;
+            color: #1a1a1a;
+        }
+
+        .main-material-header .arrow-icon {
+            font-size: 0.85rem;
+            color: #666;
+            transition: transform 0.2s;
+        }
+
+        body.material-collapsed .main-material-header .arrow-icon {
+            transform: rotate(-90deg);
+        }
+
+        body.material-collapsed .main-material-body {
+            display: none;
+        }
+
+        .main-material-body {
+            padding: 10px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
             gap: 10px;
         }
 
-        .catalog-icon {
-            font-size: 18px;
-            width: 32px;
-            height: 32px;
-            background: #fbe9e7;
-            color: #d32f2f;
+        /* ----- ПОДКАТЕГОРИИ ----- */
+        .category-section {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .category-header {
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            font-weight: 700;
+            font-size: 0.92rem;
+            color: #2d3748;
+            background: #fff;
+        }
+
+        .category-header .arrow-icon {
+            font-size: 0.75rem;
+            color: #888;
+            transition: transform 0.2s;
+        }
+
+        .category-section.collapsed .category-header .arrow-icon {
+            transform: rotate(-90deg);
+        }
+
+        .category-section.collapsed .list-container {
+            display: none;
+        }
+
+        .list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 8px;
+            background: #fdfdfe;
+            border-top: 1px solid #edf2f7;
+        }
+
+        .item-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .item-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            overflow: hidden;
+            padding-right: 10px;
+        }
+
+        .item-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #1a1a1a;
+            word-break: break-word;
+        }
+
+        .highlight {
+            background-color: #ffe066;
+            color: #1a1a1a;
+            padding: 0 2px;
+            border-radius: 3px;
+        }
+
+        .item-unit-sub {
+            font-size: 0.75rem;
+            color: #718096;
+            font-weight: 500;
+        }
+
+        .item-price {
+            color: #2b6be8;
+            font-weight: 700;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .item-right-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .arrow-icon {
+            font-size: 0.7rem;
+            color: #888;
+            transition: transform 0.2s;
+        }
+
+        .item-card.collapsed .arrow-icon {
+            transform: rotate(-90deg);
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+            padding: 8px 12px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .item-card.collapsed .quantity-control {
+            display: none;
+        }
+
+        .qty-btn-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-qty {
+            background: #e5e5ea;
+            color: #000;
+            border: none;
+            width: 30px;
+            height: 30px;
             border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .qty-input {
+            width: 45px !important;
+            padding: 5px !important;
+            text-align: center;
+            font-weight: bold;
+            background: white;
+            border: 1px solid #dcdfe6;
+            border-radius: 6px;
+        }
+
+        .item-total {
+            font-weight: 700;
+            color: #1a1a1a;
+            font-size: 0.9rem;
+        }
+
+        .btn-delete {
+            background: #eb5757;
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 0.75rem;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            cursor: pointer;
         }
 
-        .catalog-name {
-            font-size: 14px;
+        .empty-text {
+            text-align: center;
+            color: #8e8e93;
+            padding: 10px;
+            font-size: 0.85rem;
+        }
+
+        /* ----- МОДАЛЬНОЕ ОКНО ----- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 15px;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .modal-card input, .modal-card select {
+            padding: 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            background-color: #fff;
+        }
+
+        .modal-price-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-price-row input {
+            flex: 1;
+        }
+
+        .modal-price-row select {
+            width: 110px;
+            font-weight: 600;
+        }
+
+        .btn-add-catalog {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.05rem;
             font-weight: 700;
-            line-height: 1.2;
+            cursor: pointer;
+            background-color: #4a71f1;
+            color: white;
+            margin-top: 4px;
         }
 
-        .arrow-icon {
-            color: #b0bec5;
-            font-size: 16px;
+        /* ----- БЛОК ДОКУМЕНТА (ЧЕК) ----- */
+        .doc-container {
+            background: white;
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .doc-header-print {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .doc-title-print {
+            font-size: 0.95rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .input-inline {
+            border: none;
+            border-bottom: 1px solid #999;
+            border-radius: 0;
+            padding: 2px 4px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #333;
+            background: transparent;
+        }
+
+        .input-num { width: 65px; }
+        .input-date { width: 120px; }
+
+        .btn-today-date {
+            background: none;
+            border: none;
+            font-size: 0.8rem;
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 4px;
+            background-color: #f0f0f0;
+        }
+
+        .brand-logo-print {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #1e3a8a;
+            white-space: nowrap;
+        }
+
+        .brand-logo-print span { color: #2563eb; }
+
+        .doc-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+        }
+
+        .doc-meta-item {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .doc-meta-item label {
+            width: 95px;
+            font-weight: 700;
+            color: #000;
+            flex-shrink: 0;
+        }
+
+        .doc-meta-item input {
+            border: none;
+            border-bottom: 1px dashed #ccc;
+            border-radius: 0;
+            padding: 2px 4px;
+            font-size: 0.85rem;
+            color: #333;
+            width: 100%;
+            background: transparent;
+        }
+
+        .print-text-val { display: none; }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .estimate-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            table-layout: fixed;
+        }
+
+        .estimate-table th, .estimate-table td {
+            border: 1px solid #000;
+            padding: 5px 4px;
+            text-align: left;
+            vertical-align: middle;
+            word-wrap: break-word;
+        }
+
+        .estimate-table th {
+            background-color: #f2f2f2;
+            font-weight: 700;
+            color: #000;
+            text-align: center;
+        }
+
+        .estimate-table .col-num { width: 24px; text-align: center; }
+        .estimate-table .col-name { width: auto; }
+        .estimate-table .col-qty { width: 75px; text-align: right; }
+        .estimate-table .col-price { width: 65px; text-align: right; }
+        .estimate-table .col-total { width: 65px; text-align: right; }
+        .estimate-table .col-del { width: 22px; text-align: center; }
+
+        .editable-cell {
+            cursor: pointer;
+            background-color: #fffde7;
+            transition: background-color 0.2s;
+        }
+
+        .editable-cell:hover { background-color: #fff9c4; }
+
+        .table-input {
+            width: 100%;
+            padding: 2px 4px !important;
+            font-size: 0.8rem !important;
+            text-align: right;
+            border: 1px solid #3b82f6 !important;
+            border-radius: 4px !important;
+            background: white !important;
+        }
+
+        .tbl-del-btn {
+            color: #ef4444;
+            background: none;
+            border: none;
+            font-size: 0.9rem;
+            cursor: pointer;
             font-weight: bold;
+        }
+
+        .table-footer-summary {
+            display: flex;
+            justify-content: flex-end;
+            font-weight: 800;
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+
+        .only-print { display: none; }
+
+        /* ----- НИЖНЯЯ ПАНЕЛЬ ----- */
+        .bottom-bar {
+            position: fixed;
+            bottom: 12px;
+            left: 12px;
+            right: 12px;
+            background-color: #1a1c23;
+            border-radius: 14px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+
+        .total-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .total-amount {
+            color: #ffe066;
+            font-size: 1.25rem;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .btn-clipboard {
+            background: transparent;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .actions-group {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-action-green {
+            background-color: #5cd166;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .btn-action-white {
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 85px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.85);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: none;
+            z-index: 1001;
+        }
+
+        @media print {
+            body { background: white; color: black; padding: 0; margin: 0; }
+            body * { visibility: hidden; }
+            .doc-container, .doc-container * { visibility: visible; }
+            .doc-container { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; padding: 0; margin: 0; }
+            .col-del, .tbl-del-btn, .bottom-bar, .top-header, .btn-today-date, .main-material-section { display: none !important; }
+            .doc-meta-item input, .doc-title-print input { display: none !important; }
+            .editable-cell { background-color: transparent !important; }
+            .print-text-val { display: inline-block !important; font-weight: 500; font-size: 0.85rem; }
+            .only-print { display: block !important; }
+            .print-footer-info { display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; margin-top: 12px; }
+            .print-notice { font-size: 0.75rem; font-style: italic; font-weight: 600; margin-top: 12px; padding: 6px 0; border-top: 1px solid #000; border-bottom: 1px solid #000; }
+            .signatures-block { display: flex; justify-content: space-between; margin-top: 25px; font-weight: 700; font-size: 0.9rem; }
+            .estimate-table th, .estimate-table td { border: 1px solid #000 !important; }
         }
     </style>
 </head>
 <body>
 
-    <div class="mobile-container">
-        <!-- Шапка -->
-        <header class="header">
-            <div class="logo-text">
-                МЕГАВ<span class="letter-o">О<span class="lightning-bolt"></span></span>ЛЬТ
+    <!-- ВЕРХНИЙ БАР -->
+    <header class="top-header">
+        <div class="top-header-row">
+            <div class="app-title">
+                СМЕТА<br>2026
             </div>
-            <br>
-            <div class="tagline">⚡ Электрика и свет ⚡</div>
-
-            <!-- Компактная строка контактов -->
-            <div class="header-contacts">
-                <a href="https://yandex.ru/maps/?text=Махачкала+ул.+Дахадаева+50" target="_blank" class="address-link">
-                    📍 г. Махачкала, ул. Дахадаева, 50
-                </a>
-                <a href="tel:+79034981000" class="call-btn" title="Позвонить">
-                    📞
-                </a>
+            <div class="header-actions">
+                <button class="btn-hdr btn-archive" onclick="showToast('Архив открыт')">Архив</button>
+                <button class="btn-hdr btn-box" onclick="openAddModal()">📦</button>
+                <button class="btn-hdr btn-reset" onclick="resetEstimateTable()">СБРОС</button>
             </div>
-        </header>
+        </div>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Поиск..." oninput="filterItems()">
+            <button type="button" id="clearSearchBtn" class="btn-clear-search" onclick="clearSearch()">✕</button>
+        </div>
+    </header>
 
-        <!-- Каталог -->
-        <main class="content">
-            <div class="section-title">Каталог товаров</div>
-            
-            <div class="catalog-grid">
-                <a href="#" class="catalog-item">
-                    <div class="catalog-info">
-                        <span class="catalog-icon">🛡️</span>
-                        <span class="catalog-name">Щиты</span>
-                    </div>
-                    <span class="arrow-icon">❯</span>
-                </a>
-
-                <a href="#" class="catalog-item">
-                    <div class="catalog-info">
-                        <span class="catalog-icon">⚙️</span>
-                        <span class="catalog-name">Щитовое оборудование</span>
-                    </div>
-                    <span class="arrow-icon">❯</span>
-                </a>
-
-                <a href="#" class="catalog-item">
-                    <div class="catalog-info">
-                        <span class="catalog-icon">🕹️</span>
-                        <span class="catalog-name">Модульное оборудование и автоматика</span>
-                    </div>
-                    <span class="arrow-icon">❯</span>
-                </a>
-
-                <a href="#" class="catalog-item">
-                    <div class="catalog-info">
-                        <span class="catalog-icon">🔌</span>
-                        <span class="catalog-name">Провода</span>
-                    </div>
-                    <span class="arrow-icon">❯</span>
-                </a>
-
-                <a href="#" class="catalog-item">
-                    <div class="catalog-info">
-                        <span class="catalog-icon">💡</span>
-                        <span class="catalog-name">Освещение</span>
-                    </div>
-                    <span class="arrow-icon">❯</span>
-                </a>
-
-                <a href="#" class="catalog-item">
-                    <div class="catalog-info">
-                        <span class="catalog-icon">✨</span>
-                        <span class="catalog-name">Лента LED / Блоки питания</span>
-                    </div>
-                    <span class="arrow-icon">❯</span>
-                </a>
-
-                <a href="#" class="catalog-item">
-                    <div class="catalog-info">
-                        <span class="catalog-icon">🔌</span>
-                        <span class="catalog-name">Вилки и розетки</span>
-                    </div>
-                    <span class="arrow-icon">❯</span>
-                </a>
-
-                <a href="#" class="catalog-item">
-                    <div class="catalog-info">
-                        <span class="catalog-icon">📦</span>
-                        <span class="catalog-name">Коробки распределительные</span>
-                    </div>
-                    <span class="arrow-icon">❯</span>
-                </a>
-
-                <a href="#" class="catalog-item">
-                    <div class="catalog-info">
-                        <span class="catalog-icon">⚡</span>
-                        <span class="catalog-name">Стабилизаторы</span>
-                    </div>
-                    <span class="arrow-icon">❯</span>
-                </a>
-
-                <a href="#" class="catalog-item">
-                    <div class="catalog-info">
-                        <span class="catalog-icon">🔄</span>
-                        <span class="catalog-name">Инверторы</span>
-                    </div>
-                    <span class="arrow-icon">❯</span>
-                </a>
-
-                <a href="#" class="catalog-item">
-                    <div class="catalog-info">
-                        <span class="catalog-icon">🎛️</span>
-                        <span class="catalog-name">ЛАТР (Автотрансформаторы)</span>
-                    </div>
-                    <span class="arrow-icon">❯</span>
-                </a>
-
-                <a href="#" class="catalog-item">
-                    <div class="catalog-info">
-                        <span class="catalog-icon">📊</span>
-                        <span class="catalog-name">Частотный преобразователь</span>
-                    </div>
-                    <span class="arrow-icon">❯</span>
-                </a>
-
-                <a href="#" class="catalog-item">
-                    <div class="catalog-info">
-                        <span class="catalog-icon">📻</span>
-                        <span class="catalog-name">Радио/Wi-Fi Электроника и электротовары</span>
-                    </div>
-                    <span class="arrow-icon">❯</span>
-                </a>
-
-                <a href="#" class="catalog-item">
-                    <div class="catalog-info">
-                        <span class="catalog-icon">🔘</span>
-                        <span class="catalog-name">Кнопки, концевики, переключатели</span>
-                    </div>
-                    <span class="arrow-icon">❯</span>
-                </a>
-
-                <a href="#" class="catalog-item">
-                    <div class="catalog-info">
-                        <span class="catalog-icon">🔗</span>
-                        <span class="catalog-name">Клеммы, сжимы и кабельные наконечники</span>
-                    </div>
-                    <span class="arrow-icon">❯</span>
-                </a>
-
-                <a href="#" class="catalog-item">
-                    <div class="catalog-info">
-                        <span class="catalog-icon">🧪</span>
-                        <span class="catalog-name">Термотрубки</span>
-                    </div>
-                    <span class="arrow-icon">❯</span>
-                </a>
-
-                <a href="#" class="catalog-item">
-                    <div class="catalog-info">
-                        <span class="catalog-icon">🔥</span>
-                        <span class="catalog-name">Паяльники, Горелки, Приблуды</span>
-                    </div>
-                    <span class="arrow-icon">❯</span>
-                </a>
-
-                <a href="#" class="catalog-item">
-                    <div class="catalog-info">
-                        <span class="catalog-icon">🧹</span>
-                        <span class="catalog-name">Хоз товары</span>
-                    </div>
-                    <span class="arrow-icon">❯</span>
-                </a>
+    <!-- МОДАЛЬНОЕ ОКНО ДОБАВЛЕНИЯ КАТАЛОГА -->
+    <div class="modal-overlay" id="addModal" onclick="closeAddModalOuter(event)">
+        <div class="modal-card">
+            <input type="text" id="itemName" placeholder="Название материала" autocomplete="off">
+            <div class="modal-price-row">
+                <input type="number" id="itemPrice" placeholder="Цена" inputmode="decimal">
+                <select id="itemUnit">
+                    <option value="шт">за шт</option>
+                    <option value="м">за метр</option>
+                    <option value="уп">за уп</option>
+                    <option value="компл">за компл</option>
+                </select>
             </div>
-        </main>
+            <select id="itemCategory" style="width: 100%;">
+                <option value="Материал">Материал</option>
+                <option value="Щиты">Щиты</option>
+                <option value="Щитовое оборудование">Щитовое оборудование</option>
+                <option value="Модульное оборудование">Модульное оборудование</option>
+                <option value="Провода">Провода</option>
+                <option value="Вилки и розетки">Вилки и розетки</option>
+                <option value="Коробки распределительные">Коробки распределительные</option>
+                <option value="Освещение">Освещение</option>
+                <option value="Крепеж">Крепеж</option>
+                <option value="Клеммы, сжимы и кабельные наконечники">Клеммы, сжимы и наконечники</option>
+                <option value="Кабеленесущие системы">Кабеленесущие системы</option>
+                <option value="Хоз товары">Хоз товары</option>
+            </select>
+            <button class="btn-add-catalog" onclick="addItem()">Добавить в каталог</button>
+        </div>
     </div>
 
+    <!-- ГЛАВНЫЙ БЛОК МАТЕРИАЛ -->
+    <div class="main-content">
+        <div class="main-material-section" id="mainMaterialSection">
+            <div class="main-material-header" onclick="toggleMainMaterial()">
+                <span>Материал</span>
+                <span class="arrow-icon">▼</span>
+            </div>
+            <div class="main-material-body" id="categoriesContainer">
+                <!-- Секции подразделов генерируются здесь -->
+            </div>
+        </div>
+
+        <!-- БЛОК ДОКУМЕНТА (ЧЕК) -->
+        <div class="doc-container">
+            <div class="doc-header-print">
+                <div class="doc-title-print">
+                    <span>Товарный чек №</span>
+                    <input type="text" id="docNum" class="input-inline input-num" value="16618" oninput="saveDocMeta(); syncPrintText();">
+                    <span class="print-text-val" id="docNumVal">16618</span>
+                    <span>от</span>
+                    <input type="text" id="docDate" class="input-inline input-date" oninput="saveDocMeta(); syncPrintText();">
+                    <button class="btn-today-date" onclick="setTodayDate()" title="Установить сегодняшнюю дату">📅</button>
+                    <span class="print-text-val" id="docDateVal"></span>
+                </div>
+                <div class="brand-logo-print">volt <span>Master⚡</span></div>
+            </div>
+
+            <div class="doc-meta">
+                <div class="doc-meta-item">
+                    <label>Продавец:</label>
+                    <input type="text" id="docSeller" placeholder="ФИО / ИП / Компания" oninput="saveDocMeta(); syncPrintText();">
+                    <span class="print-text-val" id="docSellerVal"></span>
+                </div>
+                <div class="doc-meta-item">
+                    <label>Покупатель:</label>
+                    <input type="text" id="docBuyer" placeholder="ФИО Покупателя" oninput="saveDocMeta(); syncPrintText();">
+                    <span class="print-text-val" id="docBuyerVal"></span>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="estimate-table">
+                    <thead>
+                        <tr>
+                            <th class="col-num">№</th>
+                            <th class="col-name">Товар</th>
+                            <th class="col-qty">Кол-во</th>
+                            <th class="col-price">Цена</th>
+                            <th class="col-total">Сумма</th>
+                            <th class="col-del"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="estimateTableBody"></tbody>
+                </table>
+            </div>
+
+            <div class="table-footer-summary">
+                ИТОГО: <span id="grandTotalPrint" style="margin-left: 6px;">0,00</span>
+            </div>
+
+            <div class="only-print">
+                <div class="print-footer-info">
+                    <div>Всего наименований <span id="totalItemsCount">0</span>, на сумму <span id="totalAmountText">0,00 руб.</span></div>
+                    <div style="font-weight: 700;" id="totalInWords">Ноль рублей 00 копеек</div>
+                </div>
+
+                <div class="print-notice">
+                    Внимание: Возврат товара возможен в течение 14 календарных дней, при условии сохранения товарного вида. Для оформления возврата потребуются паспортные данные!
+                </div>
+
+                <div class="signatures-block">
+                    <div>Отпустил _______________</div>
+                    <div>Получил _______________</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- НИЖНЯЯ ПАНЕЛЬ -->
+    <div class="bottom-bar">
+        <div class="total-container">
+            <span class="total-amount" id="grandTotal">0 ₽</span>
+            <button class="btn-clipboard" onclick="copyList()" title="Скопировать список">📋</button>
+        </div>
+        <div class="actions-group">
+            <button class="btn-action-green" onclick="saveDataExplicitly()">СОХРАНИТЬ</button>
+            <button class="btn-action-white" onclick="window.print()">ПЕЧАТЬ</button>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">Сохранено!</div>
+
+    <script>
+        const categoriesList = [
+            "Материал",
+            "Щиты",
+            "Щитовое оборудование",
+            "Модульное оборудование",
+            "Провода",
+            "Вилки и розетки",
+            "Коробки распределительные",
+            "Освещение",
+            "Крепеж",
+            "Клеммы, сжимы и кабельные наконечники",
+            "Кабеленесущие системы",
+            "Хоз товары"
+        ];
+
+        let items = JSON.parse(localStorage.getItem('voltmaster_materials')) || [];
+
+        function toggleMainMaterial() {
+            document.body.classList.toggle('material-collapsed');
+        }
+
+        function openAddModal() {
+            document.getElementById('addModal').style.display = 'flex';
+            document.getElementById('itemName').focus();
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').style.display = 'none';
+        }
+
+        function closeAddModalOuter(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                closeAddModal();
+            }
+        }
+
+        function toggleCategory(catName) {
+            const el = document.getElementById(`cat-section-${escapeId(catName)}`);
+            if (el) {
+                el.classList.toggle('collapsed');
+            }
+        }
+
+        function escapeId(str) {
+            return str.replace(/[^a-zA-Z0-9а-яА-Я-_]/g, '_');
+        }
+
+        function resetEstimateTable() {
+            if (confirm('Сбросить весь выбранный список в чеке? Имена продавца и покупателя сохранятся.')) {
+                items.forEach(item => item.quantity = 0);
+                saveToStorage();
+                renderAll();
+                showToast('Таблица сброшена!');
+            }
+        }
+
+        function getFormattedTodayDate() {
+            const now = new Date();
+            const months = ['янв.', 'февр.', 'мар.', 'апр.', 'мая', 'июня', 'июля', 'авг.', 'сент.', 'окт.', 'нояб.', 'дек.'];
+            const day = now.getDate();
+            const month = months[now.getMonth()];
+            const year = now.getFullYear();
+            return `${day} ${month} ${year} г.`;
+        }
+
+        function setTodayDate() {
+            document.getElementById('docDate').value = getFormattedTodayDate();
+            saveDocMeta();
+            syncPrintText();
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('voltmaster_materials', JSON.stringify(items));
+        }
+
+        function saveDocMeta() {
+            const meta = {
+                num: document.getElementById('docNum').value,
+                date: document.getElementById('docDate').value,
+                seller: document.getElementById('docSeller').value,
+                buyer: document.getElementById('docBuyer').value
+            };
+            localStorage.setItem('voltmaster_doc_meta', JSON.stringify(meta));
+        }
+
+        function loadDocMeta() {
+            const savedMeta = localStorage.getItem('voltmaster_doc_meta');
+            let dateVal = getFormattedTodayDate();
+
+            if (savedMeta) {
+                const meta = JSON.parse(savedMeta);
+                if (meta.num !== undefined) document.getElementById('docNum').value = meta.num;
+                if (meta.date) dateVal = meta.date;
+                if (meta.seller !== undefined) document.getElementById('docSeller').value = meta.seller;
+                if (meta.buyer !== undefined) document.getElementById('docBuyer').value = meta.buyer;
+            }
+
+            document.getElementById('docDate').value = dateVal;
+            syncPrintText();
+        }
+
+        function syncPrintText() {
+            document.getElementById('docNumVal').textContent = document.getElementById('docNum').value || '—';
+            document.getElementById('docDateVal').textContent = document.getElementById('docDate').value || '—';
+            document.getElementById('docSellerVal').textContent = document.getElementById('docSeller').value || '—';
+            document.getElementById('docBuyerVal').textContent = document.getElementById('docBuyer').value || '—';
+        }
+
+        function saveDataExplicitly() {
+            saveToStorage();
+            saveDocMeta();
+            showToast('Все данные сохранены!');
+        }
+
+        function toggleItemCollapse(id, event) {
+            if (event.target.classList.contains('btn-delete') || event.target.tagName === 'INPUT' || event.target.tagName === 'BUTTON') return;
+            const card = document.getElementById(`item-card-${id}`);
+            if (card) {
+                card.classList.toggle('collapsed');
+            }
+        }
+
+        function addItem() {
+            const nameInput = document.getElementById('itemName');
+            const priceInput = document.getElementById('itemPrice');
+            const unitInput = document.getElementById('itemUnit');
+            const categoryInput = document.getElementById('itemCategory');
+
+            const name = nameInput.value.trim();
+            const price = parseFloat(priceInput.value);
+            const unit = unitInput.value;
+            const category = categoryInput.value;
+
+            if (!name || isNaN(price)) {
+                alert('Заполните название и цену');
+                return;
+            }
+
+            if (items.some(item => item.name.toLowerCase() === name.toLowerCase())) {
+                alert(`"${name}" уже есть в списке!`);
+                return;
+            }
+
+            items.unshift({ id: Date.now(), name, price, unit, category, quantity: 0 });
+            saveToStorage();
+            
+            clearSearch();
+            nameInput.value = '';
+            priceInput.value = '';
+            closeAddModal();
+            showToast('Материал добавлен!');
+        }
+
+        function deleteItem(id, name) {
+            if (confirm(`Удалить "${name}"?`)) {
+                items = items.filter(item => item.id !== id);
+                saveToStorage();
+                renderAll();
+            }
+        }
+
+        function updateQuantity(id, delta) {
+            const item = items.find(i => i.id === id);
+            if (item) {
+                item.quantity = Math.max(0, (item.quantity || 0) + delta);
+                saveToStorage();
+                
+                const qtyInput = document.getElementById(`qty-input-${id}`);
+                if (qtyInput) qtyInput.value = item.quantity;
+                
+                const cardTotal = document.getElementById(`card-total-${id}`);
+                if (cardTotal) cardTotal.textContent = `${(item.quantity * item.price).toLocaleString('ru-RU', {minimumFractionDigits: 2})} ₽`;
+
+                renderEstimateTable();
+            }
+        }
+
+        function setQuantity(id, value) {
+            const item = items.find(i => i.id === id);
+            if (item) {
+                const qty = parseFloat(value);
+                item.quantity = isNaN(qty) || qty < 0 ? 0 : qty;
+                saveToStorage();
+
+                const cardTotal = document.getElementById(`card-total-${id}`);
+                if (cardTotal) cardTotal.textContent = `${(item.quantity * item.price).toLocaleString('ru-RU', {minimumFractionDigits: 2})} ₽`;
+
+                renderEstimateTable();
+            }
+        }
+
+        function setPrice(id, value) {
+            const item = items.find(i => i.id === id);
+            if (item) {
+                const prc = parseFloat(value);
+                item.price = isNaN(prc) || prc < 0 ? 0 : prc;
+                saveToStorage();
+                renderAll();
+            }
+        }
+
+        function renderAll() {
+            filterItems();
+            renderEstimateTable();
+        }
+
+        function filterItems() {
+            const searchInput = document.getElementById('searchInput');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            const query = searchInput.value.trim().toLowerCase();
+
+            if (query.length > 0) {
+                clearBtn.style.display = 'block';
+            } else {
+                clearBtn.style.display = 'none';
+            }
+            
+            const filtered = items.filter(item => 
+                item.name.toLowerCase().includes(query) || 
+                item.price.toString().includes(query)
+            );
+            
+            renderCategories(filtered, query);
+        }
+
+        function clearSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.value = '';
+            document.getElementById('clearSearchBtn').style.display = 'none';
+            filterItems();
+            searchInput.focus();
+        }
+
+        function highlightMatch(text, query) {
+            const safeText = escapeHtml(text);
+            if (!query) return safeText;
+            
+            const escapedQuery = query.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            const regex = new RegExp(`(${escapedQuery})`, 'gi');
+            
+            return safeText.replace(regex, '<span class="highlight">$1</span>');
+        }
+
+        function renderCategories(listToRender, query = '') {
+            const container = document.getElementById('categoriesContainer');
+            
+            const collapsedMap = {};
+            document.querySelectorAll('.category-section').forEach(sec => {
+                const catId = sec.id.replace('cat-section-', '');
+                collapsedMap[catId] = sec.classList.contains('collapsed');
+            });
+
+            container.innerHTML = '';
+
+            categoriesList.forEach(catName => {
+                const catId = escapeId(catName);
+                const catItems = listToRender.filter(i => (i.category || 'Материал') === catName);
+
+                if (query && catItems.length === 0) return;
+
+                // Если введен поисковый запрос, подкатегория с найденными товарами автоматически раскрывается
+                const isCollapsed = query ? false : (collapsedMap[catId] !== undefined ? collapsedMap[catId] : true);
+
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = `category-section ${isCollapsed ? 'collapsed' : ''}`;
+                sectionDiv.id = `cat-section-${catId}`;
+
+                let itemsHtml = '';
+                if (catItems.length === 0) {
+                    itemsHtml = '<div class="empty-text">Нет товаров в этой категории</div>';
+                } else {
+                    catItems.forEach(item => {
+                        const qty = item.quantity || 0;
+                        const highlightedName = highlightMatch(item.name, query);
+
+                        itemsHtml += `
+                            <div class="item-card collapsed" id="item-card-${item.id}">
+                                <div class="item-header" onclick="toggleItemCollapse(${item.id}, event)">
+                                    <div class="item-info">
+                                        <span class="item-name">${highlightedName}</span>
+                                        <span class="item-unit-sub">${escapeHtml(item.unit || 'шт')}</span>
+                                    </div>
+                                    <div class="item-right-controls">
+                                        <span class="item-price">${item.price.toLocaleString('ru-RU', {minimumFractionDigits: 2})} ₽</span>
+                                        <button class="btn-delete" onclick="deleteItem(${item.id}, '${escapeHtml(item.name)}')">✕</button>
+                                        <span class="arrow-icon">▼</span>
+                                    </div>
+                                </div>
+                                <div class="quantity-control">
+                                    <div class="qty-btn-group">
+                                        <button class="btn-qty" onclick="updateQuantity(${item.id}, -1)">-</button>
+                                        <input type="number" id="qty-input-${item.id}" class="qty-input" value="${qty}" min="0" oninput="setQuantity(${item.id}, this.value)">
+                                        <button class="btn-qty" onclick="updateQuantity(${item.id}, 1)">+</button>
+                                    </div>
+                                    <div class="item-total" id="card-total-${item.id}">${(qty * item.price).toLocaleString('ru-RU', {minimumFractionDigits: 2})} ₽</div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                sectionDiv.innerHTML = `
+                    <div class="category-header" onclick="toggleCategory('${catName}')">
+                        <span>${catName}</span>
+                        <span class="arrow-icon">▼</span>
+                    </div>
+                    <div class="list-container">
+                        ${itemsHtml}
+                    </div>
+                `;
+
+                container.appendChild(sectionDiv);
+            });
+        }
+
+        function renderEstimateTable() {
+            const tbody = document.getElementById('estimateTableBody');
+            tbody.innerHTML = '';
+            
+            const activeItems = items.filter(i => (i.quantity || 0) > 0);
+            let grandTotal = 0;
+
+            if (activeItems.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#999; padding:12px;">Выберите количество в каталоге выше</td></tr>';
+            } else {
+                activeItems.forEach((item, index) => {
+                    const qty = item.quantity || 0;
+                    const total = qty * item.price;
+                    grandTotal += total;
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="col-num">${index + 1}</td>
+                        <td class="col-name">${escapeHtml(item.name)}</td>
+                        <td class="col-qty editable-cell" title="Нажмите для изменения количества" onclick="makeCellEditable(this, ${item.id}, 'qty', ${qty})">
+                            <span>${qty}</span> 
+                            <span style="font-size:0.7rem; color:#555;">${escapeHtml(item.unit || 'шт')}</span>
+                        </td>
+                        <td class="col-price editable-cell" title="Нажмите для изменения цены" onclick="makeCellEditable(this, ${item.id}, 'price', ${item.price})">
+                            ${item.price.toLocaleString('ru-RU', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                        </td>
+                        <td class="col-total">${total.toLocaleString('ru-RU', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td class="col-del">
+                            <button class="tbl-del-btn" onclick="setQuantity(${item.id}, 0); renderAll();">✕</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            const totalFormatted = grandTotal.toLocaleString('ru-RU', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('grandTotal').textContent = `${totalFormatted} ₽`;
+            document.getElementById('grandTotalPrint').textContent = totalFormatted;
+            document.getElementById('totalItemsCount').textContent = activeItems.length;
+            document.getElementById('totalAmountText').textContent = `${totalFormatted} руб.`;
+            document.getElementById('totalInWords').textContent = numberToWordsRu(grandTotal);
+        }
+
+        function makeCellEditable(cell, id, type, currentValue) {
+            if (cell.querySelector('input')) return;
+
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.className = 'table-input';
+            input.value = currentValue;
+            input.step = type === 'qty' ? '1' : '0.01';
+
+            cell.innerHTML = '';
+            cell.appendChild(input);
+            input.focus();
+            input.select();
+
+            function finishEdit() {
+                const val = input.value;
+                if (type === 'qty') {
+                    setQuantity(id, val);
+                    renderAll();
+                } else if (type === 'price') {
+                    setPrice(id, val);
+                }
+            }
+
+            input.addEventListener('blur', finishEdit);
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    input.blur();
+                }
+            });
+        }
+
+        function copyList() {
+            const activeItems = items.filter(i => (i.quantity || 0) > 0);
+            if (activeItems.length === 0) {
+                alert('Таблица пуста');
+                return;
+            }
+
+            let text = activeItems.map(item => `${item.name} - ${item.quantity} ${item.unit || 'шт'} x ${item.price} ₽ = ${item.quantity * item.price} ₽`).join('\n');
+            let grandTotal = activeItems.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+            text += `\n\nИтого: ${grandTotal.toLocaleString('ru-RU', {minimumFractionDigits: 2})} ₽`;
+
+            navigator.clipboard.writeText(text).then(() => showToast('Смета скопирована!'));
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 2000);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function numberToWordsRu(num) {
+            if (num === 0) return 'Ноль рублей 00 копеек';
+            
+            const rubles = Math.floor(num);
+            const kopecks = Math.round((num - rubles) * 100);
+            const kopStr = kopecks < 10 ? '0' + kopecks : kopecks;
+
+            const units = ['', 'один', 'два', 'три', 'четыре', 'пять', 'шесть', 'семь', 'восемь', 'девять'];
+            const teens = ['десять', 'одиннадцать', 'двенадцать', 'тринадцать', 'четырнадцать', 'пятнадцать', 'шестнадцать', 'семнадцать', 'восемнадцать', 'девятнадцать'];
+            const tens = ['', '', 'двадцать', 'тридцать', 'сорок', 'пятьдесят', 'шестьдесят', 'семьдесят', 'восемьдесят', 'девяносто'];
+            const hundreds = ['', 'сто', 'двести', 'триста', 'четыреста', 'пятьсот', 'шестьсот', 'семьсот', 'восемьсот', 'девятьсот'];
+
+            function convertGroup(n, isFemale) {
+                let res = '';
+                const h = Math.floor(n / 100);
+                const t = Math.floor((n % 100) / 10);
+                const u = n % 10;
+
+                if (h > 0) res += hundreds[h] + ' ';
+                if (t === 1) {
+                    res += teens[u] + ' ';
+                } else {
+                    if (t > 1) res += tens[t] + ' ';
+                    if (u > 0) {
+                        if (isFemale) {
+                            res += (u === 1 ? 'одна' : u === 2 ? 'две' : units[u]) + ' ';
+                        } else {
+                            res += units[u] + ' ';
+                        }
+                    }
+                }
+                return res;
+            }
+
+            let result = '';
+            const thousands = Math.floor((rubles % 1000000) / 1000);
+            const remRub = rubles % 1000;
+
+            if (thousands > 0) {
+                result += convertGroup(thousands, true);
+                const lastTwo = thousands % 100;
+                const last = thousands % 10;
+                if (lastTwo >= 11 && lastTwo <= 19) result += 'тысяч ';
+                else if (last === 1) result += 'тысяча ';
+                else if (last >= 2 && last <= 4) result += 'тысячи ';
+                else result += 'тысяч ';
+            }
+
+            if (remRub > 0 || rubles === 0) {
+                result += convertGroup(remRub, false);
+            }
+
+            result = result.trim();
+            if (!result) result = 'ноль';
+
+            const lastTwoRub = rubles % 100;
+            const lastRub = rubles % 10;
+            let rubWord = 'рублей';
+            if (lastTwoRub < 11 || lastTwoRub > 19) {
+                if (lastRub === 1) rubWord = 'рубль';
+                else if (lastRub >= 2 && lastRub <= 4) rubWord = 'рубли';
+            }
+
+            result = result.charAt(0).toUpperCase() + result.slice(1);
+            return `${result} ${rubWord} ${kopStr} копеек`;
+        }
+
+        loadDocMeta();
+        renderAll();
+    </script>
 </body>
 </html>
