@@ -442,7 +442,7 @@
             margin-top: 4px;
         }
 
-        /* ----- СТИЛЬ КАРТОЧЕК АРХИВА КАК НА СКРИНШОТЕ ----- */
+        /* ----- СТИЛЬ КАРТОЧЕК АРХИВА ----- */
         .archive-item {
             background: #ffffff;
             border-bottom: 1px solid #f0f0f0;
@@ -652,6 +652,16 @@
             background: white !important;
         }
 
+        .table-input-text {
+            width: 100%;
+            padding: 2px 4px !important;
+            font-size: 0.8rem !important;
+            text-align: left;
+            border: 1px solid #3b82f6 !important;
+            border-radius: 4px !important;
+            background: white !important;
+        }
+
         .tbl-del-btn {
             color: #ef4444;
             background: none;
@@ -754,7 +764,6 @@
             .doc-container, .doc-container * { visibility: visible; }
             .doc-container { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; padding: 0; margin: 0; }
             
-            /* СКРЫВАЕМ АДРЕС НА ПЕЧАТИ */
             .print-address-row { display: none !important; }
 
             .col-del, .tbl-del-btn, .bottom-bar, .top-header, .btn-today-date, .main-material-section { display: none !important; }
@@ -833,7 +842,7 @@
                 <button onclick="closeArchiveModal()" style="background:none; border:none; font-size: 1.2rem; cursor:pointer; font-weight:bold; color: #555;">✕</button>
             </div>
             <div id="archiveListContainer" style="display: flex; flex-direction: column; gap: 4px; max-height: 65vh; overflow-y: auto;">
-                <!-- Элементы архива подгружаются динамически -->
+                <!-- Элементы архива -->
             </div>
         </div>
     </div>
@@ -846,7 +855,7 @@
                 <span class="arrow-icon">▼</span>
             </div>
             <div class="main-material-body" id="categoriesContainer">
-                <!-- Секции подразделов генерируются здесь -->
+                <!-- Секции подразделов -->
             </div>
         </div>
 
@@ -1201,7 +1210,7 @@
         }
 
         function deleteItem(id, name) {
-            if (confirm(`Удалить "${name}"?`)) {
+            if (confirm(`Удалить "${name}" из каталога?`)) {
                 items = items.filter(item => item.id !== id);
                 saveToStorage();
                 renderAll();
@@ -1246,6 +1255,42 @@
                 saveToStorage();
                 renderAll();
             }
+        }
+
+        function setName(id, newName) {
+            const nameTrimmed = newName.trim();
+            const item = items.find(i => i.id === id);
+            if (!item || !nameTrimmed || item.name === nameTrimmed) {
+                renderAll();
+                return;
+            }
+
+            // 1. Запоминаем текущее количество старого товара перед сбросом
+            const currentQty = item.quantity || 1;
+
+            // 2. Сбрасываем количество у старого товара в 0, чтобы в списке каталога он больше не отмечался как выбранный
+            item.quantity = 0; 
+
+            // 3. Ищем, есть ли уже такой товар с новым названием в списке
+            let existingTarget = items.find(i => i.name.toLowerCase() === nameTrimmed.toLowerCase());
+            if (existingTarget) {
+                // Если есть, добавляем количество к нему
+                existingTarget.quantity = (existingTarget.quantity || 0) + currentQty;
+            } else {
+                // Если нет, создаем новый уникальный товар с тем же количеством
+                items.unshift({
+                    id: Date.now(),
+                    name: nameTrimmed,
+                    price: item.price,
+                    unit: item.unit,
+                    category: item.category || 'Материал',
+                    quantity: currentQty
+                });
+            }
+
+            saveToStorage();
+            renderAll();
+            showToast('Товар изменен, старая позиция очищена!');
         }
 
         function renderAll() {
@@ -1429,7 +1474,9 @@
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td class="col-num">${index + 1}</td>
-                        <td class="col-name">${escapeHtml(item.name)}</td>
+                        <td class="col-name editable-cell" title="Нажмите для изменения названия" onclick="makeCellEditable(this, ${item.id}, 'name', '${escapeHtml(item.name)}')">
+                            ${escapeHtml(item.name)}
+                        </td>
                         <td class="col-qty editable-cell" title="Нажмите для изменения количества" onclick="makeCellEditable(this, ${item.id}, 'qty', ${qty})">
                             <span>${qty}</span> 
                             <span style="font-size:0.7rem; color:#555;">${escapeHtml(item.unit || 'шт')}</span>
@@ -1458,10 +1505,12 @@
             if (cell.querySelector('input')) return;
 
             const input = document.createElement('input');
-            input.type = 'number';
-            input.className = 'table-input';
+            input.type = type === 'name' ? 'text' : 'number';
+            input.className = type === 'name' ? 'table-input-text' : 'table-input';
             input.value = currentValue;
-            input.step = type === 'qty' ? '1' : '0.01';
+            if (type !== 'name') {
+                input.step = type === 'qty' ? '1' : '0.01';
+            }
 
             cell.innerHTML = '';
             cell.appendChild(input);
@@ -1475,6 +1524,8 @@
                     renderAll();
                 } else if (type === 'price') {
                     setPrice(id, val);
+                } else if (type === 'name') {
+                    setName(id, val);
                 }
             }
 
@@ -1562,7 +1613,7 @@
             }
 
             if (remRub > 0 || rubles === 0) {
-                result += convertGroup(remRuleb = remRub, false);
+                result += convertGroup(remRub, false);
             }
 
             result = result.trim();
