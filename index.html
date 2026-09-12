@@ -64,7 +64,7 @@
         }
 
         .btn-archive {
-            background-color: #6a35a6;
+            background-color: #5835a6;
             color: white;
             padding: 10px 14px;
         }
@@ -201,8 +201,27 @@
             transform: rotate(-90deg);
         }
 
-        .category-section.collapsed .list-container {
-            display: none;
+        .category-section.collapsed > .list-container,
+        .category-section.collapsed > .category-header + .list-container {
+            display: none !important;
+        }
+
+        .category-section.collapsed .category-section.sub-category {
+            display: none !important;
+        }
+
+        .category-section.sub-category {
+            margin-left: 12px;
+            margin-top: 4px;
+            margin-bottom: 4px;
+            border-color: #cbd5e1;
+            background: #f8fafc;
+        }
+
+        .category-section.sub-category .category-header {
+            background: #f1f5f9;
+            font-size: 0.88rem;
+            color: #1e293b;
         }
 
         .list-container {
@@ -212,6 +231,10 @@
             padding: 8px;
             background: #fdfdfe;
             border-top: 1px solid #edf2f7;
+        }
+
+        .category-section.sub-category .list-container {
+            background: #ffffff;
         }
 
         .item-card {
@@ -354,7 +377,7 @@
             font-size: 0.85rem;
         }
 
-        /* ----- МОДАЛЬНОЕ ОКНО ----- */
+        /* ----- МОДАЛЬНЫЕ ОКНА ----- */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -379,6 +402,8 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
+            max-height: 85vh;
+            overflow-y: auto;
         }
 
         .modal-card input, .modal-card select {
@@ -415,6 +440,64 @@
             background-color: #4a71f1;
             color: white;
             margin-top: 4px;
+        }
+
+        /* ----- СТИЛЬ КАРТОЧЕК АРХИВА КАК НА СКРИНШОТЕ ----- */
+        .archive-item {
+            background: #ffffff;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 12px 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .archive-item:hover {
+            background: #fafafa;
+        }
+
+        .archive-item-content {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            flex-grow: 1;
+            padding-right: 10px;
+        }
+
+        .archive-client-name {
+            font-weight: 700;
+            font-size: 0.98rem;
+            color: #2b6be8;
+        }
+
+        .archive-location {
+            font-size: 0.82rem;
+            color: #444;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .archive-meta-row {
+            font-size: 0.82rem;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .archive-trash-btn {
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 8px;
+            color: #777;
+            transition: color 0.2s;
+        }
+
+        .archive-trash-btn:hover {
+            color: #d94943;
         }
 
         /* ----- БЛОК ДОКУМЕНТА (ЧЕК) ----- */
@@ -670,6 +753,10 @@
             body * { visibility: hidden; }
             .doc-container, .doc-container * { visibility: visible; }
             .doc-container { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; padding: 0; margin: 0; }
+            
+            /* СКРЫВАЕМ АДРЕС НА ПЕЧАТИ */
+            .print-address-row { display: none !important; }
+
             .col-del, .tbl-del-btn, .bottom-bar, .top-header, .btn-today-date, .main-material-section { display: none !important; }
             .doc-meta-item input, .doc-title-print input { display: none !important; }
             .editable-cell { background-color: transparent !important; }
@@ -691,7 +778,7 @@
                 СМЕТА<br>2026
             </div>
             <div class="header-actions">
-                <button class="btn-hdr btn-archive" onclick="showToast('Архив открыт')">Архив</button>
+                <button class="btn-hdr btn-archive" onclick="openArchiveModal()">Архив</button>
                 <button class="btn-hdr btn-box" onclick="openAddModal()">📦</button>
                 <button class="btn-hdr btn-reset" onclick="resetEstimateTable()">СБРОС</button>
             </div>
@@ -703,8 +790,9 @@
     </header>
 
     <!-- МОДАЛЬНОЕ ОКНО ДОБАВЛЕНИЯ КАТАЛОГА -->
-    <div class="modal-overlay" id="addModal" onclick="closeAddModalOuter(event)">
+    <div class="modal-overlay" id="addModal" onclick="closeModalOuter(event, 'addModal')">
         <div class="modal-card">
+            <h3 style="font-size: 1.1rem; font-weight: 800; color: #1e3a8a;">Добавить в каталог</h3>
             <input type="text" id="itemName" placeholder="Название материала" autocomplete="off">
             <div class="modal-price-row">
                 <input type="number" id="itemPrice" placeholder="Цена" inputmode="decimal">
@@ -719,6 +807,11 @@
                 <option value="Щиты">Щиты</option>
                 <option value="Щитовое оборудование">Щитовое оборудование</option>
                 <option value="Модульное оборудование">Модульное оборудование</option>
+                <option value="Автоматы">Автоматы</option>
+                <option value="Отсекатели">Отсекатели</option>
+                <option value="УЗО/диф. Автоматы">УЗО/диф. Автоматы</option>
+                <option value="Устройств защиты">Устройств защиты</option>
+                <option value="Нулевые шины, гребенки,din-рейки">Нулевые шины, гребенки,din-рейки</option>
                 <option value="Провода">Провода</option>
                 <option value="Вилки и розетки">Вилки и розетки</option>
                 <option value="Коробки распределительные">Коробки распределительные</option>
@@ -728,7 +821,20 @@
                 <option value="Кабеленесущие системы">Кабеленесущие системы</option>
                 <option value="Хоз товары">Хоз товары</option>
             </select>
-            <button class="btn-add-catalog" onclick="addItem()">Добавить в каталог</button>
+            <button class="btn-add-catalog" onclick="addItem()">Добавить материал</button>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО АРХИВА -->
+    <div class="modal-overlay" id="archiveModal" onclick="closeModalOuter(event, 'archiveModal')">
+        <div class="modal-card" style="max-width: 430px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                <h3 style="font-size: 1.1rem; font-weight: 800; color: #222;">Архив смет 📁</h3>
+                <button onclick="closeArchiveModal()" style="background:none; border:none; font-size: 1.2rem; cursor:pointer; font-weight:bold; color: #555;">✕</button>
+            </div>
+            <div id="archiveListContainer" style="display: flex; flex-direction: column; gap: 4px; max-height: 65vh; overflow-y: auto;">
+                <!-- Элементы архива подгружаются динамически -->
+            </div>
         </div>
     </div>
 
@@ -769,6 +875,11 @@
                     <label>Покупатель:</label>
                     <input type="text" id="docBuyer" placeholder="ФИО Покупателя" oninput="saveDocMeta(); syncPrintText();">
                     <span class="print-text-val" id="docBuyerVal"></span>
+                </div>
+                <div class="doc-meta-item print-address-row">
+                    <label>Адрес / Объект:</label>
+                    <input type="text" id="docAddress" placeholder="Например: Гимры" oninput="saveDocMeta(); syncPrintText();">
+                    <span class="print-text-val" id="docAddressVal"></span>
                 </div>
             </div>
 
@@ -817,30 +928,40 @@
             <button class="btn-clipboard" onclick="copyList()" title="Скопировать список">📋</button>
         </div>
         <div class="actions-group">
-            <button class="btn-action-green" onclick="saveDataExplicitly()">СОХРАНИТЬ</button>
+            <button class="btn-action-green" onclick="saveToArchive()">СОХРАНИТЬ</button>
             <button class="btn-action-white" onclick="window.print()">ПЕЧАТЬ</button>
         </div>
     </div>
 
-    <div id="toast" class="toast">Сохранено!</div>
+    <div id="toast" class="toast">Сохранено в архив!</div>
 
     <script>
-        const categoriesList = [
-            "Материал",
-            "Щиты",
-            "Щитовое оборудование",
-            "Модульное оборудование",
-            "Провода",
-            "Вилки и розетки",
-            "Коробки распределительные",
-            "Освещение",
-            "Крепеж",
-            "Клеммы, сжимы и кабельные наконечники",
-            "Кабеленесущие системы",
-            "Хоз товары"
+        const categoriesTree = [
+            { name: "Материал", sub: [] },
+            { name: "Щиты", sub: [] },
+            { name: "Щитовое оборудование", sub: [] },
+            { 
+                name: "Модульное оборудование", 
+                sub: [
+                    "Автоматы",
+                    "Отсекатели",
+                    "УЗО/диф. Автоматы",
+                    "Устройств защиты",
+                    "Нулевые шины, гребенки,din-рейки"
+                ] 
+            },
+            { name: "Провода", sub: [] },
+            { name: "Вилки и розетки", sub: [] },
+            { name: "Коробки распределительные", sub: [] },
+            { name: "Освещение", sub: [] },
+            { name: "Крепеж", sub: [] },
+            { name: "Клеммы, сжимы и кабельные наконечники", sub: [] },
+            { name: "Кабеленесущие системы", sub: [] },
+            { name: "Хоз товары", sub: [] }
         ];
 
         let items = JSON.parse(localStorage.getItem('voltmaster_materials')) || [];
+        let archive = JSON.parse(localStorage.getItem('voltmaster_archive')) || [];
 
         function toggleMainMaterial() {
             document.body.classList.toggle('material-collapsed');
@@ -855,9 +976,18 @@
             document.getElementById('addModal').style.display = 'none';
         }
 
-        function closeAddModalOuter(event) {
+        function openArchiveModal() {
+            renderArchiveList();
+            document.getElementById('archiveModal').style.display = 'flex';
+        }
+
+        function closeArchiveModal() {
+            document.getElementById('archiveModal').style.display = 'none';
+        }
+
+        function closeModalOuter(event, modalId) {
             if (event.target.classList.contains('modal-overlay')) {
-                closeAddModal();
+                document.getElementById(modalId).style.display = 'none';
             }
         }
 
@@ -883,11 +1013,10 @@
 
         function getFormattedTodayDate() {
             const now = new Date();
-            const months = ['янв.', 'февр.', 'мар.', 'апр.', 'мая', 'июня', 'июля', 'авг.', 'сент.', 'окт.', 'нояб.', 'дек.'];
-            const day = now.getDate();
-            const month = months[now.getMonth()];
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
             const year = now.getFullYear();
-            return `${day} ${month} ${year} г.`;
+            return `${day}.${month}.${year}`;
         }
 
         function setTodayDate() {
@@ -905,7 +1034,8 @@
                 num: document.getElementById('docNum').value,
                 date: document.getElementById('docDate').value,
                 seller: document.getElementById('docSeller').value,
-                buyer: document.getElementById('docBuyer').value
+                buyer: document.getElementById('docBuyer').value,
+                address: document.getElementById('docAddress').value
             };
             localStorage.setItem('voltmaster_doc_meta', JSON.stringify(meta));
         }
@@ -920,6 +1050,7 @@
                 if (meta.date) dateVal = meta.date;
                 if (meta.seller !== undefined) document.getElementById('docSeller').value = meta.seller;
                 if (meta.buyer !== undefined) document.getElementById('docBuyer').value = meta.buyer;
+                if (meta.address !== undefined) document.getElementById('docAddress').value = meta.address;
             }
 
             document.getElementById('docDate').value = dateVal;
@@ -931,12 +1062,103 @@
             document.getElementById('docDateVal').textContent = document.getElementById('docDate').value || '—';
             document.getElementById('docSellerVal').textContent = document.getElementById('docSeller').value || '—';
             document.getElementById('docBuyerVal').textContent = document.getElementById('docBuyer').value || '—';
+            document.getElementById('docAddressVal').textContent = document.getElementById('docAddress').value || '—';
         }
 
-        function saveDataExplicitly() {
+        /* --- ФУНКЦИИ АРХИВА --- */
+        function saveToArchive() {
             saveToStorage();
             saveDocMeta();
-            showToast('Все данные сохранены!');
+
+            const activeItems = items.filter(i => (i.quantity || 0) > 0);
+            if (activeItems.length === 0) {
+                alert('Нельзя сохранить пустую смету! Выберите хотя бы один товар.');
+                return;
+            }
+
+            const grandTotal = activeItems.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+            const docMeta = {
+                num: document.getElementById('docNum').value,
+                date: document.getElementById('docDate').value,
+                seller: document.getElementById('docSeller').value,
+                buyer: document.getElementById('docBuyer').value,
+                address: document.getElementById('docAddress').value
+            };
+
+            const buyerName = docMeta.buyer.trim() ? docMeta.buyer.trim() : 'Без имени';
+            const addressStr = docMeta.address.trim() ? docMeta.address.trim() : 'Адрес не указан';
+            const dateStr = docMeta.date || getFormattedTodayDate();
+
+            const archiveEntry = {
+                id: Date.now(),
+                buyerName: buyerName,
+                address: addressStr,
+                date: dateStr,
+                total: grandTotal,
+                itemsCount: activeItems.length,
+                docMeta: docMeta,
+                itemsSnapshot: JSON.parse(JSON.stringify(items))
+            };
+
+            archive.unshift(archiveEntry);
+            localStorage.setItem('voltmaster_archive', JSON.stringify(archive));
+            showToast('Смета успешно сохранена в архив!');
+        }
+
+        function renderArchiveList() {
+            const container = document.getElementById('archiveListContainer');
+            container.innerHTML = '';
+
+            if (archive.length === 0) {
+                container.innerHTML = '<div class="empty-text">Архив пуст. Нажмите «СОХРАНИТЬ», чтобы добавить смету.</div>';
+                return;
+            }
+
+            archive.forEach((entry) => {
+                const div = document.createElement('div');
+                div.className = 'archive-item';
+                div.innerHTML = `
+                    <div class="archive-item-content" onclick="loadFromArchive(${entry.id})">
+                        <div class="archive-client-name">${escapeHtml(entry.buyerName)}</div>
+                        <div class="archive-location">📍 ${escapeHtml(entry.address)}</div>
+                        <div class="archive-meta-row">${entry.date} — <b>${entry.total.toLocaleString('ru-RU', {minimumFractionDigits: 0})} ₽</b></div>
+                    </div>
+                    <button class="archive-trash-btn" onclick="deleteFromArchive(${entry.id}, event)" title="Удалить из архива">🗑️</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function loadFromArchive(id) {
+            const entry = archive.find(a => a.id === id);
+            if (!entry) return;
+
+            items = JSON.parse(JSON.stringify(entry.itemsSnapshot));
+            saveToStorage();
+
+            if (entry.docMeta) {
+                document.getElementById('docNum').value = entry.docMeta.num || '';
+                document.getElementById('docDate').value = entry.docMeta.date || '';
+                document.getElementById('docSeller').value = entry.docMeta.seller || '';
+                document.getElementById('docBuyer').value = entry.docMeta.buyer || '';
+                document.getElementById('docAddress').value = entry.docMeta.address || '';
+                saveDocMeta();
+                syncPrintText();
+            }
+
+            closeArchiveModal();
+            renderAll();
+            showToast('Смета загружена из архива!');
+        }
+
+        function deleteFromArchive(id, event) {
+            event.stopPropagation();
+            if (confirm('Удалить эту смету из архива?')) {
+                archive = archive.filter(a => a.id !== id);
+                localStorage.setItem('voltmaster_archive', JSON.stringify(archive));
+                renderArchiveList();
+                showToast('Смета удалена из архива');
+            }
         }
 
         function toggleItemCollapse(id, event) {
@@ -1068,6 +1290,42 @@
             return safeText.replace(regex, '<span class="highlight">$1</span>');
         }
 
+        function renderItemsListHtml(catItems, query) {
+            if (catItems.length === 0) {
+                return '<div class="empty-text">Нет товаров в этой категории</div>';
+            }
+            let html = '';
+            catItems.forEach(item => {
+                const qty = item.quantity || 0;
+                const highlightedName = highlightMatch(item.name, query);
+
+                html += `
+                    <div class="item-card collapsed" id="item-card-${item.id}">
+                        <div class="item-header" onclick="toggleItemCollapse(${item.id}, event)">
+                            <div class="item-info">
+                                <span class="item-name">${highlightedName}</span>
+                                <span class="item-unit-sub">${escapeHtml(item.unit || 'шт')}</span>
+                            </div>
+                            <div class="item-right-controls">
+                                <span class="item-price">${item.price.toLocaleString('ru-RU', {minimumFractionDigits: 2})} ₽</span>
+                                <button class="btn-delete" onclick="deleteItem(${item.id}, '${escapeHtml(item.name)}')">✕</button>
+                                <span class="arrow-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="quantity-control">
+                            <div class="qty-btn-group">
+                                <button class="btn-qty" onclick="updateQuantity(${item.id}, -1)">-</button>
+                                <input type="number" id="qty-input-${item.id}" class="qty-input" value="${qty}" min="0" oninput="setQuantity(${item.id}, this.value)">
+                                <button class="btn-qty" onclick="updateQuantity(${item.id}, 1)">+</button>
+                            </div>
+                            <div class="item-total" id="card-total-${item.id}">${(qty * item.price).toLocaleString('ru-RU', {minimumFractionDigits: 2})} ₽</div>
+                        </div>
+                    </div>
+                `;
+            });
+            return html;
+        }
+
         function renderCategories(listToRender, query = '') {
             const container = document.getElementById('categoriesContainer');
             
@@ -1079,62 +1337,75 @@
 
             container.innerHTML = '';
 
-            categoriesList.forEach(catName => {
+            categoriesTree.forEach(catObj => {
+                const catName = catObj.name;
                 const catId = escapeId(catName);
-                const catItems = listToRender.filter(i => (i.category || 'Материал') === catName);
-
-                if (query && catItems.length === 0) return;
-
-                // Если введен поисковый запрос, подкатегория с найденными товарами автоматически раскрывается
-                const isCollapsed = query ? false : (collapsedMap[catId] !== undefined ? collapsedMap[catId] : true);
+                const hasSub = catObj.sub && catObj.sub.length > 0;
 
                 const sectionDiv = document.createElement('div');
-                sectionDiv.className = `category-section ${isCollapsed ? 'collapsed' : ''}`;
                 sectionDiv.id = `cat-section-${catId}`;
 
-                let itemsHtml = '';
-                if (catItems.length === 0) {
-                    itemsHtml = '<div class="empty-text">Нет товаров в этой категории</div>';
-                } else {
-                    catItems.forEach(item => {
-                        const qty = item.quantity || 0;
-                        const highlightedName = highlightMatch(item.name, query);
+                if (hasSub) {
+                    const subCatItemsAll = listToRender.filter(i => (i.category || 'Материал') === catName || catObj.sub.includes(i.category));
+                    if (query && subCatItemsAll.length === 0) return;
 
-                        itemsHtml += `
-                            <div class="item-card collapsed" id="item-card-${item.id}">
-                                <div class="item-header" onclick="toggleItemCollapse(${item.id}, event)">
-                                    <div class="item-info">
-                                        <span class="item-name">${highlightedName}</span>
-                                        <span class="item-unit-sub">${escapeHtml(item.unit || 'шт')}</span>
-                                    </div>
-                                    <div class="item-right-controls">
-                                        <span class="item-price">${item.price.toLocaleString('ru-RU', {minimumFractionDigits: 2})} ₽</span>
-                                        <button class="btn-delete" onclick="deleteItem(${item.id}, '${escapeHtml(item.name)}')">✕</button>
-                                        <span class="arrow-icon">▼</span>
-                                    </div>
+                    const isCollapsed = query ? false : (collapsedMap[catId] !== undefined ? collapsedMap[catId] : true);
+                    sectionDiv.className = `category-section ${isCollapsed ? 'collapsed' : ''}`;
+
+                    let subHtml = '';
+                    
+                    const directItems = listToRender.filter(i => (i.category || 'Материал') === catName);
+                    if (directItems.length > 0) {
+                        subHtml += `<div class="list-container">${renderItemsListHtml(directItems, query)}</div>`;
+                    }
+
+                    catObj.sub.forEach(subName => {
+                        const subId = escapeId(subName);
+                        const subItems = listToRender.filter(i => i.category === subName);
+                        if (query && subItems.length === 0) return;
+
+                        const isSubCollapsed = query ? false : (collapsedMap[subId] !== undefined ? collapsedMap[subId] : true);
+
+                        subHtml += `
+                            <div class="category-section sub-category ${isSubCollapsed ? 'collapsed' : ''}" id="cat-section-${subId}">
+                                <div class="category-header" onclick="toggleCategory('${subName}')">
+                                    <span>${subName}</span>
+                                    <span class="arrow-icon">▼</span>
                                 </div>
-                                <div class="quantity-control">
-                                    <div class="qty-btn-group">
-                                        <button class="btn-qty" onclick="updateQuantity(${item.id}, -1)">-</button>
-                                        <input type="number" id="qty-input-${item.id}" class="qty-input" value="${qty}" min="0" oninput="setQuantity(${item.id}, this.value)">
-                                        <button class="btn-qty" onclick="updateQuantity(${item.id}, 1)">+</button>
-                                    </div>
-                                    <div class="item-total" id="card-total-${item.id}">${(qty * item.price).toLocaleString('ru-RU', {minimumFractionDigits: 2})} ₽</div>
+                                <div class="list-container">
+                                    ${renderItemsListHtml(subItems, query)}
                                 </div>
                             </div>
                         `;
                     });
-                }
 
-                sectionDiv.innerHTML = `
-                    <div class="category-header" onclick="toggleCategory('${catName}')">
-                        <span>${catName}</span>
-                        <span class="arrow-icon">▼</span>
-                    </div>
-                    <div class="list-container">
-                        ${itemsHtml}
-                    </div>
-                `;
+                    sectionDiv.innerHTML = `
+                        <div class="category-header" onclick="toggleCategory('${catName}')">
+                            <span>${catName}</span>
+                            <span class="arrow-icon">▼</span>
+                        </div>
+                        <div class="list-container" style="background: #f8fafc; display: flex; flex-direction: column; gap: 8px;">
+                            ${subHtml}
+                        </div>
+                    `;
+
+                } else {
+                    const catItems = listToRender.filter(i => (i.category || 'Материал') === catName);
+                    if (query && catItems.length === 0) return;
+
+                    const isCollapsed = query ? false : (collapsedMap[catId] !== undefined ? collapsedMap[catId] : true);
+                    sectionDiv.className = `category-section ${isCollapsed ? 'collapsed' : ''}`;
+
+                    sectionDiv.innerHTML = `
+                        <div class="category-header" onclick="toggleCategory('${catName}')">
+                            <span>${catName}</span>
+                            <span class="arrow-icon">▼</span>
+                        </div>
+                        <div class="list-container">
+                            ${renderItemsListHtml(catItems, query)}
+                        </div>
+                    `;
+                }
 
                 container.appendChild(sectionDiv);
             });
@@ -1291,7 +1562,7 @@
             }
 
             if (remRub > 0 || rubles === 0) {
-                result += convertGroup(remRub, false);
+                result += convertGroup(remRuleb = remRub, false);
             }
 
             result = result.trim();
