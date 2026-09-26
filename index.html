@@ -10,7 +10,7 @@
             --card-bg: #1e1e1e;
             --text-color: #e0e0e0;
             --border-color: #333333;
-            --primary: #f59e0b; /* Желто-оранжевый акцент */
+            --primary: #f59e0b;
             --primary-hover: #d97706;
             --danger: #ef4444;
             --success: #22c55e;
@@ -45,7 +45,7 @@
             border: 1px solid var(--border-color);
         }
 
-        /* Шапка в стиле изображения */
+        /* Шапка */
         .app-header {
             background: #18181b;
             color: white;
@@ -88,7 +88,7 @@
             color: #d1d5db;
         }
 
-        /* Общие элементы форм */
+        /* Элементы форм */
         .form-group {
             margin-bottom: 15px;
         }
@@ -113,7 +113,7 @@
             transition: border-color 0.2s;
         }
 
-        input:focus, textarea:focus {
+        input:focus, textarea:focus, select:focus {
             border-color: var(--primary);
         }
 
@@ -161,7 +161,6 @@
             background: #52525b;
         }
 
-        /* Экраны */
         .screen {
             padding: 20px;
             display: none;
@@ -171,7 +170,6 @@
             display: block;
         }
 
-        /* Вкладки переключения */
         .tabs {
             display: flex;
             margin-bottom: 20px;
@@ -195,7 +193,6 @@
             border-bottom-color: var(--primary);
         }
 
-        /* Панель администратора */
         .admin-section {
             margin-bottom: 25px;
         }
@@ -208,7 +205,6 @@
             color: #f3f4f6;
         }
 
-        /* Контейнер для таблиц с прокруткой */
         .table-responsive {
             width: 100%;
             overflow-x: auto;
@@ -244,6 +240,13 @@
         .actions-cell {
             display: flex;
             gap: 6px;
+            align-items: center;
+        }
+
+        .actions-cell select {
+            padding: 6px;
+            font-size: 0.85rem;
+            width: auto;
         }
 
         .actions-cell button {
@@ -268,11 +271,43 @@
             color: #86efac;
             border: 1px solid rgba(34, 197, 94, 0.4);
         }
+
+        /* Полноэкранный режим для prais30.html / prais50.html через iframe */
+        #fullscreen-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: var(--bg-color);
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+        }
+        #fullscreen-screen.active {
+            display: flex;
+        }
+        .fullscreen-header {
+            background: #18181b;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+        .fullscreen-iframe {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #ffffff;
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div class="container" id="main-container">
         <!-- Шапка приложения -->
         <div class="app-header">
             <div class="header-top">
@@ -353,6 +388,14 @@
                         <label>Пароль</label>
                         <input type="password" id="admin-new-password" required placeholder="Пароль">
                     </div>
+                    <div class="form-group">
+                        <label>Тариф</label>
+                        <select id="admin-new-tariff">
+                            <option value="none">Обычный</option>
+                            <option value="70/30">Тариф 70/30 (prais30.html)</option>
+                            <option value="50/50">Тариф 50/50 (prais50.html)</option>
+                        </select>
+                    </div>
                     <button type="submit">Создать аккаунт</button>
                 </form>
             </div>
@@ -373,7 +416,7 @@
                         <thead>
                             <tr>
                                 <th>Логин</th>
-                                <th>Роль</th>
+                                <th>Тариф</th>
                                 <th>Действия</th>
                             </tr>
                         </thead>
@@ -386,11 +429,20 @@
         </div>
     </div>
 
+    <!-- Полноэкранный режим через iframe для prais30.html и prais50.html -->
+    <div id="fullscreen-screen">
+        <div class="fullscreen-header">
+            <span style="font-weight: 600; color: #f59e0b; font-size: 1.05rem;" id="fullscreen-title">Прайс-лист</span>
+            <button onclick="logout()" class="btn-secondary">Выйти</button>
+        </div>
+        <iframe id="fullscreen-iframe" class="fullscreen-iframe"></iframe>
+    </div>
+
     <script>
         function initStorage() {
             if (!localStorage.getItem('volt_users')) {
                 const defaultUsers = [
-                    { username: 'Gazik0303', password: 'Gazik0303', role: 'admin' }
+                    { username: 'Gazik0303', password: 'Gazik0303', role: 'admin', tariff: 'none' }
                 ];
                 localStorage.setItem('volt_users', JSON.stringify(defaultUsers));
             }
@@ -478,23 +530,45 @@
             document.getElementById('auth-screen').classList.remove('active');
             document.getElementById('user-screen').classList.remove('active');
             document.getElementById('admin-screen').classList.remove('active');
-
-            document.getElementById('user-info').style.display = 'flex';
-            document.getElementById('current-username').textContent = `${user.username}`;
+            document.getElementById('fullscreen-screen').classList.remove('active');
 
             if (user.role === 'admin') {
+                document.getElementById('main-container').style.display = 'block';
+                document.getElementById('user-info').style.display = 'flex';
+                document.getElementById('current-username').textContent = `${user.username}`;
                 document.getElementById('admin-screen').classList.add('active');
                 loadAdminData();
             } else {
-                document.getElementById('user-screen').classList.add('active');
+                if (user.tariff === '70/30' || user.tariff === '50/50') {
+                    document.getElementById('main-container').style.display = 'none';
+                    document.getElementById('fullscreen-title').textContent = `${user.username} (Тариф ${user.tariff})`;
+                    
+                    // Открываем реальный файл в зависимости от тарифа
+                    const iframe = document.getElementById('fullscreen-iframe');
+                    if (user.tariff === '70/30') {
+                        iframe.src = 'prais30.html';
+                    } else {
+                        iframe.src = 'prais50.html';
+                    }
+
+                    document.getElementById('fullscreen-screen').classList.add('active');
+                } else {
+                    document.getElementById('main-container').style.display = 'block';
+                    document.getElementById('user-info').style.display = 'flex';
+                    document.getElementById('current-username').textContent = `${user.username}`;
+                    document.getElementById('user-screen').classList.add('active');
+                }
             }
         }
 
         function logout() {
             localStorage.removeItem('volt_current_user');
+            document.getElementById('fullscreen-iframe').src = ''; // Очищаем iframe при выходе
+            document.getElementById('main-container').style.display = 'block';
             document.getElementById('user-info').style.display = 'none';
             document.getElementById('admin-screen').classList.remove('active');
             document.getElementById('user-screen').classList.remove('active');
+            document.getElementById('fullscreen-screen').classList.remove('active');
             document.getElementById('auth-screen').classList.add('active');
             document.getElementById('login-form').reset();
             clearAlerts();
@@ -523,7 +597,7 @@
 
                 tr.innerHTML = `
                     <td>${user.username}</td>
-                    <td>${user.role === 'admin' ? 'Админ' : 'Пользователь'}</td>
+                    <td>${user.tariff || 'Обычный'}</td>
                     <td class="actions-cell">${actionsHtml}</td>
                 `;
                 tbody.appendChild(tr);
@@ -545,19 +619,22 @@
                         <thead>
                             <tr>
                                 <th>Логин</th>
-                                <th>Комментарий</th>
-                                <th>Действия</th>
+                                <th>Выбор тарифа и действия</th>
                             </tr>
                         </thead>
                         <tbody>
             `;
 
-            applications.forEach(app => {
+            applications.applications.forEach ?? applications.forEach(app => {
                 html += `
                     <tr>
-                        <td><strong>${app.username}</strong></td>
-                        <td>${app.comment || '-'}</td>
+                        <td><strong>${app.username}</strong><br><small style="color: #9ca3af;">${app.comment || ''}</small></td>
                         <td class="actions-cell">
+                            <select id="tariff-${app.id}">
+                                <option value="70/30">Тариф 70/30 (prais30.html)</option>
+                                <option value="50/50">Тариф 50/50 (prais50.html)</option>
+                                <option value="none">Обычный</option>
+                            </select>
                             <button class="btn-success" onclick="approveApplication(${app.id})">Одобрить</button>
                             <button class="btn-danger" onclick="rejectApplication(${app.id})">Отклонить</button>
                         </td>
@@ -573,6 +650,7 @@
             event.preventDefault();
             const username = document.getElementById('admin-new-username').value.trim();
             const password = document.getElementById('admin-new-password').value;
+            const tariff = document.getElementById('admin-new-tariff').value;
 
             const users = JSON.parse(localStorage.getItem('volt_users'));
             if (users.some(u => u.username === username)) {
@@ -580,7 +658,7 @@
                 return;
             }
 
-            users.push({ username, password, role: 'user' });
+            users.push({ username, password, role: 'user', tariff });
             localStorage.setItem('volt_users', JSON.stringify(users));
 
             showAlert('admin-alert', `Аккаунт "${username}" создан!`, 'success');
@@ -604,16 +682,17 @@
             
             if (appIndex !== -1) {
                 const app = applications[appIndex];
+                const selectedTariff = document.getElementById(`tariff-${appId}`).value;
                 let users = JSON.parse(localStorage.getItem('volt_users'));
                 
-                users.push({ username: app.username, password: app.password, role: 'user' });
+                users.push({ username: app.username, password: app.password, role: 'user', tariff: selectedTariff });
                 localStorage.setItem('volt_users', JSON.stringify(users));
 
                 applications.splice(appIndex, 1);
                 localStorage.setItem('volt_applications', JSON.stringify(applications));
 
                 loadAdminData();
-                showAlert('admin-alert', `Заявка ${app.username} одобрена!`, 'success');
+                showAlert('admin-alert', `Заявка ${app.username} одобрена с тарифом ${selectedTariff}!`, 'success');
             }
         }
 
