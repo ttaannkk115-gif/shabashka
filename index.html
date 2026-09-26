@@ -14,6 +14,7 @@
             --primary-hover: #d97706;
             --danger: #ef4444;
             --success: #22c55e;
+            --info: #3b82f6;
         }
 
         * {
@@ -49,23 +50,42 @@
         .app-header {
             background: #18181b;
             color: white;
-            padding: 18px 20px;
+            padding: 14px 16px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             border-bottom: 1px solid var(--border-color);
+            position: relative;
         }
 
         .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: relative;
+        }
+
+        .header-left-icons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .header-right-icons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
         }
 
         .app-header h1 {
-            font-size: 1.4rem;
+            font-size: 1.25rem;
             letter-spacing: 0.5px;
             font-weight: 700;
+            text-align: center;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            margin: 0;
         }
 
         .logo-volt {
@@ -76,16 +96,29 @@
             color: #f59e0b;
         }
 
-        #user-info {
-            display: none;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            font-size: 0.85rem;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 8px 12px;
+        .header-icon-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
             border-radius: 6px;
             color: #d1d5db;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .header-icon-btn:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+            background: #27272a;
+        }
+
+        #user-info {
+            display: none;
         }
 
         /* Элементы форм */
@@ -115,6 +148,15 @@
 
         input:focus, textarea:focus, select:focus {
             border-color: var(--primary);
+        }
+
+        /* Подсветка текста при поиске */
+        mark {
+            background-color: #f59e0b;
+            color: #121212;
+            padding: 0 2px;
+            border-radius: 2px;
+            font-weight: 600;
         }
 
         button {
@@ -148,6 +190,22 @@
         }
         .btn-success:hover {
             background: #16a34a;
+        }
+
+        .btn-info {
+            background: var(--info);
+            color: #ffffff;
+        }
+        .btn-info:hover {
+            background: #2563eb;
+        }
+
+        .btn-warning {
+            background: var(--primary);
+            color: #121212;
+        }
+        .btn-warning:hover {
+            background: var(--primary-hover);
         }
 
         .btn-secondary {
@@ -275,7 +333,172 @@
             border: 1px solid rgba(34, 197, 94, 0.4);
         }
 
-        /* Полноэкранный режим через iframe для prais30.html и prais50.html */
+        /* Меню пользователя */
+        .user-menu-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .menu-card {
+            background: #27272a;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .menu-card:hover {
+            border-color: var(--primary);
+            background: #2d2d32;
+        }
+
+        .menu-card span {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        /* Индикатор уведомлений */
+        .badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--danger);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 10px;
+            display: none;
+        }
+        .badge.active {
+            display: inline-block;
+        }
+
+        /* Карточки заданий */
+        .task-card {
+            background: #27272a;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .task-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .task-content {
+            font-size: 0.9rem;
+            color: #e4e4e7;
+            word-break: break-word;
+            flex: 1;
+        }
+
+        .task-date {
+            font-size: 0.75rem;
+            color: #a1a1aa;
+            margin-top: 4px;
+        }
+
+        .task-status-label {
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 4px;
+        }
+        .status-new {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+        .status-accepted {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fcd34d;
+        }
+        .status-completed {
+            background: rgba(34, 197, 94, 0.2);
+            color: #86efac;
+        }
+
+        .task-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        /* Чекбоксы для исключения при рассылке */
+        .exclude-list {
+            max-height: 150px;
+            overflow-y: auto;
+            background: #27272a;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px;
+            margin-top: 5px;
+        }
+
+        .exclude-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+            font-size: 0.85rem;
+        }
+
+        .exclude-item input {
+            width: auto;
+            accent-color: var(--primary);
+        }
+
+        /* Модальное окно: Создание аккаунта */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 450px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Прайс-лист iframe */
         #fullscreen-screen {
             position: fixed;
             top: 0;
@@ -314,12 +537,16 @@
         <!-- Шапка приложения -->
         <div class="app-header">
             <div class="header-top">
+                <div class="header-left-icons">
+                    <button onclick="openArchiveScreen()" class="header-icon-btn" title="Архив заданий" id="header-archive-btn" style="display: none;">🗂️</button>
+                    <button onclick="openCreateUserModal()" class="header-icon-btn" title="Создать аккаунт" id="header-create-user-btn" style="display: none;">➕</button>
+                </div>
                 <h1><span class="logo-volt">VOLT</span><span class="logo-master">MASTER</span></h1>
+                <div class="header-right-icons">
+                    <button onclick="confirmLogout()" class="header-icon-btn" title="Выйти" id="header-logout-btn" style="display: none;">❌</button>
+                </div>
             </div>
-            <div id="user-info">
-                <span id="current-username" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 250px;"></span>
-                <button onclick="logout()" class="btn-secondary">Выйти</button>
-            </div>
+            <div id="user-info"></div>
         </div>
 
         <!-- Экран 1: Авторизация и Заявки -->
@@ -350,6 +577,10 @@
             <div id="apply-form-container" style="display: none;">
                 <form id="apply-form" onsubmit="handleApply(event)">
                     <div class="form-group">
+                        <label for="apply-phone">Номер телефона</label>
+                        <input type="tel" id="apply-phone" required placeholder="+7 (___) ___-__-__">
+                    </div>
+                    <div class="form-group">
                         <label for="apply-username">Желаемый логин</label>
                         <input type="text" id="apply-username" required placeholder="Придумайте логин">
                     </div>
@@ -366,41 +597,95 @@
             </div>
         </div>
 
-        <!-- Экран 2: Панель Пользователя -->
+        <!-- Экран 2: Меню Пользователя -->
         <div id="user-screen" class="screen">
-            <h2>Личный кабинет</h2>
-            <p style="margin-top: 15px; color: #9ca3af; font-size: 0.95rem;">Вы успешно вошли в систему VoltMaster.</p>
+            <h2 id="user-menu-title" style="margin-bottom: 5px;">Меню</h2>
+            <p style="color: #9ca3af; font-size: 0.9rem;">Выберите нужный раздел:</p>
+            
+            <div class="user-menu-grid" id="user-menu-grid-container">
+                <div class="menu-card" onclick="openUserTasks()">
+                    <span id="tasks-badge" class="badge">0</span>
+                    <span style="font-size: 1.8rem;">📋</span>
+                    <span>Задания</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Экран 2.1: Просмотр заданий пользователем -->
+        <div id="user-tasks-screen" class="screen">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                <h2>Мои задания</h2>
+                <button class="btn-secondary" onclick="backToUserMenu()">Назад в меню</button>
+            </div>
+            <div id="user-tasks-list">
+                <!-- Динамически заполняется -->
+            </div>
+        </div>
+
+        <!-- Экран 2.2: Архив заданий пользователя -->
+        <div id="user-archive-screen" class="screen">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                <h2>Мой архив</h2>
+                <button class="btn-secondary" onclick="backToUserMenuFromArchive()">Назад в меню</button>
+            </div>
+            <div class="form-group">
+                <input type="text" id="user-archive-search-input" oninput="renderUserArchiveTasks()" placeholder="🔍 Поиск по вашему архиву...">
+            </div>
+            <div id="user-archive-tasks-list" style="display: flex; flex-direction: column; gap: 10px;">
+                <!-- Заполняется динамически -->
+            </div>
         </div>
 
         <!-- Экран 3: Панель Администратора -->
         <div id="admin-screen" class="screen">
             <h2>Панель Администратора</h2>
-            <p style="margin-bottom: 20px; color: #9ca3af; font-size: 0.9rem;">Управление пользователями и заявками.</p>
+            <p style="margin-bottom: 20px; color: #9ca3af; font-size: 0.9rem;">Управление пользователями и заданиями.</p>
 
             <div id="admin-alert"></div>
 
-            <!-- Секция: Создание аккаунта админом -->
+            <!-- Секция: Отправка заданий -->
             <div class="admin-section">
-                <h3>Создать аккаунт</h3>
-                <form id="create-user-form" onsubmit="handleAdminCreateUser(event)">
+                <h3>Отправить задание</h3>
+                <form id="send-task-form" onsubmit="handleSendTask(event)">
                     <div class="form-group">
-                        <label>Логин</label>
-                        <input type="text" id="admin-new-username" required placeholder="Логин">
+                        <label>Текст задания</label>
+                        <textarea id="task-text" rows="3" required placeholder="Введите текст задания..."></textarea>
                     </div>
                     <div class="form-group">
-                        <label>Пароль</label>
-                        <input type="password" id="admin-new-password" required placeholder="Пароль">
-                    </div>
-                    <div class="form-group">
-                        <label>Тариф</label>
-                        <select id="admin-new-tariff">
-                            <option value="none">Обычный</option>
-                            <option value="70/30">70/30</option>
-                            <option value="50/50">50/50</option>
+                        <label>Кому отправить</label>
+                        <select id="task-target-type" onchange="toggleTaskTargetType()">
+                            <option value="all">Всем пользователям (общие)</option>
+                            <option value="all-except">Всем, кроме выбранных...</option>
+                            <option value="single">Конкретному пользователю</option>
                         </select>
                     </div>
-                    <button type="submit">Создать аккаунт</button>
+
+                    <!-- Блок выбора конкретного пользователя -->
+                    <div class="form-group" id="single-user-group" style="display: none;">
+                        <label>Выберите пользователя</label>
+                        <select id="task-single-user">
+                            <!-- Заполняется динамически -->
+                        </select>
+                    </div>
+
+                    <!-- Блок исключения пользователей для общего задания -->
+                    <div class="form-group" id="except-users-group" style="display: none;">
+                        <label>Снимите галочки с тех, кому НЕ нужно отправлять:</label>
+                        <div class="exclude-list" id="exclude-users-container">
+                            <!-- Заполняется динамически -->
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-info">Отправить задание</button>
                 </form>
+            </div>
+
+            <!-- Секция: Активные отправленные задания -->
+            <div class="admin-section">
+                <h3>Активные задания</h3>
+                <div id="admin-sent-tasks-list" style="display: flex; flex-direction: column; gap: 10px;">
+                    <!-- Динамически заполняется -->
+                </div>
             </div>
 
             <!-- Секция: Заявки на создание аккаунта -->
@@ -430,14 +715,63 @@
                 </div>
             </div>
         </div>
+
+        <!-- Экран 4: Отдельный экран Архива заданий для Администратора -->
+        <div id="admin-archive-screen" class="screen">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                <h2>Архив заданий</h2>
+                <button class="btn-secondary" onclick="backToAdminFromArchive()">Назад в панель</button>
+            </div>
+            <div class="form-group">
+                <input type="text" id="archive-search-input" oninput="renderAdminArchiveTasks()" placeholder="🔍 Умный поиск по архиву...">
+            </div>
+            <div id="admin-archive-tasks-list" style="display: flex; flex-direction: column; gap: 10px; max-height: 70vh; overflow-y: auto;">
+                <!-- Заполняется динамически -->
+            </div>
+        </div>
     </div>
 
-    <!-- Полноэкранный режим через iframe для prais30.html и prais50.html -->
+    <!-- Модальное окно: Создание аккаунта -->
+    <div id="create-user-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                <h3 style="margin: 0;">Создать аккаунт</h3>
+                <button class="btn-secondary" onclick="closeCreateUserModal()">Закрыть</button>
+            </div>
+            <form id="create-user-form" onsubmit="handleAdminCreateUser(event)">
+                <div class="form-group">
+                    <label>Номер телефона</label>
+                    <input type="tel" id="admin-new-phone" required placeholder="Номер телефона">
+                </div>
+                <div class="form-group">
+                    <label>Логин</label>
+                    <input type="text" id="admin-new-username" required placeholder="Логин">
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" id="admin-new-password" required placeholder="Пароль">
+                </div>
+                <div class="form-group">
+                    <label>Тариф</label>
+                    <select id="admin-new-tariff">
+                        <option value="none">Обычный</option>
+                        <option value="70/30">70/30</option>
+                        <option value="50/50">50/50</option>
+                    </select>
+                </div>
+                <button type="submit">Создать аккаунт</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Полноэкранный режим через iframe для прайсов -->
     <div id="fullscreen-screen">
         <div class="fullscreen-header">
-            <!-- Убрано название тарифа в скобках, теперь выводится только имя пользователя -->
             <span style="font-weight: 600; color: #f59e0b; font-size: 1.05rem;" id="fullscreen-title"></span>
-            <button onclick="logout()" class="btn-secondary">Выйти</button>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="backToUserMenuFromPrice()" class="btn-secondary">Меню</button>
+                <button onclick="confirmLogout()" class="btn-secondary">Выйти</button>
+            </div>
         </div>
         <iframe id="fullscreen-iframe" class="fullscreen-iframe"></iframe>
     </div>
@@ -446,12 +780,18 @@
         function initStorage() {
             if (!localStorage.getItem('volt_users')) {
                 const defaultUsers = [
-                    { username: 'Gazik0303', password: 'Gazik0303', role: 'admin', tariff: 'none' }
+                    { username: 'Gazik0303', password: 'Gazik0303', phone: 'Не указан', role: 'admin', tariff: 'none' }
                 ];
                 localStorage.setItem('volt_users', JSON.stringify(defaultUsers));
             }
             if (!localStorage.getItem('volt_applications')) {
                 localStorage.setItem('volt_applications', JSON.stringify([]));
+            }
+            if (!localStorage.getItem('volt_tasks')) {
+                localStorage.setItem('volt_tasks', JSON.stringify([]));
+            }
+            if (!localStorage.getItem('volt_task_statuses')) {
+                localStorage.setItem('volt_task_statuses', JSON.stringify({})); 
             }
         }
 
@@ -506,6 +846,7 @@
 
         function handleApply(event) {
             event.preventDefault();
+            const phone = document.getElementById('apply-phone').value.trim();
             const username = document.getElementById('apply-username').value.trim();
             const password = document.getElementById('apply-password').value;
             const comment = document.getElementById('apply-comment').value.trim();
@@ -523,7 +864,7 @@
                 return;
             }
 
-            applications.push({ id: Date.now(), username, password, comment });
+            applications.push({ id: Date.now(), phone, username, password, comment });
             localStorage.setItem('volt_applications', JSON.stringify(applications));
 
             showAlert('auth-alert', 'Заявка успешно отправлена администратору!', 'success');
@@ -533,35 +874,309 @@
         function routeUser(user) {
             document.getElementById('auth-screen').classList.remove('active');
             document.getElementById('user-screen').classList.remove('active');
+            document.getElementById('user-tasks-screen').classList.remove('active');
+            document.getElementById('user-archive-screen').classList.remove('active');
             document.getElementById('admin-screen').classList.remove('active');
+            document.getElementById('admin-archive-screen').classList.remove('active');
             document.getElementById('fullscreen-screen').classList.remove('active');
+            
+            document.getElementById('header-logout-btn').style.display = 'none';
+            document.getElementById('header-archive-btn').style.display = 'none';
+            document.getElementById('header-create-user-btn').style.display = 'none';
 
             if (user.role === 'admin') {
                 document.getElementById('main-container').style.display = 'block';
-                document.getElementById('user-info').style.display = 'flex';
-                document.getElementById('current-username').textContent = `${user.username}`;
                 document.getElementById('admin-screen').classList.add('active');
+                document.getElementById('header-logout-btn').style.display = 'flex';
+                document.getElementById('header-archive-btn').style.display = 'flex';
+                document.getElementById('header-create-user-btn').style.display = 'flex';
                 loadAdminData();
             } else {
-                if (user.tariff === '70/30' || user.tariff === '50/50') {
-                    document.getElementById('main-container').style.display = 'none';
-                    // Выводим только имя пользователя без упоминания тарифа
-                    document.getElementById('fullscreen-title').textContent = `${user.username}`;
-                    
-                    const iframe = document.getElementById('fullscreen-iframe');
-                    if (user.tariff === '70/30') {
-                        iframe.src = 'prais30.html';
-                    } else {
-                        iframe.src = 'prais50.html';
-                    }
-
-                    document.getElementById('fullscreen-screen').classList.add('active');
+                document.getElementById('main-container').style.display = 'block';
+                document.getElementById('user-screen').classList.add('active');
+                document.getElementById('header-logout-btn').style.display = 'flex';
+                document.getElementById('header-archive-btn').style.display = 'flex'; 
+                
+                const menuGrid = document.getElementById('user-menu-grid-container');
+                let gridHtml = `
+                    <div class="menu-card" onclick="openUserTasks()">
+                        <span id="tasks-badge" class="badge">0</span>
+                        <span style="font-size: 1.8rem;">📋</span>
+                        <span>Задания</span>
+                    </div>
+                `;
+                if (user.tariff && user.tariff !== 'none') {
+                    gridHtml += `
+                        <div class="menu-card" onclick="openUserPrice()">
+                            <span style="font-size: 1.8rem;">💰</span>
+                            <span>Прайс</span>
+                        </div>
+                    `;
+                    menuGrid.style.gridTemplateColumns = '1fr 1fr';
                 } else {
-                    document.getElementById('main-container').style.display = 'block';
-                    document.getElementById('user-info').style.display = 'flex';
-                    document.getElementById('current-username').textContent = `${user.username}`;
-                    document.getElementById('user-screen').classList.add('active');
+                    menuGrid.style.gridTemplateColumns = '1fr';
                 }
+                menuGrid.innerHTML = gridHtml;
+
+                updateUserTasksBadge();
+            }
+        }
+
+        function updateUserTasksBadge() {
+            const currentUser = JSON.parse(localStorage.getItem('volt_current_user'));
+            if (!currentUser || currentUser.role === 'admin') return;
+
+            const tasks = JSON.parse(localStorage.getItem('volt_tasks')) || [];
+            const taskStatuses = JSON.parse(localStorage.getItem('volt_task_statuses')) || {};
+
+            const myTasks = tasks.filter(t => {
+                if (t.target === 'all') return true;
+                if (t.target === currentUser.username) return true;
+                if (Array.isArray(t.excluded) && t.target === 'all-except' && !t.excluded.includes(currentUser.username)) return true;
+                return false;
+            });
+
+            const activeMyTasks = myTasks.filter(t => {
+                const key = `${t.id}_${currentUser.username}`;
+                const status = taskStatuses[key] || 'new';
+                return status !== 'completed';
+            });
+
+            const newTasksCount = activeMyTasks.filter(t => {
+                const key = `${t.id}_${currentUser.username}`;
+                const status = taskStatuses[key] || 'new';
+                return status === 'new';
+            }).length;
+
+            const badge = document.getElementById('tasks-badge');
+            if (badge) {
+                if (newTasksCount > 0) {
+                    badge.textContent = newTasksCount;
+                    badge.classList.add('active');
+                } else {
+                    badge.classList.remove('active');
+                }
+            }
+        }
+
+        function openUserTasks() {
+            document.getElementById('user-screen').classList.remove('active');
+            document.getElementById('user-archive-screen').classList.remove('active');
+            document.getElementById('user-tasks-screen').classList.add('active');
+            renderUserTasksList();
+        }
+
+        function openArchiveScreen() {
+            const currentUser = JSON.parse(localStorage.getItem('volt_current_user'));
+            if (!currentUser) return;
+
+            if (currentUser.role === 'admin') {
+                document.getElementById('admin-screen').classList.remove('active');
+                document.getElementById('admin-archive-screen').classList.add('active');
+                renderAdminArchiveTasks();
+            } else {
+                document.getElementById('user-screen').classList.remove('active');
+                document.getElementById('user-tasks-screen').classList.remove('active');
+                document.getElementById('user-archive-screen').classList.add('active');
+                renderUserArchiveTasks();
+            }
+        }
+
+        function backToUserMenu() {
+            document.getElementById('user-tasks-screen').classList.remove('active');
+            document.getElementById('user-archive-screen').classList.remove('active');
+            document.getElementById('user-screen').classList.add('active');
+            updateUserTasksBadge();
+        }
+
+        function backToUserMenuFromArchive() {
+            document.getElementById('user-archive-screen').classList.remove('active');
+            document.getElementById('user-screen').classList.add('active');
+            updateUserTasksBadge();
+        }
+
+        function backToUserMenuFromPrice() {
+            document.getElementById('fullscreen-screen').classList.remove('active');
+            document.getElementById('main-container').style.display = 'block';
+            document.getElementById('user-screen').classList.add('active');
+            updateUserTasksBadge();
+        }
+
+        function openUserPrice() {
+            const currentUser = JSON.parse(localStorage.getItem('volt_current_user'));
+            document.getElementById('main-container').style.display = 'none';
+            document.getElementById('fullscreen-title').textContent = `${currentUser.username}`;
+            
+            const iframe = document.getElementById('fullscreen-iframe');
+            if (currentUser.tariff === '70/30') {
+                iframe.src = 'prais30.html';
+            } else if (currentUser.tariff === '50/50') {
+                iframe.src = 'prais50.html';
+            } else {
+                iframe.src = 'prais30.html';
+            }
+            document.getElementById('fullscreen-screen').classList.add('active');
+        }
+
+        function highlightMatch(text, query) {
+            if (!query) return escapeHtml(text);
+            const safeText = escapeHtml(text);
+            const safeQuery = escapeHtml(query);
+            // Создаем безопасное регулярное выражение для поиска с учетом регистра
+            const regex = new RegExp(`(${escapeRegExp(safeQuery)})`, 'gi');
+            return safeText.replace(regex, '<mark>$1</mark>');
+        }
+
+        function escapeHtml(string) {
+            return String(string)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        function renderUserTasksList() {
+            const currentUser = JSON.parse(localStorage.getItem('volt_current_user'));
+            const tasks = JSON.parse(localStorage.getItem('volt_tasks')) || [];
+            const taskStatuses = JSON.parse(localStorage.getItem('volt_task_statuses')) || {};
+            const container = document.getElementById('user-tasks-list');
+
+            const myTasks = tasks.filter(t => {
+                if (t.target === 'all') return true;
+                if (t.target === currentUser.username) return true;
+                if (Array.isArray(t.excluded) && t.target === 'all-except' && !t.excluded.includes(currentUser.username)) return true;
+                return false;
+            });
+
+            const activeMyTasks = myTasks.filter(t => {
+                const key = `${t.id}_${currentUser.username}`;
+                const status = taskStatuses[key] || 'new';
+                return status !== 'completed';
+            });
+
+            if (activeMyTasks.length === 0) {
+                container.innerHTML = '<p style="color: #71717a; font-size: 0.9rem;">У вас пока нет активных заданий.</p>';
+                updateUserTasksBadge();
+                return;
+            }
+
+            let html = '';
+            activeMyTasks.slice().reverse().forEach(task => {
+                const key = `${task.id}_${currentUser.username}`;
+                const status = taskStatuses[key] || 'new';
+
+                let statusBadgeHtml = '';
+                let actionButtonsHtml = '';
+
+                if (status === 'new') {
+                    statusBadgeHtml = `<span class="task-status-label status-new">Новое</span>`;
+                    actionButtonsHtml = `
+                        <button class="btn-warning" style="width: auto; padding: 6px 12px; font-size: 0.8rem;" onclick="acceptUserTask(${task.id})">Принял</button>
+                        <button class="btn-success" style="width: auto; padding: 6px 12px; font-size: 0.8rem;" onclick="completeUserTask(${task.id})">Выполнено</button>
+                    `;
+                } else if (status === 'accepted') {
+                    statusBadgeHtml = `<span class="task-status-label status-accepted">В работе (Принято)</span>`;
+                    actionButtonsHtml = `
+                        <button class="btn-success" style="width: auto; padding: 6px 12px; font-size: 0.8rem;" onclick="completeUserTask(${task.id})">Выполнено</button>
+                    `;
+                }
+
+                html += `
+                    <div class="task-card">
+                        <div class="task-header-row">
+                            <div>
+                                <div class="task-content">${escapeHtml(task.text)}</div>
+                                <div class="task-date">${escapeHtml(task.date)}</div>
+                                ${statusBadgeHtml}
+                            </div>
+                        </div>
+                        <div class="task-buttons">
+                            ${actionButtonsHtml}
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            updateUserTasksBadge();
+        }
+
+        function renderUserArchiveTasks() {
+            const currentUser = JSON.parse(localStorage.getItem('volt_current_user'));
+            const tasks = JSON.parse(localStorage.getItem('volt_tasks')) || [];
+            const taskStatuses = JSON.parse(localStorage.getItem('volt_task_statuses')) || {};
+            const container = document.getElementById('user-archive-tasks-list');
+            const searchInput = document.getElementById('user-archive-search-input');
+            const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+            const myTasks = tasks.filter(t => {
+                if (t.target === 'all') return true;
+                if (t.target === currentUser.username) return true;
+                if (Array.isArray(t.excluded) && t.target === 'all-except' && !t.excluded.includes(currentUser.username)) return true;
+                return false;
+            });
+
+            const archivedMyTasks = myTasks.filter(t => {
+                const key = `${t.id}_${currentUser.username}`;
+                const status = taskStatuses[key] || 'new';
+                return status === 'completed';
+            });
+
+            const filteredTasks = archivedMyTasks.filter(t => {
+                if (!searchQuery) return true;
+                return t.text.toLowerCase().includes(searchQuery) || t.date.toLowerCase().includes(searchQuery);
+            });
+
+            if (filteredTasks.length === 0) {
+                container.innerHTML = '<p style="color: #71717a; font-size: 0.9rem;">Архив пуст или ничего не найдено.</p>';
+                return;
+            }
+
+            let html = '';
+            filteredTasks.slice().reverse().forEach(task => {
+                const highlightedText = highlightMatch(task.text, searchQuery);
+                const highlightedDate = highlightMatch(task.date, searchQuery);
+
+                html += `
+                    <div class="task-card" style="opacity: 0.85;">
+                        <div class="task-header-row">
+                            <div>
+                                <div class="task-content">${highlightedText}</div>
+                                <div class="task-date">Отправлено: ${highlightedDate}</div>
+                                <span class="task-status-label status-completed" style="margin-top: 6px;">Выполнено</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function acceptUserTask(taskId) {
+            const currentUser = JSON.parse(localStorage.getItem('volt_current_user'));
+            let taskStatuses = JSON.parse(localStorage.getItem('volt_task_statuses')) || {};
+            const key = `${taskId}_${currentUser.username}`;
+            taskStatuses[key] = 'accepted';
+            localStorage.setItem('volt_task_statuses', JSON.stringify(taskStatuses));
+            renderUserTasksList();
+        }
+
+        function completeUserTask(taskId) {
+            const currentUser = JSON.parse(localStorage.getItem('volt_current_user'));
+            let taskStatuses = JSON.parse(localStorage.getItem('volt_task_statuses')) || {};
+            const key = `${taskId}_${currentUser.username}`;
+            taskStatuses[key] = 'completed';
+            localStorage.setItem('volt_task_statuses', JSON.stringify(taskStatuses));
+            renderUserTasksList();
+        }
+
+        function confirmLogout() {
+            if (confirm('Вы действительно хотите выйти из аккаунта?')) {
+                logout();
             }
         }
 
@@ -569,18 +1184,321 @@
             localStorage.removeItem('volt_current_user');
             document.getElementById('fullscreen-iframe').src = '';
             document.getElementById('main-container').style.display = 'block';
-            document.getElementById('user-info').style.display = 'none';
+            document.getElementById('header-logout-btn').style.display = 'none';
+            document.getElementById('header-archive-btn').style.display = 'none';
+            document.getElementById('header-create-user-btn').style.display = 'none';
             document.getElementById('admin-screen').classList.remove('active');
+            document.getElementById('admin-archive-screen').classList.remove('active');
             document.getElementById('user-screen').classList.remove('active');
+            document.getElementById('user-tasks-screen').classList.remove('active');
+            document.getElementById('user-archive-screen').classList.remove('active');
             document.getElementById('fullscreen-screen').classList.remove('active');
+            closeCreateUserModal();
             document.getElementById('auth-screen').classList.add('active');
             document.getElementById('login-form').reset();
             clearAlerts();
         }
 
+        function backToAdminFromArchive() {
+            document.getElementById('admin-archive-screen').classList.remove('active');
+            document.getElementById('admin-screen').classList.add('active');
+        }
+
+        function openCreateUserModal() {
+            document.getElementById('create-user-modal').classList.add('active');
+        }
+
+        function closeCreateUserModal() {
+            document.getElementById('create-user-modal').classList.remove('active');
+        }
+
         function loadAdminData() {
             renderUsersTable();
             renderApplicationsList();
+            renderAdminTaskSelectors();
+            renderAdminSentTasks();
+        }
+
+        function toggleTaskTargetType() {
+            const type = document.getElementById('task-target-type').value;
+            const singleGroup = document.getElementById('single-user-group');
+            const exceptGroup = document.getElementById('except-users-group');
+
+            singleGroup.style.display = 'none';
+            exceptGroup.style.display = 'none';
+
+            if (type === 'single') {
+                singleGroup.style.display = 'block';
+            } else if (type === 'all-except') {
+                exceptGroup.style.display = 'block';
+            }
+        }
+
+        function renderAdminTaskSelectors() {
+            const users = JSON.parse(localStorage.getItem('volt_users')) || [];
+            const regularUsers = users.filter(u => u.role !== 'admin');
+
+            const singleSelect = document.getElementById('task-single-user');
+            singleSelect.innerHTML = '';
+            regularUsers.forEach(u => {
+                singleSelect.innerHTML += `<option value="${u.username}">${u.username}</option>`;
+            });
+
+            const exceptContainer = document.getElementById('exclude-users-container');
+            exceptContainer.innerHTML = '';
+            if (regularUsers.length === 0) {
+                exceptContainer.innerHTML = '<span style="color: #71717a; font-size: 0.85rem;">Нет других пользователей</span>';
+            } else {
+                regularUsers.forEach(u => {
+                    exceptContainer.innerHTML += `
+                        <div class="exclude-item">
+                            <input type="checkbox" value="${u.username}" checked id="exc-${u.username}">
+                            <label for="exc-${u.username}" style="margin-bottom:0; cursor:pointer;">${u.username}</label>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        function handleSendTask(event) {
+            event.preventDefault();
+            const text = document.getElementById('task-text').value.trim();
+            const targetType = document.getElementById('task-target-type').value;
+            let target = 'all';
+            let excluded = [];
+
+            if (targetType === 'single') {
+                target = document.getElementById('task-single-user').value;
+            } else if (targetType === 'all-except') {
+                target = 'all-except';
+                const checkboxes = document.querySelectorAll('#exclude-users-container input[type="checkbox"]');
+                checkboxes.forEach(cb => {
+                    if (!cb.checked) {
+                        excluded.push(cb.value);
+                    }
+                });
+            }
+
+            const tasks = JSON.parse(localStorage.getItem('volt_tasks')) || [];
+            const now = new Date();
+            const dateStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            tasks.push({
+                id: Date.now(),
+                timestamp: Date.now(),
+                text,
+                target,
+                excluded,
+                date: dateStr
+            });
+
+            localStorage.setItem('volt_tasks', JSON.stringify(tasks));
+            showAlert('admin-alert', 'Задание успешно отправлено!', 'success');
+            document.getElementById('task-text').value = '';
+            loadAdminData();
+        }
+
+        function isTaskArchived(task) {
+            const users = JSON.parse(localStorage.getItem('volt_users')) || [];
+            const taskStatuses = JSON.parse(localStorage.getItem('volt_task_statuses')) || {};
+            const regularUsers = users.filter(u => u.role !== 'admin');
+
+            let assignedUsers = [];
+            regularUsers.forEach(u => {
+                let isTargeted = false;
+                if (task.target === 'all') isTargeted = true;
+                if (task.target === u.username) isTargeted = true;
+                if (task.target === 'all-except' && Array.isArray(task.excluded) && !task.excluded.includes(u.username)) isTargeted = true;
+
+                if (isTargeted) {
+                    assignedUsers.push(u.username);
+                }
+            });
+
+            if (assignedUsers.length === 0) return true;
+
+            let allCompleted = true;
+            assignedUsers.forEach(username => {
+                const key = `${task.id}_${username}`;
+                const status = taskStatuses[key] || 'new';
+                if (status !== 'completed') {
+                    allCompleted = false;
+                }
+            });
+
+            if (allCompleted) return true;
+
+            const twentyFourHours = 24 * 60 * 60 * 1000;
+            if (task.timestamp && (Date.now() - task.timestamp) >= twentyFourHours) {
+                return true;
+            }
+
+            return false;
+        }
+
+        function renderAdminSentTasks() {
+            const tasks = JSON.parse(localStorage.getItem('volt_tasks')) || [];
+            const users = JSON.parse(localStorage.getItem('volt_users')) || [];
+            const taskStatuses = JSON.parse(localStorage.getItem('volt_task_statuses')) || {};
+            const container = document.getElementById('admin-sent-tasks-list');
+
+            const regularUsers = users.filter(u => u.role !== 'admin');
+            const activeTasks = tasks.filter(t => !isTaskArchived(t));
+
+            if (activeTasks.length === 0) {
+                container.innerHTML = '<p style="color: #71717a; font-size: 0.9rem;">Нет активных заданий.</p>';
+                return;
+            }
+
+            let html = '';
+            activeTasks.slice().reverse().forEach(task => {
+                let assignedUsers = [];
+                regularUsers.forEach(u => {
+                    let isTargeted = false;
+                    if (task.target === 'all') isTargeted = true;
+                    if (task.target === u.username) isTargeted = true;
+                    if (task.target === 'all-except' && Array.isArray(task.excluded) && !task.excluded.includes(u.username)) isTargeted = true;
+
+                    if (isTargeted) {
+                        assignedUsers.push(u.username);
+                    }
+                });
+
+                let recipientsHtml = '';
+                if (assignedUsers.length === 0) {
+                    recipientsHtml = '<span style="color: #71717a; font-size: 0.8rem;">Никому не назначено</span>';
+                } else {
+                    assignedUsers.forEach(username => {
+                        const key = `${task.id}_${username}`;
+                        const status = taskStatuses[key] || 'new';
+
+                        let statusBadge = '';
+                        if (status === 'new') {
+                            statusBadge = `<span class="task-status-label status-new">Новое</span>`;
+                        } else if (status === 'accepted') {
+                            statusBadge = `<span class="task-status-label status-accepted">Принято (В работе)</span>`;
+                        } else if (status === 'completed') {
+                            statusBadge = `<span class="task-status-label status-completed">Выполнено</span>`;
+                        }
+
+                        recipientsHtml += `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;">
+                                <span style="color: #e4e4e7;">${username}</span>
+                                ${statusBadge}
+                            </div>
+                        `;
+                    });
+                }
+
+                html += `
+                    <div class="task-card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div class="task-content"><strong>Текст:</strong> ${escapeHtml(task.text)}</div>
+                            <button class="btn-danger" style="width: auto; padding: 4px 8px; font-size: 0.75rem;" onclick="deleteAdminTask(${task.id})">Удалить</button>
+                        </div>
+                        <div class="task-date">Отправлено: ${escapeHtml(task.date)}</div>
+                        <div style="margin-top: 6px; background: #18181b; padding: 8px; border-radius: 6px;">
+                            <div style="font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; color: #a1a1aa;">Статусы исполнителей:</div>
+                            ${recipientsHtml}
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function renderAdminArchiveTasks() {
+            const tasks = JSON.parse(localStorage.getItem('volt_tasks')) || [];
+            const users = JSON.parse(localStorage.getItem('volt_users')) || [];
+            const taskStatuses = JSON.parse(localStorage.getItem('volt_task_statuses')) || {};
+            const container = document.getElementById('admin-archive-tasks-list');
+            const searchInput = document.getElementById('archive-search-input');
+            const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+            const regularUsers = users.filter(u => u.role !== 'admin');
+            const archivedTasks = tasks.filter(t => isTaskArchived(t));
+
+            const filteredTasks = archivedTasks.filter(t => {
+                if (!searchQuery) return true;
+                const textMatch = t.text.toLowerCase().includes(searchQuery);
+                const dateMatch = t.date.toLowerCase().includes(searchQuery);
+                return textMatch || dateMatch;
+            });
+
+            if (filteredTasks.length === 0) {
+                container.innerHTML = '<p style="color: #71717a; font-size: 0.9rem;">Архив пуст или ничего не найдено по запросу.</p>';
+                return;
+            }
+
+            let html = '';
+            filteredTasks.slice().reverse().forEach(task => {
+                let assignedUsers = [];
+                regularUsers.forEach(u => {
+                    let isTargeted = false;
+                    if (task.target === 'all') isTargeted = true;
+                    if (task.target === u.username) isTargeted = true;
+                    if (task.target === 'all-except' && Array.isArray(task.excluded) && !task.excluded.includes(u.username)) isTargeted = true;
+
+                    if (isTargeted) {
+                        assignedUsers.push(u.username);
+                    }
+                });
+
+                let recipientsHtml = '';
+                if (assignedUsers.length === 0) {
+                    recipientsHtml = '<span style="font-size: 0.8rem;">Никому не назначено</span>';
+                } else {
+                    assignedUsers.forEach(username => {
+                        const key = `${task.id}_${username}`;
+                        const status = taskStatuses[key] || 'new';
+
+                        let statusBadge = '';
+                        if (status === 'new') {
+                            statusBadge = `<span class="task-status-label status-new">Новое</span>`;
+                        } else if (status === 'accepted') {
+                            statusBadge = `<span class="task-status-label status-accepted">Принято (В работе)</span>`;
+                        } else if (status === 'completed') {
+                            statusBadge = `<span class="task-status-label status-completed">Выполнено</span>`;
+                        }
+
+                        recipientsHtml += `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;">
+                                <span style="color: #e4e4e7;">${username}</span>
+                                ${statusBadge}
+                            </div>
+                        `;
+                    });
+                }
+
+                const highlightedText = highlightMatch(task.text, searchQuery);
+                const highlightedDate = highlightMatch(task.date, searchQuery);
+
+                html += `
+                    <div class="task-card" style="opacity: 0.85;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div class="task-content"><strong>[Архив] Текст:</strong> ${highlightedText}</div>
+                            <button class="btn-danger" style="width: auto; padding: 4px 8px; font-size: 0.75rem;" onclick="deleteAdminTask(${task.id})">Удалить</button>
+                        </div>
+                        <div class="task-date">Отправлено: ${highlightedDate}</div>
+                        <div style="margin-top: 6px; background: #18181b; padding: 8px; border-radius: 6px;">
+                            <div style="font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; color: #a1a1aa;">Статусы исполнителей:</div>
+                            ${recipientsHtml}
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function deleteAdminTask(taskId) {
+            if (confirm('Удалить это задание окончательно?')) {
+                let tasks = JSON.parse(localStorage.getItem('volt_tasks')) || [];
+                tasks = tasks.filter(t => t.id !== taskId);
+                localStorage.setItem('volt_tasks', JSON.stringify(tasks));
+                loadAdminData();
+                renderAdminArchiveTasks();
+                showAlert('admin-alert', 'Задание удалено.', 'success');
+            }
         }
 
         function renderUsersTable() {
@@ -613,12 +1531,13 @@
                 }
 
                 tr.innerHTML = `
-                    <td>${user.username}</td>
+                    <td>${escapeHtml(user.username)}<br><span style="font-size:0.75rem; color:#9ca3af;">📞 ${escapeHtml(user.phone || 'Нет')}</span></td>
                     <td>${tariffSelectHtml}</td>
                     <td class="actions-cell">${actionsHtml}</td>
                 `;
                 tbody.appendChild(tr);
             });
+            renderAdminTaskSelectors();
         }
 
         function updateUserTariff(username, newTariff) {
@@ -645,7 +1564,7 @@
                     <table>
                         <thead>
                             <tr>
-                                <th style="width: 45%;">Логин</th>
+                                <th style="width: 45%;">Данные заявки</th>
                                 <th style="width: 55%;">Действия</th>
                             </tr>
                         </thead>
@@ -655,7 +1574,11 @@
             applications.forEach(app => {
                 html += `
                     <tr>
-                        <td><strong>${app.username}</strong></td>
+                        <td>
+                            <strong>${escapeHtml(app.username)}</strong><br>
+                            <span style="font-size: 0.75rem; color: #9ca3af;">📞 ${escapeHtml(app.phone)}</span>
+                            ${app.comment ? `<br><span style="font-size: 0.75rem; color: #d1d5db;">💬 ${escapeHtml(app.comment)}</span>` : ''}
+                        </td>
                         <td class="actions-cell">
                             <select id="tariff-${app.id}">
                                 <option value="70/30">70/30</option>
@@ -675,6 +1598,7 @@
 
         function handleAdminCreateUser(event) {
             event.preventDefault();
+            const phone = document.getElementById('admin-new-phone').value.trim();
             const username = document.getElementById('admin-new-username').value.trim();
             const password = document.getElementById('admin-new-password').value;
             const tariff = document.getElementById('admin-new-tariff').value;
@@ -685,11 +1609,12 @@
                 return;
             }
 
-            users.push({ username, password, role: 'user', tariff });
+            users.push({ username, password, phone, role: 'user', tariff });
             localStorage.setItem('volt_users', JSON.stringify(users));
 
             showAlert('admin-alert', `Аккаунт "${username}" создан!`, 'success');
             document.getElementById('create-user-form').reset();
+            closeCreateUserModal();
             renderUsersTable();
         }
 
@@ -712,7 +1637,7 @@
                 const selectedTariff = document.getElementById(`tariff-${appId}`).value;
                 let users = JSON.parse(localStorage.getItem('volt_users'));
                 
-                users.push({ username: app.username, password: app.password, role: 'user', tariff: selectedTariff });
+                users.push({ username: app.username, password: app.password, phone: app.phone, role: 'user', tariff: selectedTariff });
                 localStorage.setItem('volt_users', JSON.stringify(users));
 
                 applications.splice(appIndex, 1);
