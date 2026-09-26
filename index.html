@@ -121,6 +121,20 @@
             display: none;
         }
 
+        /* Баланс рядом с надписью Меню */
+        .menu-balance-badge {
+            display: none;
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #86efac;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            align-items: center;
+            gap: 4px;
+        }
+
         /* Элементы форм */
         .form-group {
             margin-bottom: 15px;
@@ -150,7 +164,6 @@
             border-color: var(--primary);
         }
 
-        /* Подсветка текста при поиске */
         mark {
             background-color: #f59e0b;
             color: #121212;
@@ -263,6 +276,55 @@
             color: #f3f4f6;
         }
 
+        .collapsible-header {
+            background: #27272a;
+            color: #ffffff;
+            cursor: pointer;
+            padding: 12px 15px;
+            width: 100%;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            text-align: left;
+            outline: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .collapsible-header:hover {
+            background: #2d2d32;
+            border-color: var(--primary);
+        }
+
+        .collapsible-arrow {
+            transition: transform 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .collapsible-header.active .collapsible-arrow {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #18181b;
+            border-radius: 0 0 6px 6px;
+            border: 0 solid var(--border-color);
+            border-top: none;
+            padding: 0 15px;
+        }
+
+        .collapsible-content.open {
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-top: none;
+        }
+
         .table-responsive {
             width: 100%;
             margin-top: 10px;
@@ -333,7 +395,6 @@
             border: 1px solid rgba(34, 197, 94, 0.4);
         }
 
-        /* Меню пользователя */
         .user-menu-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -367,7 +428,6 @@
             color: #ffffff;
         }
 
-        /* Индикатор уведомлений */
         .badge {
             position: absolute;
             top: 10px;
@@ -384,7 +444,6 @@
             display: inline-block;
         }
 
-        /* Карточки заданий */
         .task-card {
             background: #27272a;
             border: 1px solid var(--border-color);
@@ -432,6 +491,10 @@
             background: rgba(245, 158, 11, 0.2);
             color: #fcd34d;
         }
+        .status-pending {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+        }
         .status-completed {
             background: rgba(34, 197, 94, 0.2);
             color: #86efac;
@@ -443,7 +506,6 @@
             justify-content: flex-end;
         }
 
-        /* Чекбоксы для исключения при рассылке */
         .exclude-list {
             max-height: 150px;
             overflow-y: auto;
@@ -467,7 +529,6 @@
             accent-color: var(--primary);
         }
 
-        /* Модальное окно: Создание аккаунта */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -498,7 +559,6 @@
             gap: 15px;
         }
 
-        /* Прайс-лист iframe */
         #fullscreen-screen {
             position: fixed;
             top: 0;
@@ -558,7 +618,6 @@
 
             <div id="auth-alert"></div>
 
-            <!-- Вкладка Входа -->
             <div id="login-form-container">
                 <form id="login-form" onsubmit="handleLogin(event)">
                     <div class="form-group">
@@ -573,7 +632,6 @@
                 </form>
             </div>
 
-            <!-- Вкладка Заявки -->
             <div id="apply-form-container" style="display: none;">
                 <form id="apply-form" onsubmit="handleApply(event)">
                     <div class="form-group">
@@ -599,7 +657,10 @@
 
         <!-- Экран 2: Меню Пользователя -->
         <div id="user-screen" class="screen">
-            <h2 id="user-menu-title" style="margin-bottom: 5px;">Меню</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                <h2 id="user-menu-title" style="margin: 0;">Меню</h2>
+                <div id="menu-balance-badge" class="menu-balance-badge">💰 <span id="menu-balance-val">0</span> ₽</div>
+            </div>
             <p style="color: #9ca3af; font-size: 0.9rem;">Выберите нужный раздел:</p>
             
             <div class="user-menu-grid" id="user-menu-grid-container">
@@ -622,7 +683,18 @@
             </div>
         </div>
 
-        <!-- Экран 2.2: Архив заданий пользователя -->
+        <!-- Экран 2.2: Просмотр авансов пользователем (подтверждение) -->
+        <div id="user-advances-screen" class="screen">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                <h2>Авансы к подтверждению</h2>
+                <button class="btn-secondary" onclick="backToUserMenu()">Назад в меню</button>
+            </div>
+            <div id="user-advances-list">
+                <!-- Динамически заполняется -->
+            </div>
+        </div>
+
+        <!-- Экран 2.3: Архив заданий пользователя -->
         <div id="user-archive-screen" class="screen">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
                 <h2>Мой архив</h2>
@@ -643,48 +715,61 @@
 
             <div id="admin-alert"></div>
 
-            <!-- Секция: Отправка заданий -->
+            <!-- Секция: Отправка заданий (сворачиваемая) -->
             <div class="admin-section">
-                <h3>Отправить задание</h3>
-                <form id="send-task-form" onsubmit="handleSendTask(event)">
-                    <div class="form-group">
-                        <label>Текст задания</label>
-                        <textarea id="task-text" rows="3" required placeholder="Введите текст задания..."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Кому отправить</label>
-                        <select id="task-target-type" onchange="toggleTaskTargetType()">
-                            <option value="all">Всем пользователям (общие)</option>
-                            <option value="all-except">Всем, кроме выбранных...</option>
-                            <option value="single">Конкретному пользователю</option>
-                        </select>
-                    </div>
-
-                    <!-- Блок выбора конкретного пользователя -->
-                    <div class="form-group" id="single-user-group" style="display: none;">
-                        <label>Выберите пользователя</label>
-                        <select id="task-single-user">
-                            <!-- Заполняется динамически -->
-                        </select>
-                    </div>
-
-                    <!-- Блок исключения пользователей для общего задания -->
-                    <div class="form-group" id="except-users-group" style="display: none;">
-                        <label>Снимите галочки с тех, кому НЕ нужно отправлять:</label>
-                        <div class="exclude-list" id="exclude-users-container">
-                            <!-- Заполняется динамически -->
+                <button type="button" class="collapsible-header" onclick="toggleAccordion('send-task-accordion-content', this)">
+                    <span>✉️ Отправить задание</span>
+                    <span class="collapsible-arrow">▼</span>
+                </button>
+                <div class="collapsible-content" id="send-task-accordion-content">
+                    <form id="send-task-form" onsubmit="handleSendTask(event)">
+                        <div class="form-group">
+                            <label>Текст задания</label>
+                            <textarea id="task-text" rows="3" required placeholder="Введите текст задания..."></textarea>
                         </div>
-                    </div>
+                        <div class="form-group">
+                            <label>Сумма за задание (₽) <small style="color: #a1a1aa; font-weight: normal;">(можно оставить пустым)</small></label>
+                            <input type="number" id="task-amount" min="0" step="any" placeholder="Например: 5000 (или пусто)">
+                            <small style="color: #a1a1aa; font-size: 0.75rem; display: block; margin-top: 4px;">Если сумма указана, она автоматически разделится на каждого участника поровну.</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Кому отправить</label>
+                            <select id="task-target-type" onchange="toggleTaskTargetType()">
+                                <option value="all">Всем пользователям (общие)</option>
+                                <option value="all-except">Всем, кроме выбранных...</option>
+                                <option value="single">Конкретному пользователю</option>
+                            </select>
+                        </div>
 
-                    <button type="submit" class="btn-info">Отправить задание</button>
-                </form>
+                        <div class="form-group" id="single-user-group" style="display: none;">
+                            <label>Выберите пользователя</label>
+                            <select id="task-single-user">
+                                <!-- Заполняется динамически -->
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="except-users-group" style="display: none;">
+                            <label>Снимите галочки с тех, кому НЕ нужно отправлять:</label>
+                            <div class="exclude-list" id="exclude-users-container">
+                                <!-- Заполняется динамически -->
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-info">Отправить задание</button>
+                    </form>
+                </div>
             </div>
 
-            <!-- Секция: Активные отправленные задания -->
+            <!-- Секция: Активные отправленные задания (сворачиваемая) -->
             <div class="admin-section">
-                <h3>Активные задания</h3>
-                <div id="admin-sent-tasks-list" style="display: flex; flex-direction: column; gap: 10px;">
-                    <!-- Динамически заполняется -->
+                <button type="button" class="collapsible-header" onclick="toggleAccordion('active-tasks-accordion-content', this)">
+                    <span>📋 Активные задания</span>
+                    <span class="collapsible-arrow">▼</span>
+                </button>
+                <div class="collapsible-content" id="active-tasks-accordion-content">
+                    <div id="admin-sent-tasks-list" style="display: flex; flex-direction: column; gap: 10px;">
+                        <!-- Динамически заполняется -->
+                    </div>
                 </div>
             </div>
 
@@ -703,9 +788,9 @@
                     <table>
                         <thead>
                             <tr>
-                                <th style="width: 32%;">Логин</th>
-                                <th style="width: 42%;">Тариф</th>
-                                <th style="width: 26%;">Действия</th>
+                                <th style="width: 30%;">Логин</th>
+                                <th style="width: 36%;">Тариф / Авансы</th>
+                                <th style="width: 34%;">Действия</th>
                             </tr>
                         </thead>
                         <tbody id="users-table-body">
@@ -764,6 +849,25 @@
         </div>
     </div>
 
+    <!-- Модальное окно: Выдача аванса -->
+    <div id="advance-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                <h3 style="margin: 0;">Выдать аванс</h3>
+                <button class="btn-secondary" onclick="closeAdvanceModal()">Закрыть</button>
+            </div>
+            <p id="advance-modal-user-label" style="font-size: 0.9rem; color: #a1a1aa;"></p>
+            <form id="advance-form" onsubmit="handleIssueAdvance(event)">
+                <input type="hidden" id="advance-username">
+                <div class="form-group">
+                    <label>Сумма аванса (₽)</label>
+                    <input type="number" id="advance-amount" min="1" step="any" required placeholder="Например: 1000">
+                </div>
+                <button type="submit" class="btn-success">Подтвердить выдачу</button>
+            </form>
+        </div>
+    </div>
+
     <!-- Полноэкранный режим через iframe для прайсов -->
     <div id="fullscreen-screen">
         <div class="fullscreen-header">
@@ -780,7 +884,7 @@
         function initStorage() {
             if (!localStorage.getItem('volt_users')) {
                 const defaultUsers = [
-                    { username: 'Gazik0303', password: 'Gazik0303', phone: 'Не указан', role: 'admin', tariff: 'none' }
+                    { username: 'Gazik0303', password: 'Gazik0303', phone: 'Не указан', role: 'admin', tariff: 'none', advances: [] }
                 ];
                 localStorage.setItem('volt_users', JSON.stringify(defaultUsers));
             }
@@ -792,6 +896,17 @@
             }
             if (!localStorage.getItem('volt_task_statuses')) {
                 localStorage.setItem('volt_task_statuses', JSON.stringify({})); 
+            }
+            let users = JSON.parse(localStorage.getItem('volt_users'));
+            let updated = false;
+            users.forEach(u => {
+                if (!u.advances) {
+                    u.advances = [];
+                    updated = true;
+                }
+            });
+            if (updated) {
+                localStorage.setItem('volt_users', JSON.stringify(users));
             }
         }
 
@@ -875,6 +990,7 @@
             document.getElementById('auth-screen').classList.remove('active');
             document.getElementById('user-screen').classList.remove('active');
             document.getElementById('user-tasks-screen').classList.remove('active');
+            document.getElementById('user-advances-screen').classList.remove('active');
             document.getElementById('user-archive-screen').classList.remove('active');
             document.getElementById('admin-screen').classList.remove('active');
             document.getElementById('admin-archive-screen').classList.remove('active');
@@ -883,6 +999,7 @@
             document.getElementById('header-logout-btn').style.display = 'none';
             document.getElementById('header-archive-btn').style.display = 'none';
             document.getElementById('header-create-user-btn').style.display = 'none';
+            document.getElementById('menu-balance-badge').style.display = 'none';
 
             if (user.role === 'admin') {
                 document.getElementById('main-container').style.display = 'block';
@@ -895,7 +1012,8 @@
                 document.getElementById('main-container').style.display = 'block';
                 document.getElementById('user-screen').classList.add('active');
                 document.getElementById('header-logout-btn').style.display = 'flex';
-                document.getElementById('header-archive-btn').style.display = 'flex'; 
+                document.getElementById('header-archive-btn').style.display = 'flex';
+                document.getElementById('menu-balance-badge').style.display = 'flex';
                 
                 const menuGrid = document.getElementById('user-menu-grid-container');
                 let gridHtml = `
@@ -903,6 +1021,11 @@
                         <span id="tasks-badge" class="badge">0</span>
                         <span style="font-size: 1.8rem;">📋</span>
                         <span>Задания</span>
+                    </div>
+                    <div class="menu-card" onclick="openUserAdvances()">
+                        <span id="advances-badge" class="badge">0</span>
+                        <span style="font-size: 1.8rem;">💸</span>
+                        <span>Авансы</span>
                     </div>
                 `;
                 if (user.tariff && user.tariff !== 'none') {
@@ -914,12 +1037,81 @@
                     `;
                     menuGrid.style.gridTemplateColumns = '1fr 1fr';
                 } else {
-                    menuGrid.style.gridTemplateColumns = '1fr';
+                    menuGrid.style.gridTemplateColumns = '1fr 1fr';
                 }
                 menuGrid.innerHTML = gridHtml;
 
                 updateUserTasksBadge();
+                updateUserAdvancesBadge();
+                updateUserHeaderBalance();
             }
+        }
+
+        function isUserAssignedToTask(task, username) {
+            if (Array.isArray(task.removedUsers) && task.removedUsers.includes(username)) {
+                return false;
+            }
+            if (task.target === 'all') return true;
+            if (task.target === username) return true;
+            if (task.target === 'all-except' && Array.isArray(task.excluded) && !task.excluded.includes(username)) return true;
+            return false;
+        }
+
+        function getAssignedCountForTask(task, users) {
+            const regularUsers = users.filter(u => u.role !== 'admin');
+            let count = 0;
+            regularUsers.forEach(u => {
+                if (isUserAssignedToTask(task, u.username)) {
+                    count++;
+                }
+            });
+            return count > 0 ? count : 1;
+        }
+
+        function calculateUserEarnings(username) {
+            const tasks = JSON.parse(localStorage.getItem('volt_tasks')) || [];
+            const taskStatuses = JSON.parse(localStorage.getItem('volt_task_statuses')) || {};
+            const users = JSON.parse(localStorage.getItem('volt_users')) || [];
+            const userObj = users.find(u => u.username === username);
+
+            let totalEarned = 0;
+
+            tasks.forEach(task => {
+                if (isUserAssignedToTask(task, username)) {
+                    const key = `${task.id}_${username}`;
+                    const status = taskStatuses[key] || 'new';
+                    if (status === 'completed') {
+                        let assignedCount = getAssignedCountForTask(task, users);
+                        let taskTotal = Number(task.amount) || 0;
+                        let share = assignedCount > 0 ? (taskTotal / assignedCount) : 0;
+                        totalEarned += share;
+                    }
+                }
+            });
+
+            let totalAdvances = 0;
+            if (userObj && Array.isArray(userObj.advances)) {
+                userObj.advances.forEach(adv => {
+                    // Учитываем аванс только если он подтвержден рабочим
+                    if (adv.confirmed) {
+                        totalAdvances += Number(adv.amount) || 0;
+                    }
+                });
+            }
+
+            return Math.max(0, totalEarned - totalAdvances);
+        }
+
+        function updateUserHeaderBalance() {
+            const currentUser = JSON.parse(localStorage.getItem('volt_current_user'));
+            if (!currentUser || currentUser.role === 'admin') return;
+
+            const users = JSON.parse(localStorage.getItem('volt_users')) || [];
+            const latestUser = users.find(u => u.username === currentUser.username) || currentUser;
+            localStorage.setItem('volt_current_user', JSON.stringify(latestUser));
+
+            const balance = calculateUserEarnings(latestUser.username);
+            document.getElementById('menu-balance-val').textContent = balance.toLocaleString();
         }
 
         function updateUserTasksBadge() {
@@ -929,12 +1121,7 @@
             const tasks = JSON.parse(localStorage.getItem('volt_tasks')) || [];
             const taskStatuses = JSON.parse(localStorage.getItem('volt_task_statuses')) || {};
 
-            const myTasks = tasks.filter(t => {
-                if (t.target === 'all') return true;
-                if (t.target === currentUser.username) return true;
-                if (Array.isArray(t.excluded) && t.target === 'all-except' && !t.excluded.includes(currentUser.username)) return true;
-                return false;
-            });
+            const myTasks = tasks.filter(t => isUserAssignedToTask(t, currentUser.username));
 
             const activeMyTasks = myTasks.filter(t => {
                 const key = `${t.id}_${currentUser.username}`;
@@ -959,11 +1146,43 @@
             }
         }
 
+        function updateUserAdvancesBadge() {
+            const currentUser = JSON.parse(localStorage.getItem('volt_current_user'));
+            if (!currentUser || currentUser.role === 'admin') return;
+
+            const users = JSON.parse(localStorage.getItem('volt_users')) || [];
+            const userObj = users.find(u => u.username === currentUser.username) || currentUser;
+
+            let unconfirmedCount = 0;
+            if (userObj && Array.isArray(userObj.advances)) {
+                unconfirmedCount = userObj.advances.filter(a => !a.confirmed).length;
+            }
+
+            const badge = document.getElementById('advances-badge');
+            if (badge) {
+                if (unconfirmedCount > 0) {
+                    badge.textContent = unconfirmedCount;
+                    badge.classList.add('active');
+                } else {
+                    badge.classList.remove('active');
+                }
+            }
+        }
+
         function openUserTasks() {
             document.getElementById('user-screen').classList.remove('active');
             document.getElementById('user-archive-screen').classList.remove('active');
+            document.getElementById('user-advances-screen').classList.remove('active');
             document.getElementById('user-tasks-screen').classList.add('active');
             renderUserTasksList();
+        }
+
+        function openUserAdvances() {
+            document.getElementById('user-screen').classList.remove('active');
+            document.getElementById('user-tasks-screen').classList.remove('active');
+            document.getElementById('user-archive-screen').classList.remove('active');
+            document.getElementById('user-advances-screen').classList.add('active');
+            renderUserAdvancesList();
         }
 
         function openArchiveScreen() {
@@ -977,6 +1196,7 @@
             } else {
                 document.getElementById('user-screen').classList.remove('active');
                 document.getElementById('user-tasks-screen').classList.remove('active');
+                document.getElementById('user-advances-screen').classList.remove('active');
                 document.getElementById('user-archive-screen').classList.add('active');
                 renderUserArchiveTasks();
             }
@@ -984,15 +1204,20 @@
 
         function backToUserMenu() {
             document.getElementById('user-tasks-screen').classList.remove('active');
+            document.getElementById('user-advances-screen').classList.remove('active');
             document.getElementById('user-archive-screen').classList.remove('active');
             document.getElementById('user-screen').classList.add('active');
             updateUserTasksBadge();
+            updateUserAdvancesBadge();
+            updateUserHeaderBalance();
         }
 
         function backToUserMenuFromArchive() {
             document.getElementById('user-archive-screen').classList.remove('active');
             document.getElementById('user-screen').classList.add('active');
             updateUserTasksBadge();
+            updateUserAdvancesBadge();
+            updateUserHeaderBalance();
         }
 
         function backToUserMenuFromPrice() {
@@ -1000,6 +1225,8 @@
             document.getElementById('main-container').style.display = 'block';
             document.getElementById('user-screen').classList.add('active');
             updateUserTasksBadge();
+            updateUserAdvancesBadge();
+            updateUserHeaderBalance();
         }
 
         function openUserPrice() {
@@ -1022,7 +1249,6 @@
             if (!query) return escapeHtml(text);
             const safeText = escapeHtml(text);
             const safeQuery = escapeHtml(query);
-            // Создаем безопасное регулярное выражение для поиска с учетом регистра
             const regex = new RegExp(`(${escapeRegExp(safeQuery)})`, 'gi');
             return safeText.replace(regex, '<mark>$1</mark>');
         }
@@ -1044,14 +1270,10 @@
             const currentUser = JSON.parse(localStorage.getItem('volt_current_user'));
             const tasks = JSON.parse(localStorage.getItem('volt_tasks')) || [];
             const taskStatuses = JSON.parse(localStorage.getItem('volt_task_statuses')) || {};
+            const users = JSON.parse(localStorage.getItem('volt_users')) || [];
             const container = document.getElementById('user-tasks-list');
 
-            const myTasks = tasks.filter(t => {
-                if (t.target === 'all') return true;
-                if (t.target === currentUser.username) return true;
-                if (Array.isArray(t.excluded) && t.target === 'all-except' && !t.excluded.includes(currentUser.username)) return true;
-                return false;
-            });
+            const myTasks = tasks.filter(t => isUserAssignedToTask(t, currentUser.username));
 
             const activeMyTasks = myTasks.filter(t => {
                 const key = `${t.id}_${currentUser.username}`;
@@ -1062,6 +1284,8 @@
             if (activeMyTasks.length === 0) {
                 container.innerHTML = '<p style="color: #71717a; font-size: 0.9rem;">У вас пока нет активных заданий.</p>';
                 updateUserTasksBadge();
+                updateUserAdvancesBadge();
+                updateUserHeaderBalance();
                 return;
             }
 
@@ -1069,6 +1293,10 @@
             activeMyTasks.slice().reverse().forEach(task => {
                 const key = `${task.id}_${currentUser.username}`;
                 const status = taskStatuses[key] || 'new';
+
+                const assignedCount = getAssignedCountForTask(task, users);
+                const taskTotal = Number(task.amount) || 0;
+                const personalSum = assignedCount > 0 ? (taskTotal / assignedCount) : 0;
 
                 let statusBadgeHtml = '';
                 let actionButtonsHtml = '';
@@ -1084,13 +1312,19 @@
                     actionButtonsHtml = `
                         <button class="btn-success" style="width: auto; padding: 6px 12px; font-size: 0.8rem;" onclick="completeUserTask(${task.id})">Выполнено</button>
                     `;
+                } else if (status === 'pending') {
+                    statusBadgeHtml = `<span class="task-status-label status-pending">Ожидает подтверждения админа</span>`;
+                    actionButtonsHtml = `<span style="font-size: 0.8rem; color: #93c5fd;">Отправлено на проверку</span>`;
                 }
 
                 html += `
                     <div class="task-card">
                         <div class="task-header-row">
-                            <div>
-                                <div class="task-content">${escapeHtml(task.text)}</div>
+                            <div style="width: 100%;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+                                    <div class="task-content">${escapeHtml(task.text)}</div>
+                                    <span style="font-size: 0.9rem; font-weight: 700; color: var(--primary); white-space: nowrap;">${personalSum.toLocaleString()} ₽</span>
+                                </div>
                                 <div class="task-date">${escapeHtml(task.date)}</div>
                                 ${statusBadgeHtml}
                             </div>
@@ -1103,30 +1337,89 @@
             });
             container.innerHTML = html;
             updateUserTasksBadge();
+            updateUserAdvancesBadge();
+            updateUserHeaderBalance();
+        }
+
+        function renderUserAdvancesList() {
+            const currentUser = JSON.parse(localStorage.getItem('volt_current_user'));
+            const users = JSON.parse(localStorage.getItem('volt_users')) || [];
+            const userObj = users.find(u => u.username === currentUser.username) || currentUser;
+            const container = document.getElementById('user-advances-list');
+
+            const advances = userObj.advances || [];
+
+            if (advances.length === 0) {
+                container.innerHTML = '<p style="color: #71717a; font-size: 0.9rem;">У вас нет записей об авансах.</p>';
+                return;
+            }
+
+            let html = '';
+            advances.slice().reverse().forEach(adv => {
+                let statusBadge = adv.confirmed 
+                    ? `<span class="task-status-label status-completed">Подтверждено</span>`
+                    : `<span class="task-status-label status-pending">Ожидает вашего подтверждения</span>`;
+                
+                let btnHtml = !adv.confirmed 
+                    ? `<button class="btn-success" style="width: auto; padding: 6px 12px; font-size: 0.8rem;" onclick="confirmUserAdvance(${adv.id})">Подтвердить получение</button>`
+                    : `<span style="font-size: 0.8rem; color: #86efac;">Аванс зачислен в баланс</span>`;
+
+                html += `
+                    <div class="task-card">
+                        <div class="task-header-row">
+                            <div style="width: 100%;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+                                    <div class="task-content"><strong>Аванс от администратора</strong></div>
+                                    <span style="font-size: 0.9rem; font-weight: 700; color: var(--primary); white-space: nowrap;">${Number(adv.amount).toLocaleString()} ₽</span>
+                                </div>
+                                <div class="task-date">Выдан: ${escapeHtml(adv.date)}</div>
+                                <div style="margin-top: 6px;">${statusBadge}</div>
+                            </div>
+                        </div>
+                        <div class="task-buttons" style="margin-top: 8px;">
+                            ${btnHtml}
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            updateUserAdvancesBadge();
+            updateUserHeaderBalance();
+        }
+
+        function confirmUserAdvance(advanceId) {
+            const currentUser = JSON.parse(localStorage.getItem('volt_current_user'));
+            let users = JSON.parse(localStorage.getItem('volt_users')) || [];
+            const user = users.find(u => u.username === currentUser.username);
+            
+            if (user && Array.isArray(user.advances)) {
+                const adv = user.advances.find(a => a.id === advanceId);
+                if (adv) {
+                    adv.confirmed = true;
+                    localStorage.setItem('volt_users', JSON.stringify(users));
+                    localStorage.setItem('volt_current_user', JSON.stringify(user));
+                    renderUserAdvancesList();
+                    updateUserHeaderBalance();
+                }
+            }
         }
 
         function renderUserArchiveTasks() {
             const currentUser = JSON.parse(localStorage.getItem('volt_current_user'));
             const tasks = JSON.parse(localStorage.getItem('volt_tasks')) || [];
             const taskStatuses = JSON.parse(localStorage.getItem('volt_task_statuses')) || {};
+            const users = JSON.parse(localStorage.getItem('volt_users')) || [];
             const container = document.getElementById('user-archive-tasks-list');
             const searchInput = document.getElementById('user-archive-search-input');
             const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
             const myTasks = tasks.filter(t => {
-                if (t.target === 'all') return true;
-                if (t.target === currentUser.username) return true;
-                if (Array.isArray(t.excluded) && t.target === 'all-except' && !t.excluded.includes(currentUser.username)) return true;
-                return false;
-            });
-
-            const archivedMyTasks = myTasks.filter(t => {
                 const key = `${t.id}_${currentUser.username}`;
                 const status = taskStatuses[key] || 'new';
                 return status === 'completed';
             });
 
-            const filteredTasks = archivedMyTasks.filter(t => {
+            const filteredTasks = myTasks.filter(t => {
                 if (!searchQuery) return true;
                 return t.text.toLowerCase().includes(searchQuery) || t.date.toLowerCase().includes(searchQuery);
             });
@@ -1138,16 +1431,23 @@
 
             let html = '';
             filteredTasks.slice().reverse().forEach(task => {
+                const assignedCount = getAssignedCountForTask(task, users);
+                const taskTotal = Number(task.amount) || 0;
+                const personalSum = assignedCount > 0 ? (taskTotal / assignedCount) : 0;
+
                 const highlightedText = highlightMatch(task.text, searchQuery);
                 const highlightedDate = highlightMatch(task.date, searchQuery);
 
                 html += `
                     <div class="task-card" style="opacity: 0.85;">
                         <div class="task-header-row">
-                            <div>
-                                <div class="task-content">${highlightedText}</div>
+                            <div style="width: 100%;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div class="task-content">${highlightedText}</div>
+                                    <span style="font-size: 0.9rem; font-weight: 700; color: var(--success); white-space: nowrap;">+${personalSum.toLocaleString()} ₽</span>
+                                </div>
                                 <div class="task-date">Отправлено: ${highlightedDate}</div>
-                                <span class="task-status-label status-completed" style="margin-top: 6px;">Выполнено</span>
+                                <span class="task-status-label status-completed" style="margin-top: 6px;">Выполнено и подтверждено</span>
                             </div>
                         </div>
                     </div>
@@ -1169,7 +1469,7 @@
             const currentUser = JSON.parse(localStorage.getItem('volt_current_user'));
             let taskStatuses = JSON.parse(localStorage.getItem('volt_task_statuses')) || {};
             const key = `${taskId}_${currentUser.username}`;
-            taskStatuses[key] = 'completed';
+            taskStatuses[key] = 'pending';
             localStorage.setItem('volt_task_statuses', JSON.stringify(taskStatuses));
             renderUserTasksList();
         }
@@ -1187,13 +1487,16 @@
             document.getElementById('header-logout-btn').style.display = 'none';
             document.getElementById('header-archive-btn').style.display = 'none';
             document.getElementById('header-create-user-btn').style.display = 'none';
+            document.getElementById('menu-balance-badge').style.display = 'none';
             document.getElementById('admin-screen').classList.remove('active');
             document.getElementById('admin-archive-screen').classList.remove('active');
             document.getElementById('user-screen').classList.remove('active');
             document.getElementById('user-tasks-screen').classList.remove('active');
+            document.getElementById('user-advances-screen').classList.remove('active');
             document.getElementById('user-archive-screen').classList.remove('active');
             document.getElementById('fullscreen-screen').classList.remove('active');
             closeCreateUserModal();
+            closeAdvanceModal();
             document.getElementById('auth-screen').classList.add('active');
             document.getElementById('login-form').reset();
             clearAlerts();
@@ -1212,11 +1515,58 @@
             document.getElementById('create-user-modal').classList.remove('active');
         }
 
+        function openAdvanceModal(username) {
+            document.getElementById('advance-username').value = username;
+            document.getElementById('advance-modal-user-label').textContent = `Выдача аванса для: ${username}`;
+            document.getElementById('advance-amount').value = '';
+            document.getElementById('advance-modal').classList.add('active');
+        }
+
+        function closeAdvanceModal() {
+            document.getElementById('advance-modal').classList.remove('active');
+        }
+
+        function handleIssueAdvance(event) {
+            event.preventDefault();
+            const username = document.getElementById('advance-username').value;
+            const amount = Number(document.getElementById('advance-amount').value);
+
+            if (!amount || amount <= 0) return;
+
+            let users = JSON.parse(localStorage.getItem('volt_users')) || [];
+            const user = users.find(u => u.username === username);
+            if (user) {
+                if (!user.advances) user.advances = [];
+                user.advances.push({
+                    id: Date.now(),
+                    amount: amount,
+                    confirmed: false, // Ожидает подтверждения рабочим, но у админа уже отображается
+                    date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                });
+                localStorage.setItem('volt_users', JSON.stringify(users));
+                closeAdvanceModal();
+                renderUsersTable();
+                showAlert('admin-alert', `Аванс ${amount} ₽ успешно выдан пользователю ${username}.`, 'success');
+            }
+        }
+
         function loadAdminData() {
             renderUsersTable();
             renderApplicationsList();
             renderAdminTaskSelectors();
             renderAdminSentTasks();
+        }
+
+        function toggleAccordion(contentId, headerBtn) {
+            const content = document.getElementById(contentId);
+            headerBtn.classList.toggle('active');
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+                content.style.maxHeight = null;
+            } else {
+                content.classList.add('open');
+                content.style.maxHeight = content.scrollHeight + 'px';
+            }
         }
 
         function toggleTaskTargetType() {
@@ -1231,6 +1581,11 @@
                 singleGroup.style.display = 'block';
             } else if (type === 'all-except') {
                 exceptGroup.style.display = 'block';
+            }
+            
+            const content = document.getElementById('send-task-accordion-content');
+            if (content.classList.contains('open')) {
+                content.style.maxHeight = content.scrollHeight + 'px';
             }
         }
 
@@ -1263,6 +1618,9 @@
         function handleSendTask(event) {
             event.preventDefault();
             const text = document.getElementById('task-text').value.trim();
+            const amountInput = document.getElementById('task-amount').value;
+            const amount = amountInput === '' ? 0 : Number(amountInput);
+            
             const targetType = document.getElementById('task-target-type').value;
             let target = 'all';
             let excluded = [];
@@ -1287,15 +1645,63 @@
                 id: Date.now(),
                 timestamp: Date.now(),
                 text,
+                amount,
                 target,
                 excluded,
+                removedUsers: [],
                 date: dateStr
             });
 
             localStorage.setItem('volt_tasks', JSON.stringify(tasks));
             showAlert('admin-alert', 'Задание успешно отправлено!', 'success');
             document.getElementById('task-text').value = '';
+            document.getElementById('task-amount').value = '';
+            
+            const sendContent = document.getElementById('send-task-accordion-content');
+            if (sendContent.classList.contains('open')) {
+                const sendHeaderBtn = sendContent.previousElementSibling;
+                sendHeaderBtn.classList.remove('active');
+                sendContent.classList.remove('open');
+                sendContent.style.maxHeight = null;
+            }
+
             loadAdminData();
+        }
+
+        function updateTaskAmountAdmin(taskId, newAmountVal) {
+            let tasks = JSON.parse(localStorage.getItem('volt_tasks')) || [];
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                task.amount = newAmountVal === '' ? 0 : Number(newAmountVal);
+                localStorage.setItem('volt_tasks', JSON.stringify(tasks));
+                renderAdminSentTasks();
+                showAlert('admin-alert', 'Сумма задания обновлена.', 'success');
+            }
+        }
+
+        function removeUserFromTask(taskId, username) {
+            let tasks = JSON.parse(localStorage.getItem('volt_tasks')) || [];
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                if (!task.removedUsers) task.removedUsers = [];
+                if (!task.removedUsers.includes(username)) {
+                    task.removedUsers.push(username);
+                }
+                localStorage.setItem('volt_tasks', JSON.stringify(tasks));
+                renderAdminSentTasks();
+                renderUsersTable();
+                showAlert('admin-alert', `Пользователь ${username} убран из этого задания.`, 'success');
+            }
+        }
+
+        function adminConfirmTask(taskId, username) {
+            let taskStatuses = JSON.parse(localStorage.getItem('volt_task_statuses')) || {};
+            const key = `${taskId}_${username}`;
+            taskStatuses[key] = 'completed';
+            localStorage.setItem('volt_task_statuses', JSON.stringify(taskStatuses));
+            renderAdminSentTasks();
+            renderUsersTable();
+            showAlert('admin-alert', `Задание пользователя ${username} подтверждено, деньги зачислены на его баланс!`, 'success');
         }
 
         function isTaskArchived(task) {
@@ -1305,12 +1711,7 @@
 
             let assignedUsers = [];
             regularUsers.forEach(u => {
-                let isTargeted = false;
-                if (task.target === 'all') isTargeted = true;
-                if (task.target === u.username) isTargeted = true;
-                if (task.target === 'all-except' && Array.isArray(task.excluded) && !task.excluded.includes(u.username)) isTargeted = true;
-
-                if (isTargeted) {
+                if (isUserAssignedToTask(task, u.username)) {
                     assignedUsers.push(u.username);
                 }
             });
@@ -1328,11 +1729,6 @@
 
             if (allCompleted) return true;
 
-            const twentyFourHours = 24 * 60 * 60 * 1000;
-            if (task.timestamp && (Date.now() - task.timestamp) >= twentyFourHours) {
-                return true;
-            }
-
             return false;
         }
 
@@ -1347,6 +1743,10 @@
 
             if (activeTasks.length === 0) {
                 container.innerHTML = '<p style="color: #71717a; font-size: 0.9rem;">Нет активных заданий.</p>';
+                const activeContent = document.getElementById('active-tasks-accordion-content');
+                if (activeContent.classList.contains('open')) {
+                    activeContent.style.maxHeight = activeContent.scrollHeight + 'px';
+                }
                 return;
             }
 
@@ -1354,15 +1754,14 @@
             activeTasks.slice().reverse().forEach(task => {
                 let assignedUsers = [];
                 regularUsers.forEach(u => {
-                    let isTargeted = false;
-                    if (task.target === 'all') isTargeted = true;
-                    if (task.target === u.username) isTargeted = true;
-                    if (task.target === 'all-except' && Array.isArray(task.excluded) && !task.excluded.includes(u.username)) isTargeted = true;
-
-                    if (isTargeted) {
+                    if (isUserAssignedToTask(task, u.username)) {
                         assignedUsers.push(u.username);
                     }
                 });
+
+                const assignedCount = assignedUsers.length > 0 ? assignedUsers.length : 1;
+                const taskTotal = Number(task.amount) || 0;
+                const perPerson = taskTotal / assignedCount;
 
                 let recipientsHtml = '';
                 if (assignedUsers.length === 0) {
@@ -1373,18 +1772,36 @@
                         const status = taskStatuses[key] || 'new';
 
                         let statusBadge = '';
+                        let confirmBtnHtml = '';
+
                         if (status === 'new') {
                             statusBadge = `<span class="task-status-label status-new">Новое</span>`;
                         } else if (status === 'accepted') {
                             statusBadge = `<span class="task-status-label status-accepted">Принято (В работе)</span>`;
+                        } else if (status === 'pending') {
+                            statusBadge = `<span class="task-status-label status-pending">Ожидает проверки</span>`;
+                            confirmBtnHtml = `<button class="btn-success" style="width: auto; padding: 3px 8px; font-size: 0.75rem;" onclick="adminConfirmTask(${task.id}, '${username}')">Подтвердить</button>`;
                         } else if (status === 'completed') {
                             statusBadge = `<span class="task-status-label status-completed">Выполнено</span>`;
                         }
 
+                        let removeUserBtn = '';
+                        if (status !== 'completed') {
+                            removeUserBtn = `<button class="btn-danger" style="width: auto; padding: 3px 6px; font-size: 0.7rem;" onclick="removeUserFromTask(${task.id}, '${username}')" title="Убрать из задания">Убрать</button>`;
+                        }
+
                         recipientsHtml += `
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;">
-                                <span style="color: #e4e4e7;">${username}</span>
-                                ${statusBadge}
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; gap: 6px;">
+                                <div style="display: flex; flex-direction: column;">
+                                    <span style="color: #e4e4e7;">${username} <small style="color: #f59e0b;">(${perPerson.toLocaleString()} ₽)</small></span>
+                                    <div style="display: flex; gap: 4px; align-items: center; margin-top: 2px;">
+                                        ${statusBadge}
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 4px; align-items: center;">
+                                    ${confirmBtnHtml}
+                                    ${removeUserBtn}
+                                </div>
                             </div>
                         `;
                     });
@@ -1394,17 +1811,26 @@
                     <div class="task-card">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                             <div class="task-content"><strong>Текст:</strong> ${escapeHtml(task.text)}</div>
-                            <button class="btn-danger" style="width: auto; padding: 4px 8px; font-size: 0.75rem;" onclick="deleteAdminTask(${task.id})">Удалить</button>
+                            <button class="btn-danger" style="width: auto; padding: 4px 8px; font-size: 0.75rem;" onclick="deleteAdminTask(${task.id})">Удалить всё</button>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: center; margin-top: 6px;">
+                            <label style="font-size: 0.8rem; margin-bottom: 0; white-space: nowrap;">Общая сумма (₽):</label>
+                            <input type="number" min="0" step="any" value="${task.amount || 0}" onchange="updateTaskAmountAdmin(${task.id}, this.value)" style="padding: 6px; font-size: 0.85rem; height: 32px;">
                         </div>
                         <div class="task-date">Отправлено: ${escapeHtml(task.date)}</div>
                         <div style="margin-top: 6px; background: #18181b; padding: 8px; border-radius: 6px;">
-                            <div style="font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; color: #a1a1aa;">Статусы исполнителей:</div>
+                            <div style="font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; color: #a1a1aa;">Статусы исполнителей и доли:</div>
                             ${recipientsHtml}
                         </div>
                     </div>
                 `;
             });
             container.innerHTML = html;
+
+            const activeContent = document.getElementById('active-tasks-accordion-content');
+            if (activeContent.classList.contains('open')) {
+                activeContent.style.maxHeight = activeContent.scrollHeight + 'px';
+            }
         }
 
         function renderAdminArchiveTasks() {
@@ -1434,15 +1860,14 @@
             filteredTasks.slice().reverse().forEach(task => {
                 let assignedUsers = [];
                 regularUsers.forEach(u => {
-                    let isTargeted = false;
-                    if (task.target === 'all') isTargeted = true;
-                    if (task.target === u.username) isTargeted = true;
-                    if (task.target === 'all-except' && Array.isArray(task.excluded) && !task.excluded.includes(u.username)) isTargeted = true;
-
-                    if (isTargeted) {
+                    if (isUserAssignedToTask(task, u.username)) {
                         assignedUsers.push(u.username);
                     }
                 });
+
+                const assignedCount = assignedUsers.length > 0 ? assignedUsers.length : 1;
+                const taskTotal = Number(task.amount) || 0;
+                const perPerson = taskTotal / assignedCount;
 
                 let recipientsHtml = '';
                 if (assignedUsers.length === 0) {
@@ -1453,17 +1878,15 @@
                         const status = taskStatuses[key] || 'new';
 
                         let statusBadge = '';
-                        if (status === 'new') {
-                            statusBadge = `<span class="task-status-label status-new">Новое</span>`;
-                        } else if (status === 'accepted') {
-                            statusBadge = `<span class="task-status-label status-accepted">Принято (В работе)</span>`;
-                        } else if (status === 'completed') {
-                            statusBadge = `<span class="task-status-label status-completed">Выполнено</span>`;
+                        if (status === 'completed') {
+                            statusBadge = `<span class="task-status-label status-completed">Подтверждено</span>`;
+                        } else {
+                            statusBadge = `<span class="task-status-label status-new">Не выполнено</span>`;
                         }
 
                         recipientsHtml += `
                             <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;">
-                                <span style="color: #e4e4e7;">${username}</span>
+                                <span style="color: #e4e4e7;">${username} <small style="color: #f59e0b;">(${perPerson.toLocaleString()} ₽)</small></span>
                                 ${statusBadge}
                             </div>
                         `;
@@ -1479,9 +1902,9 @@
                             <div class="task-content"><strong>[Архив] Текст:</strong> ${highlightedText}</div>
                             <button class="btn-danger" style="width: auto; padding: 4px 8px; font-size: 0.75rem;" onclick="deleteAdminTask(${task.id})">Удалить</button>
                         </div>
-                        <div class="task-date">Отправлено: ${highlightedDate}</div>
+                        <div class="task-date">Отправлено: ${highlightedDate} | Общая сумма: ${taskTotal} ₽</div>
                         <div style="margin-top: 6px; background: #18181b; padding: 8px; border-radius: 6px;">
-                            <div style="font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; color: #a1a1aa;">Статусы исполнителей:</div>
+                            <div style="font-size: 0.80rem; font-weight: 600; margin-bottom: 4px; color: #a1a1aa;">Статусы исполнителей и доли:</div>
                             ${recipientsHtml}
                         </div>
                     </div>
@@ -1510,29 +1933,42 @@
             users.forEach(user => {
                 const tr = document.createElement('tr');
                 let actionsHtml = '';
-                let tariffSelectHtml = '';
+                let tariffAndInfoHtml = '';
 
                 if (user.role !== 'admin') {
-                    tariffSelectHtml = `
-                        <select onchange="updateUserTariff('${user.username}', this.value)">
+                    let totalAdvancesAdmin = 0; // Считаем все выданные админом авансы
+                    if (Array.isArray(user.advances)) {
+                        user.advances.forEach(a => {
+                            totalAdvancesAdmin += Number(a.amount) || 0;
+                        });
+                    }
+                    const netEarned = calculateUserEarnings(user.username);
+
+                    tariffAndInfoHtml = `
+                        <select onchange="updateUserTariff('${user.username}', this.value)" style="margin-bottom: 4px;">
                             <option value="none" ${user.tariff === 'none' ? 'selected' : ''}>Обычный</option>
                             <option value="70/30" ${user.tariff === '70/30' ? 'selected' : ''}>70/30</option>
                             <option value="50/50" ${user.tariff === '50/50' ? 'selected' : ''}>50/50</option>
                         </select>
+                        <div style="font-size: 0.75rem; color: #a1a1aa;">Баланс: <strong style="color: #86efac;">${netEarned.toLocaleString()} ₽</strong></div>
+                        <div style="font-size: 0.75rem; color: #a1a1aa;">Выдано авансов: <strong style="color: #f59e0b;">${totalAdvancesAdmin.toLocaleString()} ₽</strong></div>
                     `;
                 } else {
-                    tariffSelectHtml = `<span style="color: #9ca3af; font-size: 0.8rem;">Админ</span>`;
+                    tariffAndInfoHtml = `<span style="color: #9ca3af; font-size: 0.8rem;">Администратор</span>`;
                 }
                 
                 if (user.username !== 'Gazik0303' && user.username !== currentUser.username) {
-                    actionsHtml = `<button class="btn-danger" onclick="deleteUser('${user.username}')">Удалить</button>`;
+                    actionsHtml = `
+                        ${user.role !== 'admin' ? `<button class="btn-success" onclick="openAdvanceModal('${user.username}')">Аванс</button>` : ''}
+                        <button class="btn-danger" onclick="deleteUser('${user.username}')">Удалить</button>
+                    `;
                 } else {
-                    actionsHtml = `<span style="color: #71717a; font-size: 0.75rem;">Защищено</span>`;
+                    actionsHtml = user.role !== 'admin' ? `<button class="btn-success" onclick="openAdvanceModal('${user.username}')">Аванс</button>` : `<span style="color: #71717a; font-size: 0.75rem;">Защищено</span>`;
                 }
 
                 tr.innerHTML = `
                     <td>${escapeHtml(user.username)}<br><span style="font-size:0.75rem; color:#9ca3af;">📞 ${escapeHtml(user.phone || 'Нет')}</span></td>
-                    <td>${tariffSelectHtml}</td>
+                    <td>${tariffAndInfoHtml}</td>
                     <td class="actions-cell">${actionsHtml}</td>
                 `;
                 tbody.appendChild(tr);
@@ -1609,7 +2045,7 @@
                 return;
             }
 
-            users.push({ username, password, phone, role: 'user', tariff });
+            users.push({ username, password, phone, role: 'user', tariff, advances: [] });
             localStorage.setItem('volt_users', JSON.stringify(users));
 
             showAlert('admin-alert', `Аккаунт "${username}" создан!`, 'success');
@@ -1637,7 +2073,7 @@
                 const selectedTariff = document.getElementById(`tariff-${appId}`).value;
                 let users = JSON.parse(localStorage.getItem('volt_users'));
                 
-                users.push({ username: app.username, password: app.password, phone: app.phone, role: 'user', tariff: selectedTariff });
+                users.push({ username: app.username, password: app.password, phone: app.phone, role: 'user', tariff: selectedTariff, advances: [] });
                 localStorage.setItem('volt_users', JSON.stringify(users));
 
                 applications.splice(appIndex, 1);
