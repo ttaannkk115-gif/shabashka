@@ -205,7 +205,6 @@
             color: #f3f4f6;
         }
 
-        /* Убрали горизонтальный скролл, таблица гибкая под экран */
         .table-responsive {
             width: 100%;
             margin-top: 10px;
@@ -436,7 +435,8 @@
     <!-- Полноэкранный режим через iframe для prais30.html и prais50.html -->
     <div id="fullscreen-screen">
         <div class="fullscreen-header">
-            <span style="font-weight: 600; color: #f59e0b; font-size: 1.05rem;" id="fullscreen-title">Прайс-лист</span>
+            <!-- Убрано название тарифа в скобках, теперь выводится только имя пользователя -->
+            <span style="font-weight: 600; color: #f59e0b; font-size: 1.05rem;" id="fullscreen-title"></span>
             <button onclick="logout()" class="btn-secondary">Выйти</button>
         </div>
         <iframe id="fullscreen-iframe" class="fullscreen-iframe"></iframe>
@@ -446,7 +446,7 @@
         function initStorage() {
             if (!localStorage.getItem('volt_users')) {
                 const defaultUsers = [
-                    { username: 'Gazik0303', password: 'gazik0303', role: 'admin', tariff: 'none' }
+                    { username: 'Gazik0303', password: 'Gazik0303', role: 'admin', tariff: 'none' }
                 ];
                 localStorage.setItem('volt_users', JSON.stringify(defaultUsers));
             }
@@ -545,7 +545,8 @@
             } else {
                 if (user.tariff === '70/30' || user.tariff === '50/50') {
                     document.getElementById('main-container').style.display = 'none';
-                    document.getElementById('fullscreen-title').textContent = `${user.username} (Тариф ${user.tariff})`;
+                    // Выводим только имя пользователя без упоминания тарифа
+                    document.getElementById('fullscreen-title').textContent = `${user.username}`;
                     
                     const iframe = document.getElementById('fullscreen-iframe');
                     if (user.tariff === '70/30') {
