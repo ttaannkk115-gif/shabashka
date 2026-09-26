@@ -247,6 +247,7 @@
             padding: 6px;
             font-size: 0.85rem;
             width: auto;
+            background: #18181b;
         }
 
         .actions-cell button {
@@ -392,8 +393,8 @@
                         <label>Тариф</label>
                         <select id="admin-new-tariff">
                             <option value="none">Обычный</option>
-                            <option value="70/30">Тариф 70/30 (prais30.html)</option>
-                            <option value="50/50">Тариф 50/50 (prais50.html)</option>
+                            <option value="70/30">70/30 (prais30.html)</option>
+                            <option value="50/50">50/50 (prais50.html)</option>
                         </select>
                     </div>
                     <button type="submit">Создать аккаунт</button>
@@ -416,7 +417,7 @@
                         <thead>
                             <tr>
                                 <th>Логин</th>
-                                <th>Тариф</th>
+                                <th>Тариф (можно изменить)</th>
                                 <th>Действия</th>
                             </tr>
                         </thead>
@@ -543,7 +544,6 @@
                     document.getElementById('main-container').style.display = 'none';
                     document.getElementById('fullscreen-title').textContent = `${user.username} (Тариф ${user.tariff})`;
                     
-                    // Открываем реальный файл в зависимости от тарифа
                     const iframe = document.getElementById('fullscreen-iframe');
                     if (user.tariff === '70/30') {
                         iframe.src = 'prais30.html';
@@ -563,7 +563,7 @@
 
         function logout() {
             localStorage.removeItem('volt_current_user');
-            document.getElementById('fullscreen-iframe').src = ''; // Очищаем iframe при выходе
+            document.getElementById('fullscreen-iframe').src = '';
             document.getElementById('main-container').style.display = 'block';
             document.getElementById('user-info').style.display = 'none';
             document.getElementById('admin-screen').classList.remove('active');
@@ -588,6 +588,19 @@
             users.forEach(user => {
                 const tr = document.createElement('tr');
                 let actionsHtml = '';
+                let tariffSelectHtml = '';
+
+                if (user.role !== 'admin') {
+                    tariffSelectHtml = `
+                        <select onchange="updateUserTariff('${user.username}', this.value)">
+                            <option value="none" ${user.tariff === 'none' ? 'selected' : ''}>Обычный</option>
+                            <option value="70/30" ${user.tariff === '70/30' ? 'selected' : ''}>70/30 (prais30.html)</option>
+                            <option value="50/50" ${user.tariff === '50/50' ? 'selected' : ''}>50/50 (prais50.html)</option>
+                        </select>
+                    `;
+                } else {
+                    tariffSelectHtml = `<span>Администратор</span>`;
+                }
                 
                 if (user.username !== 'Gazik0303' && user.username !== currentUser.username) {
                     actionsHtml = `<button class="btn-danger" onclick="deleteUser('${user.username}')">Удалить</button>`;
@@ -597,18 +610,28 @@
 
                 tr.innerHTML = `
                     <td>${user.username}</td>
-                    <td>${user.tariff || 'Обычный'}</td>
+                    <td>${tariffSelectHtml}</td>
                     <td class="actions-cell">${actionsHtml}</td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
+        function updateUserTariff(username, newTariff) {
+            let users = JSON.parse(localStorage.getItem('volt_users'));
+            const user = users.find(u => u.username === username);
+            if (user) {
+                user.tariff = newTariff;
+                localStorage.setItem('volt_users', JSON.stringify(users));
+                showAlert('admin-alert', `Тариф для пользователя "${username}" изменен на ${newTariff}!`, 'success');
+            }
+        }
+
         function renderApplicationsList() {
             const applications = JSON.parse(localStorage.getItem('volt_applications'));
             const container = document.getElementById('applications-list');
 
-            if (applications.length === 0) {
+            if (!applications || applications.length === 0) {
                 container.innerHTML = '<p style="color: #71717a; font-size: 0.9rem;">Нет новых заявок.</p>';
                 return;
             }
@@ -625,14 +648,14 @@
                         <tbody>
             `;
 
-            applications.applications.forEach ?? applications.forEach(app => {
+            applications.forEach(app => {
                 html += `
                     <tr>
                         <td><strong>${app.username}</strong><br><small style="color: #9ca3af;">${app.comment || ''}</small></td>
                         <td class="actions-cell">
                             <select id="tariff-${app.id}">
-                                <option value="70/30">Тариф 70/30 (prais30.html)</option>
-                                <option value="50/50">Тариф 50/50 (prais50.html)</option>
+                                <option value="70/30">70/30 (prais30.html)</option>
+                                <option value="50/50">50/50 (prais50.html)</option>
                                 <option value="none">Обычный</option>
                             </select>
                             <button class="btn-success" onclick="approveApplication(${app.id})">Одобрить</button>
