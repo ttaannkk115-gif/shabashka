@@ -3,1636 +3,634 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VoltMaster - Смета 2026</title>
+    <title>VoltMaster</title>
     <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --border-color: #333333;
+            --primary: #f59e0b; /* Желто-оранжевый акцент */
+            --primary-hover: #d97706;
+            --danger: #ef4444;
+            --success: #22c55e;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: #f4f5f7;
-            color: #333;
-            padding-bottom: 120px;
-            overflow-x: hidden;
-        }
-
-        /* ----- ВЕРХНИЙ БАР ----- */
-        .top-header {
-            background-color: #2b6be8;
-            padding: 16px 14px 14px 14px;
-            color: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .top-header-row {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .app-title {
-            font-size: 1.3rem;
-            font-weight: 800;
-            line-height: 1.1;
-            letter-spacing: 0.5px;
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-hdr {
-            border: none;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
             justify-content: center;
-            transition: opacity 0.2s;
+            align-items: flex-start;
+            padding: 10px;
         }
 
-        .btn-hdr:active {
-            opacity: 0.8;
-        }
-
-        .btn-archive {
-            background-color: #5835a6;
-            color: white;
-            padding: 10px 14px;
-        }
-
-        .btn-box {
-            background-color: #538ee8;
-            padding: 8px 11px;
-            font-size: 1.2rem;
-        }
-
-        .btn-reset {
-            background-color: #d94943;
-            color: white;
-            padding: 10px 14px;
-        }
-
-        /* ----- БЛОК ПОИСКА С КРЕСТИКОМ ----- */
-        .search-container {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .search-container input {
+        .container {
             width: 100%;
-            padding: 12px 38px 12px 16px;
+            max-width: 480px;
+            background: var(--card-bg);
             border-radius: 12px;
-            border: none;
-            font-size: 1.05rem;
-            outline: none;
-            background-color: #ffffff;
-            color: #333;
-        }
-
-        .search-container input::placeholder {
-            color: #a0a0a0;
-        }
-
-        .btn-clear-search {
-            position: absolute;
-            right: 12px;
-            background: none;
-            border: none;
-            font-size: 1.1rem;
-            color: #999;
-            cursor: pointer;
-            display: none;
-            padding: 4px;
-            font-weight: bold;
-        }
-
-        .btn-clear-search:hover {
-            color: #333;
-        }
-
-        .main-content {
-            padding: 10px;
-        }
-
-        /* ----- ГЛАВНЫЙ АККОРДЕОН «МАТЕРИАЛ» ----- */
-        .main-material-section {
-            background: #ffffff;
-            border: 1px solid #cbd5e1;
-            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             overflow: hidden;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.04);
-            margin-bottom: 15px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
         }
 
-        .main-material-header {
-            background: #ffffff;
-            padding: 14px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            user-select: none;
-            font-weight: 800;
-            font-size: 1.05rem;
-            color: #1a1a1a;
-        }
-
-        .main-material-header .arrow-icon {
-            font-size: 0.85rem;
-            color: #666;
-            transition: transform 0.2s;
-        }
-
-        body.material-collapsed .main-material-header .arrow-icon {
-            transform: rotate(-90deg);
-        }
-
-        body.material-collapsed .main-material-body {
-            display: none;
-        }
-
-        .main-material-body {
-            padding: 10px;
-            background: #f8fafc;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        /* ----- ПОДКАТЕГОРИИ ----- */
-        .category-section {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .category-header {
-            padding: 10px 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            user-select: none;
-            font-weight: 700;
-            font-size: 0.92rem;
-            color: #2d3748;
-            background: #fff;
-        }
-
-        .category-header .arrow-icon {
-            font-size: 0.75rem;
-            color: #888;
-            transition: transform 0.2s;
-        }
-
-        .category-section.collapsed .category-header .arrow-icon {
-            transform: rotate(-90deg);
-        }
-
-        .category-section.collapsed > .list-container,
-        .category-section.collapsed > .category-header + .list-container {
-            display: none !important;
-        }
-
-        .category-section.collapsed .category-section.sub-category {
-            display: none !important;
-        }
-
-        .category-section.sub-category {
-            margin-left: 12px;
-            margin-top: 4px;
-            margin-bottom: 4px;
-            border-color: #cbd5e1;
-            background: #f8fafc;
-        }
-
-        .category-section.sub-category .category-header {
-            background: #f1f5f9;
-            font-size: 0.88rem;
-            color: #1e293b;
-        }
-
-        .list-container {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            padding: 8px;
-            background: #fdfdfe;
-            border-top: 1px solid #edf2f7;
-        }
-
-        .category-section.sub-category .list-container {
-            background: #ffffff;
-        }
-
-        .item-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-        }
-
-        .item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 12px;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .item-info {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            overflow: hidden;
-            padding-right: 10px;
-        }
-
-        .item-name {
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: #1a1a1a;
-            word-break: break-word;
-        }
-
-        .highlight {
-            background-color: #ffe066;
-            color: #1a1a1a;
-            padding: 0 2px;
-            border-radius: 3px;
-        }
-
-        .item-unit-sub {
-            font-size: 0.75rem;
-            color: #718096;
-            font-weight: 500;
-        }
-
-        .item-price {
-            color: #2b6be8;
-            font-weight: 700;
-            font-size: 0.9rem;
-            white-space: nowrap;
-        }
-
-        .item-right-controls {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .arrow-icon {
-            font-size: 0.7rem;
-            color: #888;
-            transition: transform 0.2s;
-        }
-
-        .item-card.collapsed .arrow-icon {
-            transform: rotate(-90deg);
-        }
-
-        .quantity-control {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #f8fafc;
-            padding: 8px 12px;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        .item-card.collapsed .quantity-control {
-            display: none;
-        }
-
-        .qty-btn-group {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-qty {
-            background: #e5e5ea;
-            color: #000;
-            border: none;
-            width: 30px;
-            height: 30px;
-            border-radius: 6px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        .qty-input {
-            width: 45px !important;
-            padding: 5px !important;
-            text-align: center;
-            font-weight: bold;
-            background: white;
-            border: 1px solid #dcdfe6;
-            border-radius: 6px;
-        }
-
-        .item-total {
-            font-weight: 700;
-            color: #1a1a1a;
-            font-size: 0.9rem;
-        }
-
-        .btn-delete {
-            background: #eb5757;
+        /* Шапка в стиле изображения */
+        .app-header {
+            background: #18181b;
             color: white;
-            border: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            font-size: 0.75rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            cursor: pointer;
-        }
-
-        .empty-text {
-            text-align: center;
-            color: #8e8e93;
-            padding: 10px;
-            font-size: 0.85rem;
-        }
-
-        /* ----- МОДАЛЬНЫЕ ОКНА ----- */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.4);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            padding: 15px;
-        }
-
-        .modal-card {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 20px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            padding: 18px 20px;
             display: flex;
             flex-direction: column;
             gap: 12px;
-            max-height: 85vh;
-            overflow-y: auto;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .modal-card input, .modal-card select {
-            padding: 14px;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-header h1 {
+            font-size: 1.4rem;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+
+        .logo-volt {
+            color: #ffffff;
+        }
+
+        .logo-master {
+            color: #f59e0b;
+        }
+
+        #user-info {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            font-size: 0.85rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 12px;
+            border-radius: 6px;
+            color: #d1d5db;
+        }
+
+        /* Общие элементы форм */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
             font-size: 1rem;
             outline: none;
-            background-color: #fff;
+            background: #27272a;
+            color: #ffffff;
+            transition: border-color 0.2s;
         }
 
-        .modal-price-row {
-            display: flex;
-            gap: 10px;
+        input:focus, textarea:focus {
+            border-color: var(--primary);
         }
 
-        .modal-price-row input {
-            flex: 1;
-        }
-
-        .modal-price-row select {
-            width: 110px;
-            font-weight: 600;
-        }
-
-        .btn-add-catalog {
-            width: 100%;
-            padding: 14px;
+        button {
+            background: var(--primary);
+            color: #121212;
             border: none;
-            border-radius: 10px;
-            font-size: 1.05rem;
-            font-weight: 700;
-            cursor: pointer;
-            background-color: #4a71f1;
-            color: white;
-            margin-top: 4px;
-        }
-
-        /* ----- СТИЛЬ КАРТОЧЕК АРХИВА ----- */
-        .archive-item {
-            background: #ffffff;
-            border-bottom: 1px solid #f0f0f0;
-            padding: 12px 4px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
             transition: background 0.2s;
-        }
-
-        .archive-item:hover {
-            background: #fafafa;
-        }
-
-        .archive-item-content {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-            flex-grow: 1;
-            padding-right: 10px;
-        }
-
-        .archive-client-name {
-            font-weight: 700;
-            font-size: 0.98rem;
-            color: #2b6be8;
-        }
-
-        .archive-location {
-            font-size: 0.82rem;
-            color: #444;
-            display: flex;
-            align-items: center;
-            gap: 3px;
-        }
-
-        .archive-meta-row {
-            font-size: 0.82rem;
-            color: #666;
-            margin-top: 2px;
-        }
-
-        .archive-trash-btn {
-            background: none;
-            border: none;
-            font-size: 1.1rem;
-            cursor: pointer;
-            padding: 8px;
-            color: #777;
-            transition: color 0.2s;
-        }
-
-        .archive-trash-btn:hover {
-            color: #d94943;
-        }
-
-        /* ----- БЛОК ДОКУМЕНТА (ЧЕК) ----- */
-        .doc-container {
-            background: white;
-            border-radius: 12px;
-            padding: 12px;
-            margin-top: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
             width: 100%;
-            overflow: hidden;
         }
 
-        .doc-header-print {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #000;
-            padding-bottom: 8px;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-            gap: 5px;
+        button:hover {
+            background: var(--primary-hover);
         }
 
-        .doc-title-print {
-            font-size: 0.95rem;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 4px;
+        .btn-danger {
+            background: var(--danger);
+            color: #ffffff;
+        }
+        .btn-danger:hover {
+            background: #dc2626;
         }
 
-        .input-inline {
-            border: none;
-            border-bottom: 1px solid #999;
-            border-radius: 0;
-            padding: 2px 4px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: #333;
-            background: transparent;
+        .btn-success {
+            background: var(--success);
+            color: #ffffff;
+        }
+        .btn-success:hover {
+            background: #16a34a;
         }
 
-        .input-num { width: 65px; }
-        .input-date { width: 120px; }
-
-        .btn-today-date {
-            background: none;
-            border: none;
+        .btn-secondary {
+            background: #3f3f46;
+            color: #ffffff;
+            width: auto;
+            padding: 6px 12px;
             font-size: 0.8rem;
+        }
+        .btn-secondary:hover {
+            background: #52525b;
+        }
+
+        /* Экраны */
+        .screen {
+            padding: 20px;
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Вкладки переключения */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
             cursor: pointer;
-            padding: 2px 4px;
-            border-radius: 4px;
-            background-color: #f0f0f0;
+            font-weight: 600;
+            color: #71717a;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            font-size: 0.95rem;
         }
 
-        .brand-logo-print {
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: #1e3a8a;
-            white-space: nowrap;
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
         }
 
-        .brand-logo-print span { color: #2563eb; }
+        /* Панель администратора */
+        .admin-section {
+            margin-bottom: 25px;
+        }
 
-        .doc-meta {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+        .admin-section h3 {
             margin-bottom: 12px;
-            font-size: 0.85rem;
+            font-size: 1.1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+            color: #f3f4f6;
         }
 
-        .doc-meta-item {
-            display: flex;
-            align-items: center;
-            position: relative;
-        }
-
-        .doc-meta-item label {
-            width: 95px;
-            font-weight: 700;
-            color: #000;
-            flex-shrink: 0;
-        }
-
-        .doc-meta-item input {
-            border: none;
-            border-bottom: 1px dashed #ccc;
-            border-radius: 0;
-            padding: 2px 4px;
-            font-size: 0.85rem;
-            color: #333;
-            width: 100%;
-            background: transparent;
-        }
-
-        .print-text-val { display: none; }
-
+        /* Контейнер для таблиц с прокруткой */
         .table-responsive {
             width: 100%;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
+            margin-top: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
         }
 
-        .estimate-table {
+        table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.8rem;
-            margin-top: 5px;
-            table-layout: fixed;
-        }
-
-        .estimate-table th, .estimate-table td {
-            border: 1px solid #000;
-            padding: 5px 4px;
-            text-align: left;
-            vertical-align: middle;
-            word-wrap: break-word;
-        }
-
-        .estimate-table th {
-            background-color: #f2f2f2;
-            font-weight: 700;
-            color: #000;
-            text-align: center;
-        }
-
-        .estimate-table .col-num { width: 24px; text-align: center; }
-        .estimate-table .col-name { width: auto; }
-        .estimate-table .col-qty { width: 75px; text-align: right; }
-        .estimate-table .col-price { width: 65px; text-align: right; }
-        .estimate-table .col-total { width: 65px; text-align: right; }
-        .estimate-table .col-del { width: 22px; text-align: center; }
-
-        .editable-cell {
-            cursor: pointer;
-            background-color: #fffde7;
-            transition: background-color 0.2s;
-        }
-
-        .editable-cell:hover { background-color: #fff9c4; }
-
-        .table-input {
-            width: 100%;
-            padding: 2px 4px !important;
-            font-size: 0.8rem !important;
-            text-align: right;
-            border: 1px solid #3b82f6 !important;
-            border-radius: 4px !important;
-            background: white !important;
-        }
-
-        .table-input-text {
-            width: 100%;
-            padding: 2px 4px !important;
-            font-size: 0.8rem !important;
-            text-align: left;
-            border: 1px solid #3b82f6 !important;
-            border-radius: 4px !important;
-            background: white !important;
-        }
-
-        .tbl-del-btn {
-            color: #ef4444;
-            background: none;
-            border: none;
-            font-size: 0.9rem;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .table-footer-summary {
-            display: flex;
-            justify-content: flex-end;
-            font-weight: 800;
-            font-size: 1rem;
-            margin-top: 10px;
-        }
-
-        .only-print { display: none; }
-
-        /* ----- НИЖНЯЯ ПАНЕЛЬ ----- */
-        .bottom-bar {
-            position: fixed;
-            bottom: 12px;
-            left: 12px;
-            right: 12px;
-            background-color: #1a1c23;
-            border-radius: 14px;
-            padding: 10px 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-            z-index: 1000;
-        }
-
-        .total-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .total-amount {
-            color: #ffe066;
-            font-size: 1.25rem;
-            font-weight: 800;
             white-space: nowrap;
         }
 
-        .btn-clipboard {
-            background: transparent;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: #d1d5db;
         }
 
-        .actions-group {
+        th {
+            background-color: #27272a;
+            color: #ffffff;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .actions-cell {
             display: flex;
             gap: 6px;
         }
 
-        .btn-action-green {
-            background-color: #5cd166;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 12px;
-            font-size: 0.75rem;
-            font-weight: 800;
-            cursor: pointer;
+        .actions-cell button {
+            padding: 6px 10px;
+            font-size: 0.8rem;
+            width: auto;
         }
 
-        .btn-action-white {
-            background-color: #ffffff;
-            color: #000000;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 12px;
-            font-size: 0.75rem;
-            font-weight: 800;
-            cursor: pointer;
+        .alert {
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
         }
-
-        .toast {
-            position: fixed;
-            bottom: 85px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.85);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            display: none;
-            z-index: 1001;
+        .alert-error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.4);
         }
-
-        @media print {
-            body { background: white; color: black; padding: 0; margin: 0; }
-            body * { visibility: hidden; }
-            .doc-container, .doc-container * { visibility: visible; }
-            .doc-container { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; padding: 0; margin: 0; }
-            
-            .print-address-row { display: none !important; }
-
-            .col-del, .tbl-del-btn, .bottom-bar, .top-header, .btn-today-date, .main-material-section { display: none !important; }
-            .doc-meta-item input, .doc-title-print input { display: none !important; }
-            .editable-cell { background-color: transparent !important; }
-            .print-text-val { display: inline-block !important; font-weight: 500; font-size: 0.85rem; }
-            .only-print { display: block !important; }
-            .print-footer-info { display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; margin-top: 12px; }
-            .print-notice { font-size: 0.75rem; font-style: italic; font-weight: 600; margin-top: 12px; padding: 6px 0; border-top: 1px solid #000; border-bottom: 1px solid #000; }
-            .signatures-block { display: flex; justify-content: space-between; margin-top: 25px; font-weight: 700; font-size: 0.9rem; }
-            .estimate-table th, .estimate-table td { border: 1px solid #000 !important; }
+        .alert-success {
+            background: rgba(34, 197, 94, 0.2);
+            color: #86efac;
+            border: 1px solid rgba(34, 197, 94, 0.4);
         }
     </style>
 </head>
 <body>
 
-    <!-- ВЕРХНИЙ БАР -->
-    <header class="top-header">
-        <div class="top-header-row">
-            <div class="app-title">
-                СМЕТА<br>2026
+    <div class="container">
+        <!-- Шапка приложения -->
+        <div class="app-header">
+            <div class="header-top">
+                <h1><span class="logo-volt">VOLT</span><span class="logo-master">MASTER</span></h1>
             </div>
-            <div class="header-actions">
-                <button class="btn-hdr btn-archive" onclick="openArchiveModal()">Архив</button>
-                <button class="btn-hdr btn-box" onclick="openAddModal()">📦</button>
-                <button class="btn-hdr btn-reset" onclick="resetEstimateTable()">СБРОС</button>
-            </div>
-        </div>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Поиск..." oninput="filterItems()">
-            <button type="button" id="clearSearchBtn" class="btn-clear-search" onclick="clearSearch()">✕</button>
-        </div>
-    </header>
-
-    <!-- МОДАЛЬНОЕ ОКНО ДОБАВЛЕНИЯ КАТАЛОГА -->
-    <div class="modal-overlay" id="addModal" onclick="closeModalOuter(event, 'addModal')">
-        <div class="modal-card">
-            <h3 style="font-size: 1.1rem; font-weight: 800; color: #1e3a8a;">Добавить в каталог</h3>
-            <input type="text" id="itemName" placeholder="Название материала" autocomplete="off">
-            <div class="modal-price-row">
-                <input type="number" id="itemPrice" placeholder="Цена" inputmode="decimal">
-                <select id="itemUnit">
-                    <option value="шт">за шт</option>
-                    <option value="м">за метр</option>
-                    <option value="уп">за уп</option>
-                    <option value="компл">за компл</option>
-                </select>
-            </div>
-            <select id="itemCategory" style="width: 100%;">
-                <option value="Щиты">Щиты</option>
-                <option value="Щитовое оборудование">Щитовое оборудование</option>
-                <option value="Модульное оборудование">Модульное оборудование</option>
-                <option value="Автоматы">Автоматы</option>
-                <option value="Отсекатели">Отсекатели</option>
-                <option value="УЗО/диф. Автоматы">УЗО/диф. Автоматы</option>
-                <option value="Устройств защиты">Устройств защиты</option>
-                <option value="Нулевые шины, гребенки,din-рейки">Нулевые шины, гребенки,din-рейки</option>
-                <option value="Провода">Провода</option>
-                <option value="Вилки и розетки">Вилки и розетки</option>
-                <option value="Коробки распределительные">Коробки распределительные</option>
-                <option value="Освещение">Освещение</option>
-                <option value="Крепеж">Крепеж</option>
-                <option value="Клеммы, сжимы и кабельные наконечники">Клеммы, сжимы и наконечники</option>
-                <option value="Кабеленесущие системы">Кабеленесущие системы</option>
-                <option value="Хоз товары">Хоз товары</option>
-            </select>
-            <button class="btn-add-catalog" onclick="addItem()">Добавить материал</button>
-        </div>
-    </div>
-
-    <!-- МОДАЛЬНОЕ ОКНО АРХИВА -->
-    <div class="modal-overlay" id="archiveModal" onclick="closeModalOuter(event, 'archiveModal')">
-        <div class="modal-card" style="max-width: 430px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-                <h3 style="font-size: 1.1rem; font-weight: 800; color: #222;">Архив смет 📁</h3>
-                <button onclick="closeArchiveModal()" style="background:none; border:none; font-size: 1.2rem; cursor:pointer; font-weight:bold; color: #555;">✕</button>
-            </div>
-            <div id="archiveListContainer" style="display: flex; flex-direction: column; gap: 4px; max-height: 65vh; overflow-y: auto;">
-                <!-- Элементы архива -->
-            </div>
-        </div>
-    </div>
-
-    <!-- ГЛАВНЫЙ БЛОК МАТЕРИАЛ -->
-    <div class="main-content">
-        <div class="main-material-section" id="mainMaterialSection">
-            <div class="main-material-header" onclick="toggleMainMaterial()">
-                <span>Материал</span>
-                <span class="arrow-icon">▼</span>
-            </div>
-            <div class="main-material-body" id="categoriesContainer">
-                <!-- Секции подразделов -->
+            <div id="user-info">
+                <span id="current-username" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 250px;"></span>
+                <button onclick="logout()" class="btn-secondary">Выйти</button>
             </div>
         </div>
 
-        <!-- БЛОК ДОКУМЕНТА (ЧЕК) -->
-        <div class="doc-container">
-            <div class="doc-header-print">
-                <div class="doc-title-print">
-                    <span>Товарный чек №</span>
-                    <input type="text" id="docNum" class="input-inline input-num" value="16618" oninput="saveDocMeta(); syncPrintText();">
-                    <span class="print-text-val" id="docNumVal">16618</span>
-                    <span>от</span>
-                    <input type="text" id="docDate" class="input-inline input-date" oninput="saveDocMeta(); syncPrintText();">
-                    <button class="btn-today-date" onclick="setTodayDate()" title="Установить сегодняшнюю дату">📅</button>
-                    <span class="print-text-val" id="docDateVal"></span>
-                </div>
-                <div class="brand-logo-print">volt <span>Master⚡</span></div>
+        <!-- Экран 1: Авторизация и Заявки -->
+        <div id="auth-screen" class="screen active">
+            <div class="tabs">
+                <div class="tab active" onclick="switchAuthTab('login')">Вход</div>
+                <div class="tab" onclick="switchAuthTab('apply')">Подать заявку</div>
             </div>
 
-            <div class="doc-meta">
-                <div class="doc-meta-item">
-                    <label>Продавец:</label>
-                    <input type="text" id="docSeller" placeholder="ФИО / ИП / Компания" oninput="saveDocMeta(); syncPrintText();">
-                    <span class="print-text-val" id="docSellerVal"></span>
-                </div>
-                <div class="doc-meta-item">
-                    <label>Покупатель:</label>
-                    <input type="text" id="docBuyer" placeholder="ФИО Покупателя" oninput="saveDocMeta(); syncPrintText();">
-                    <span class="print-text-val" id="docBuyerVal"></span>
-                </div>
-                <div class="doc-meta-item print-address-row">
-                    <label>Адрес / Объект:</label>
-                    <input type="text" id="docAddress" placeholder="Например: Гимры" oninput="saveDocMeta(); syncPrintText();">
-                    <span class="print-text-val" id="docAddressVal"></span>
+            <div id="auth-alert"></div>
+
+            <!-- Вкладка Входа -->
+            <div id="login-form-container">
+                <form id="login-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="login-username">Логин</label>
+                        <input type="text" id="login-username" required placeholder="Введите логин">
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Пароль</label>
+                        <input type="password" id="login-password" required placeholder="Введите пароль">
+                    </div>
+                    <button type="submit">Войти</button>
+                </form>
+            </div>
+
+            <!-- Вкладка Заявки -->
+            <div id="apply-form-container" style="display: none;">
+                <form id="apply-form" onsubmit="handleApply(event)">
+                    <div class="form-group">
+                        <label for="apply-username">Желаемый логин</label>
+                        <input type="text" id="apply-username" required placeholder="Придумайте логин">
+                    </div>
+                    <div class="form-group">
+                        <label for="apply-password">Пароль</label>
+                        <input type="password" id="apply-password" required placeholder="Придумайте пароль">
+                    </div>
+                    <div class="form-group">
+                        <label for="apply-comment">Комментарий к заявке</label>
+                        <textarea id="apply-comment" rows="3" placeholder="Зачем вам нужен аккаунт?"></textarea>
+                    </div>
+                    <button type="submit">Отправить заявку</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Экран 2: Панель Пользователя -->
+        <div id="user-screen" class="screen">
+            <h2>Личный кабинет</h2>
+            <p style="margin-top: 15px; color: #9ca3af; font-size: 0.95rem;">Вы успешно вошли в систему VoltMaster.</p>
+        </div>
+
+        <!-- Экран 3: Панель Администратора -->
+        <div id="admin-screen" class="screen">
+            <h2>Панель Администратора</h2>
+            <p style="margin-bottom: 20px; color: #9ca3af; font-size: 0.9rem;">Управление пользователями и заявками.</p>
+
+            <div id="admin-alert"></div>
+
+            <!-- Секция: Создание аккаунта админом -->
+            <div class="admin-section">
+                <h3>Создать аккаунт</h3>
+                <form id="create-user-form" onsubmit="handleAdminCreateUser(event)">
+                    <div class="form-group">
+                        <label>Логин</label>
+                        <input type="text" id="admin-new-username" required placeholder="Логин">
+                    </div>
+                    <div class="form-group">
+                        <label>Пароль</label>
+                        <input type="password" id="admin-new-password" required placeholder="Пароль">
+                    </div>
+                    <button type="submit">Создать аккаунт</button>
+                </form>
+            </div>
+
+            <!-- Секция: Заявки на создание аккаунта -->
+            <div class="admin-section">
+                <h3>Заявки на регистрацию</h3>
+                <div id="applications-list">
+                    <p style="color: #71717a; font-size: 0.9rem;">Нет новых заявок.</p>
                 </div>
             </div>
 
-            <div class="table-responsive">
-                <table class="estimate-table">
-                    <thead>
-                        <tr>
-                            <th class="col-num">№</th>
-                            <th class="col-name">Товар</th>
-                            <th class="col-qty">Кол-во</th>
-                            <th class="col-price">Цена</th>
-                            <th class="col-total">Сумма</th>
-                            <th class="col-del"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="estimateTableBody"></tbody>
-                </table>
-            </div>
-
-            <div class="table-footer-summary">
-                ИТОГО: <span id="grandTotalPrint" style="margin-left: 6px;">0,00</span>
-            </div>
-
-            <div class="only-print">
-                <div class="print-footer-info">
-                    <div>Всего наименований <span id="totalItemsCount">0</span>, на сумму <span id="totalAmountText">0,00 руб.</span></div>
-                    <div style="font-weight: 700;" id="totalInWords">Ноль рублей 00 копеек</div>
-                </div>
-
-                <div class="print-notice">
-                    Внимание: Возврат товара возможен в течение 14 календарных дней, при условии сохранения товарного вида. Для оформления возврата потребуются паспортные данные!
-                </div>
-
-                <div class="signatures-block">
-                    <div>Отпустил _______________</div>
-                    <div>Получил _______________</div>
+            <!-- Секция: Список пользователей -->
+            <div class="admin-section">
+                <h3>Список пользователей</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Логин</th>
+                                <th>Роль</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <!-- Динамически заполняется -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- НИЖНЯЯ ПАНЕЛЬ -->
-    <div class="bottom-bar">
-        <div class="total-container">
-            <span class="total-amount" id="grandTotal">0 ₽</span>
-            <button class="btn-clipboard" onclick="copyList()" title="Скопировать список">📋</button>
-        </div>
-        <div class="actions-group">
-            <button class="btn-action-green" onclick="saveToArchive()">СОХРАНИТЬ</button>
-            <button class="btn-action-white" onclick="window.print()">ПЕЧАТЬ</button>
-        </div>
-    </div>
-
-    <div id="toast" class="toast">Сохранено в архив!</div>
 
     <script>
-        const categoriesTree = [
-            { name: "Материал", sub: [] },
-            { name: "Щиты", sub: [] },
-            { name: "Щитовое оборудование", sub: [] },
-            { 
-                name: "Модульное оборудование", 
-                sub: [
-                    "Автоматы",
-                    "Отсекатели",
-                    "УЗО/диф. Автоматы",
-                    "Устройств защиты",
-                    "Нулевые шины, гребенки,din-рейки"
-                ] 
-            },
-            { name: "Провода", sub: [] },
-            { name: "Вилки и розетки", sub: [] },
-            { name: "Коробки распределительные", sub: [] },
-            { name: "Освещение", sub: [] },
-            { name: "Крепеж", sub: [] },
-            { name: "Клеммы, сжимы и кабельные наконечники", sub: [] },
-            { name: "Кабеленесущие системы", sub: [] },
-            { name: "Хоз товары", sub: [] }
-        ];
-
-        let items = JSON.parse(localStorage.getItem('voltmaster_materials')) || [];
-        let archive = JSON.parse(localStorage.getItem('voltmaster_archive')) || [];
-
-        function toggleMainMaterial() {
-            document.body.classList.toggle('material-collapsed');
-        }
-
-        function openAddModal() {
-            document.getElementById('addModal').style.display = 'flex';
-            document.getElementById('itemName').focus();
-        }
-
-        function closeAddModal() {
-            document.getElementById('addModal').style.display = 'none';
-        }
-
-        function openArchiveModal() {
-            renderArchiveList();
-            document.getElementById('archiveModal').style.display = 'flex';
-        }
-
-        function closeArchiveModal() {
-            document.getElementById('archiveModal').style.display = 'none';
-        }
-
-        function closeModalOuter(event, modalId) {
-            if (event.target.classList.contains('modal-overlay')) {
-                document.getElementById(modalId).style.display = 'none';
+        function initStorage() {
+            if (!localStorage.getItem('volt_users')) {
+                const defaultUsers = [
+                    { username: 'Gazik0303', password: 'Gazik0303', role: 'admin' }
+                ];
+                localStorage.setItem('volt_users', JSON.stringify(defaultUsers));
+            }
+            if (!localStorage.getItem('volt_applications')) {
+                localStorage.setItem('volt_applications', JSON.stringify([]));
             }
         }
 
-        function toggleCategory(catName) {
-            const el = document.getElementById(`cat-section-${escapeId(catName)}`);
-            if (el) {
-                el.classList.toggle('collapsed');
-            }
-        }
+        initStorage();
 
-        function escapeId(str) {
-            return str.replace(/[^a-zA-Z0-9а-яА-Я-_]/g, '_');
-        }
-
-        function resetEstimateTable() {
-            if (confirm('Сбросить весь выбранный список в чеке? Имена продавца и покупателя сохранятся.')) {
-                items.forEach(item => item.quantity = 0);
-                saveToStorage();
-                renderAll();
-                showToast('Таблица сброшена!');
-            }
-        }
-
-        function getFormattedTodayDate() {
-            const now = new Date();
-            const day = String(now.getDate()).padStart(2, '0');
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const year = now.getFullYear();
-            return `${day}.${month}.${year}`;
-        }
-
-        function setTodayDate() {
-            document.getElementById('docDate').value = getFormattedTodayDate();
-            saveDocMeta();
-            syncPrintText();
-        }
-
-        function saveToStorage() {
-            localStorage.setItem('voltmaster_materials', JSON.stringify(items));
-        }
-
-        function saveDocMeta() {
-            const meta = {
-                num: document.getElementById('docNum').value,
-                date: document.getElementById('docDate').value,
-                seller: document.getElementById('docSeller').value,
-                buyer: document.getElementById('docBuyer').value,
-                address: document.getElementById('docAddress').value
-            };
-            localStorage.setItem('voltmaster_doc_meta', JSON.stringify(meta));
-        }
-
-        function loadDocMeta() {
-            const savedMeta = localStorage.getItem('voltmaster_doc_meta');
-            let dateVal = getFormattedTodayDate();
-
-            if (savedMeta) {
-                const meta = JSON.parse(savedMeta);
-                if (meta.num !== undefined) document.getElementById('docNum').value = meta.num;
-                if (meta.date) dateVal = meta.date;
-                if (meta.seller !== undefined) document.getElementById('docSeller').value = meta.seller;
-                if (meta.buyer !== undefined) document.getElementById('docBuyer').value = meta.buyer;
-                if (meta.address !== undefined) document.getElementById('docAddress').value = meta.address;
-            }
-
-            document.getElementById('docDate').value = dateVal;
-            syncPrintText();
-        }
-
-        function syncPrintText() {
-            document.getElementById('docNumVal').textContent = document.getElementById('docNum').value || '—';
-            document.getElementById('docDateVal').textContent = document.getElementById('docDate').value || '—';
-            document.getElementById('docSellerVal').textContent = document.getElementById('docSeller').value || '—';
-            document.getElementById('docBuyerVal').textContent = document.getElementById('docBuyer').value || '—';
-            document.getElementById('docAddressVal').textContent = document.getElementById('docAddress').value || '—';
-        }
-
-        /* --- ФУНКЦИИ АРХИВА --- */
-        function saveToArchive() {
-            saveToStorage();
-            saveDocMeta();
-
-            const activeItems = items.filter(i => (i.quantity || 0) > 0);
-            if (activeItems.length === 0) {
-                alert('Нельзя сохранить пустую смету! Выберите хотя бы один товар.');
-                return;
-            }
-
-            const grandTotal = activeItems.reduce((sum, item) => sum + (item.quantity * item.price), 0);
-            const docMeta = {
-                num: document.getElementById('docNum').value,
-                date: document.getElementById('docDate').value,
-                seller: document.getElementById('docSeller').value,
-                buyer: document.getElementById('docBuyer').value,
-                address: document.getElementById('docAddress').value
-            };
-
-            const buyerName = docMeta.buyer.trim() ? docMeta.buyer.trim() : 'Без имени';
-            const addressStr = docMeta.address.trim() ? docMeta.address.trim() : 'Адрес не указан';
-            const dateStr = docMeta.date || getFormattedTodayDate();
-
-            const archiveEntry = {
-                id: Date.now(),
-                buyerName: buyerName,
-                address: addressStr,
-                date: dateStr,
-                total: grandTotal,
-                itemsCount: activeItems.length,
-                docMeta: docMeta,
-                itemsSnapshot: JSON.parse(JSON.stringify(items))
-            };
-
-            archive.unshift(archiveEntry);
-            localStorage.setItem('voltmaster_archive', JSON.stringify(archive));
-            showToast('Смета успешно сохранена в архив!');
-        }
-
-        function renderArchiveList() {
-            const container = document.getElementById('archiveListContainer');
-            container.innerHTML = '';
-
-            if (archive.length === 0) {
-                container.innerHTML = '<div class="empty-text">Архив пуст. Нажмите «СОХРАНИТЬ», чтобы добавить смету.</div>';
-                return;
-            }
-
-            archive.forEach((entry) => {
-                const div = document.createElement('div');
-                div.className = 'archive-item';
-                div.innerHTML = `
-                    <div class="archive-item-content" onclick="loadFromArchive(${entry.id})">
-                        <div class="archive-client-name">${escapeHtml(entry.buyerName)}</div>
-                        <div class="archive-location">📍 ${escapeHtml(entry.address)}</div>
-                        <div class="archive-meta-row">${entry.date} — <b>${entry.total.toLocaleString('ru-RU', {minimumFractionDigits: 0})} ₽</b></div>
-                    </div>
-                    <button class="archive-trash-btn" onclick="deleteFromArchive(${entry.id}, event)" title="Удалить из архива">🗑️</button>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function loadFromArchive(id) {
-            const entry = archive.find(a => a.id === id);
-            if (!entry) return;
-
-            items = JSON.parse(JSON.stringify(entry.itemsSnapshot));
-            saveToStorage();
-
-            if (entry.docMeta) {
-                document.getElementById('docNum').value = entry.docMeta.num || '';
-                document.getElementById('docDate').value = entry.docMeta.date || '';
-                document.getElementById('docSeller').value = entry.docMeta.seller || '';
-                document.getElementById('docBuyer').value = entry.docMeta.buyer || '';
-                document.getElementById('docAddress').value = entry.docMeta.address || '';
-                saveDocMeta();
-                syncPrintText();
-            }
-
-            closeArchiveModal();
-            renderAll();
-            showToast('Смета загружена из архива!');
-        }
-
-        function deleteFromArchive(id, event) {
-            event.stopPropagation();
-            if (confirm('Удалить эту смету из архива?')) {
-                archive = archive.filter(a => a.id !== id);
-                localStorage.setItem('voltmaster_archive', JSON.stringify(archive));
-                renderArchiveList();
-                showToast('Смета удалена из архива');
-            }
-        }
-
-        function toggleItemCollapse(id, event) {
-            if (event.target.classList.contains('btn-delete') || event.target.tagName === 'INPUT' || event.target.tagName === 'BUTTON') return;
-            const card = document.getElementById(`item-card-${id}`);
-            if (card) {
-                card.classList.toggle('collapsed');
-            }
-        }
-
-        function addItem() {
-            const nameInput = document.getElementById('itemName');
-            const priceInput = document.getElementById('itemPrice');
-            const unitInput = document.getElementById('itemUnit');
-            const categoryInput = document.getElementById('itemCategory');
-
-            const name = nameInput.value.trim();
-            const price = parseFloat(priceInput.value);
-            const unit = unitInput.value;
-            const category = categoryInput.value;
-
-            if (!name || isNaN(price)) {
-                alert('Заполните название и цену');
-                return;
-            }
-
-            if (items.some(item => item.name.toLowerCase() === name.toLowerCase())) {
-                alert(`"${name}" уже есть в списке!`);
-                return;
-            }
-
-            items.unshift({ id: Date.now(), name, price, unit, category, quantity: 0 });
-            saveToStorage();
+        function switchAuthTab(tabName) {
+            const loginTab = document.querySelector('.tabs .tab:nth-child(1)');
+            const applyTab = document.querySelector('.tabs .tab:nth-child(2)');
+            const loginContainer = document.getElementById('login-form-container');
+            const applyContainer = document.getElementById('apply-form-container');
             
-            clearSearch();
-            nameInput.value = '';
-            priceInput.value = '';
-            closeAddModal();
-            showToast('Материал добавлен!');
-        }
+            clearAlerts();
 
-        function deleteItem(id, name) {
-            if (confirm(`Удалить "${name}" из каталога?`)) {
-                items = items.filter(item => item.id !== id);
-                saveToStorage();
-                renderAll();
-            }
-        }
-
-        function updateQuantity(id, delta) {
-            const item = items.find(i => i.id === id);
-            if (item) {
-                item.quantity = Math.max(0, (item.quantity || 0) + delta);
-                saveToStorage();
-                
-                const qtyInput = document.getElementById(`qty-input-${id}`);
-                if (qtyInput) qtyInput.value = item.quantity;
-                
-                const cardTotal = document.getElementById(`card-total-${id}`);
-                if (cardTotal) cardTotal.textContent = `${(item.quantity * item.price).toLocaleString('ru-RU', {minimumFractionDigits: 2})} ₽`;
-
-                renderEstimateTable();
-            }
-        }
-
-        function setQuantity(id, value) {
-            const item = items.find(i => i.id === id);
-            if (item) {
-                const qty = parseFloat(value);
-                item.quantity = isNaN(qty) || qty < 0 ? 0 : qty;
-                saveToStorage();
-
-                const cardTotal = document.getElementById(`card-total-${id}`);
-                if (cardTotal) cardTotal.textContent = `${(item.quantity * item.price).toLocaleString('ru-RU', {minimumFractionDigits: 2})} ₽`;
-
-                renderEstimateTable();
-            }
-        }
-
-        function setPrice(id, value) {
-            const item = items.find(i => i.id === id);
-            if (item) {
-                const prc = parseFloat(value);
-                item.price = isNaN(prc) || prc < 0 ? 0 : prc;
-                saveToStorage();
-                renderAll();
-            }
-        }
-
-        function setName(id, newName) {
-            const nameTrimmed = newName.trim();
-            const item = items.find(i => i.id === id);
-            if (!item || !nameTrimmed || item.name === nameTrimmed) {
-                renderAll();
-                return;
-            }
-
-            // 1. Запоминаем текущее количество старого товара перед сбросом
-            const currentQty = item.quantity || 1;
-
-            // 2. Сбрасываем количество у старого товара в 0, чтобы в списке каталога он больше не отмечался как выбранный
-            item.quantity = 0; 
-
-            // 3. Ищем, есть ли уже такой товар с новым названием в списке
-            let existingTarget = items.find(i => i.name.toLowerCase() === nameTrimmed.toLowerCase());
-            if (existingTarget) {
-                // Если есть, добавляем количество к нему
-                existingTarget.quantity = (existingTarget.quantity || 0) + currentQty;
+            if (tabName === 'login') {
+                loginTab.classList.add('active');
+                applyTab.classList.remove('active');
+                loginContainer.style.display = 'block';
+                applyContainer.style.display = 'none';
             } else {
-                // Если нет, создаем новый уникальный товар с тем же количеством
-                items.unshift({
-                    id: Date.now(),
-                    name: nameTrimmed,
-                    price: item.price,
-                    unit: item.unit,
-                    category: item.category || 'Материал',
-                    quantity: currentQty
-                });
+                applyTab.classList.add('active');
+                loginTab.classList.remove('active');
+                applyContainer.style.display = 'block';
+                loginContainer.style.display = 'none';
             }
-
-            saveToStorage();
-            renderAll();
-            showToast('Товар изменен, старая позиция очищена!');
         }
 
-        function renderAll() {
-            filterItems();
-            renderEstimateTable();
+        function showAlert(containerId, message, type = 'error') {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
         }
 
-        function filterItems() {
-            const searchInput = document.getElementById('searchInput');
-            const clearBtn = document.getElementById('clearSearchBtn');
-            const query = searchInput.value.trim().toLowerCase();
+        function clearAlerts() {
+            document.getElementById('auth-alert').innerHTML = '';
+            document.getElementById('admin-alert').innerHTML = '';
+        }
 
-            if (query.length > 0) {
-                clearBtn.style.display = 'block';
+        function handleLogin(event) {
+            event.preventDefault();
+            const usernameInput = document.getElementById('login-username').value.trim();
+            const passwordInput = document.getElementById('login-password').value;
+
+            const users = JSON.parse(localStorage.getItem('volt_users'));
+            const user = users.find(u => u.username === usernameInput && u.password === passwordInput);
+
+            if (user) {
+                localStorage.setItem('volt_current_user', JSON.stringify(user));
+                routeUser(user);
             } else {
-                clearBtn.style.display = 'none';
+                showAlert('auth-alert', 'Неверный логин или пароль!');
             }
-            
-            const filtered = items.filter(item => 
-                item.name.toLowerCase().includes(query) || 
-                item.price.toString().includes(query)
-            );
-            
-            renderCategories(filtered, query);
         }
 
-        function clearSearch() {
-            const searchInput = document.getElementById('searchInput');
-            searchInput.value = '';
-            document.getElementById('clearSearchBtn').style.display = 'none';
-            filterItems();
-            searchInput.focus();
-        }
+        function handleApply(event) {
+            event.preventDefault();
+            const username = document.getElementById('apply-username').value.trim();
+            const password = document.getElementById('apply-password').value;
+            const comment = document.getElementById('apply-comment').value.trim();
 
-        function highlightMatch(text, query) {
-            const safeText = escapeHtml(text);
-            if (!query) return safeText;
-            
-            const escapedQuery = query.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-            const regex = new RegExp(`(${escapedQuery})`, 'gi');
-            
-            return safeText.replace(regex, '<span class="highlight">$1</span>');
-        }
+            const users = JSON.parse(localStorage.getItem('volt_users'));
+            const applications = JSON.parse(localStorage.getItem('volt_applications'));
 
-        function renderItemsListHtml(catItems, query) {
-            if (catItems.length === 0) {
-                return '<div class="empty-text">Нет товаров в этой категории</div>';
+            if (users.some(u => u.username === username)) {
+                showAlert('auth-alert', 'Пользователь с таким логином уже существует!');
+                return;
             }
-            let html = '';
-            catItems.forEach(item => {
-                const qty = item.quantity || 0;
-                const highlightedName = highlightMatch(item.name, query);
 
-                html += `
-                    <div class="item-card collapsed" id="item-card-${item.id}">
-                        <div class="item-header" onclick="toggleItemCollapse(${item.id}, event)">
-                            <div class="item-info">
-                                <span class="item-name">${highlightedName}</span>
-                                <span class="item-unit-sub">${escapeHtml(item.unit || 'шт')}</span>
-                            </div>
-                            <div class="item-right-controls">
-                                <span class="item-price">${item.price.toLocaleString('ru-RU', {minimumFractionDigits: 2})} ₽</span>
-                                <button class="btn-delete" onclick="deleteItem(${item.id}, '${escapeHtml(item.name)}')">✕</button>
-                                <span class="arrow-icon">▼</span>
-                            </div>
-                        </div>
-                        <div class="quantity-control">
-                            <div class="qty-btn-group">
-                                <button class="btn-qty" onclick="updateQuantity(${item.id}, -1)">-</button>
-                                <input type="number" id="qty-input-${item.id}" class="qty-input" value="${qty}" min="0" oninput="setQuantity(${item.id}, this.value)">
-                                <button class="btn-qty" onclick="updateQuantity(${item.id}, 1)">+</button>
-                            </div>
-                            <div class="item-total" id="card-total-${item.id}">${(qty * item.price).toLocaleString('ru-RU', {minimumFractionDigits: 2})} ₽</div>
-                        </div>
-                    </div>
-                `;
-            });
-            return html;
+            if (applications.some(a => a.username === username)) {
+                showAlert('auth-alert', 'Заявка с таким логином уже ожидает рассмотрения!');
+                return;
+            }
+
+            applications.push({ id: Date.now(), username, password, comment });
+            localStorage.setItem('volt_applications', JSON.stringify(applications));
+
+            showAlert('auth-alert', 'Заявка успешно отправлена администратору!', 'success');
+            document.getElementById('apply-form').reset();
         }
 
-        function renderCategories(listToRender, query = '') {
-            const container = document.getElementById('categoriesContainer');
-            
-            const collapsedMap = {};
-            document.querySelectorAll('.category-section').forEach(sec => {
-                const catId = sec.id.replace('cat-section-', '');
-                collapsedMap[catId] = sec.classList.contains('collapsed');
-            });
+        function routeUser(user) {
+            document.getElementById('auth-screen').classList.remove('active');
+            document.getElementById('user-screen').classList.remove('active');
+            document.getElementById('admin-screen').classList.remove('active');
 
-            container.innerHTML = '';
+            document.getElementById('user-info').style.display = 'flex';
+            document.getElementById('current-username').textContent = `${user.username}`;
 
-            categoriesTree.forEach(catObj => {
-                const catName = catObj.name;
-                const catId = escapeId(catName);
-                const hasSub = catObj.sub && catObj.sub.length > 0;
-
-                const sectionDiv = document.createElement('div');
-                sectionDiv.id = `cat-section-${catId}`;
-
-                if (hasSub) {
-                    const subCatItemsAll = listToRender.filter(i => (i.category || 'Материал') === catName || catObj.sub.includes(i.category));
-                    if (query && subCatItemsAll.length === 0) return;
-
-                    const isCollapsed = query ? false : (collapsedMap[catId] !== undefined ? collapsedMap[catId] : true);
-                    sectionDiv.className = `category-section ${isCollapsed ? 'collapsed' : ''}`;
-
-                    let subHtml = '';
-                    
-                    const directItems = listToRender.filter(i => (i.category || 'Материал') === catName);
-                    if (directItems.length > 0) {
-                        subHtml += `<div class="list-container">${renderItemsListHtml(directItems, query)}</div>`;
-                    }
-
-                    catObj.sub.forEach(subName => {
-                        const subId = escapeId(subName);
-                        const subItems = listToRender.filter(i => i.category === subName);
-                        if (query && subItems.length === 0) return;
-
-                        const isSubCollapsed = query ? false : (collapsedMap[subId] !== undefined ? collapsedMap[subId] : true);
-
-                        subHtml += `
-                            <div class="category-section sub-category ${isSubCollapsed ? 'collapsed' : ''}" id="cat-section-${subId}">
-                                <div class="category-header" onclick="toggleCategory('${subName}')">
-                                    <span>${subName}</span>
-                                    <span class="arrow-icon">▼</span>
-                                </div>
-                                <div class="list-container">
-                                    ${renderItemsListHtml(subItems, query)}
-                                </div>
-                            </div>
-                        `;
-                    });
-
-                    sectionDiv.innerHTML = `
-                        <div class="category-header" onclick="toggleCategory('${catName}')">
-                            <span>${catName}</span>
-                            <span class="arrow-icon">▼</span>
-                        </div>
-                        <div class="list-container" style="background: #f8fafc; display: flex; flex-direction: column; gap: 8px;">
-                            ${subHtml}
-                        </div>
-                    `;
-
-                } else {
-                    const catItems = listToRender.filter(i => (i.category || 'Материал') === catName);
-                    if (query && catItems.length === 0) return;
-
-                    const isCollapsed = query ? false : (collapsedMap[catId] !== undefined ? collapsedMap[catId] : true);
-                    sectionDiv.className = `category-section ${isCollapsed ? 'collapsed' : ''}`;
-
-                    sectionDiv.innerHTML = `
-                        <div class="category-header" onclick="toggleCategory('${catName}')">
-                            <span>${catName}</span>
-                            <span class="arrow-icon">▼</span>
-                        </div>
-                        <div class="list-container">
-                            ${renderItemsListHtml(catItems, query)}
-                        </div>
-                    `;
-                }
-
-                container.appendChild(sectionDiv);
-            });
+            if (user.role === 'admin') {
+                document.getElementById('admin-screen').classList.add('active');
+                loadAdminData();
+            } else {
+                document.getElementById('user-screen').classList.add('active');
+            }
         }
 
-        function renderEstimateTable() {
-            const tbody = document.getElementById('estimateTableBody');
+        function logout() {
+            localStorage.removeItem('volt_current_user');
+            document.getElementById('user-info').style.display = 'none';
+            document.getElementById('admin-screen').classList.remove('active');
+            document.getElementById('user-screen').classList.remove('active');
+            document.getElementById('auth-screen').classList.add('active');
+            document.getElementById('login-form').reset();
+            clearAlerts();
+        }
+
+        function loadAdminData() {
+            renderUsersTable();
+            renderApplicationsList();
+        }
+
+        function renderUsersTable() {
+            const users = JSON.parse(localStorage.getItem('volt_users'));
+            const currentUser = JSON.parse(localStorage.getItem('volt_current_user'));
+            const tbody = document.getElementById('users-table-body');
             tbody.innerHTML = '';
-            
-            const activeItems = items.filter(i => (i.quantity || 0) > 0);
-            let grandTotal = 0;
 
-            if (activeItems.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#999; padding:12px;">Выберите количество в каталоге выше</td></tr>';
-            } else {
-                activeItems.forEach((item, index) => {
-                    const qty = item.quantity || 0;
-                    const total = qty * item.price;
-                    grandTotal += total;
-
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td class="col-num">${index + 1}</td>
-                        <td class="col-name editable-cell" title="Нажмите для изменения названия" onclick="makeCellEditable(this, ${item.id}, 'name', '${escapeHtml(item.name)}')">
-                            ${escapeHtml(item.name)}
-                        </td>
-                        <td class="col-qty editable-cell" title="Нажмите для изменения количества" onclick="makeCellEditable(this, ${item.id}, 'qty', ${qty})">
-                            <span>${qty}</span> 
-                            <span style="font-size:0.7rem; color:#555;">${escapeHtml(item.unit || 'шт')}</span>
-                        </td>
-                        <td class="col-price editable-cell" title="Нажмите для изменения цены" onclick="makeCellEditable(this, ${item.id}, 'price', ${item.price})">
-                            ${item.price.toLocaleString('ru-RU', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
-                        </td>
-                        <td class="col-total">${total.toLocaleString('ru-RU', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                        <td class="col-del">
-                            <button class="tbl-del-btn" onclick="setQuantity(${item.id}, 0); renderAll();">✕</button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            }
-
-            const totalFormatted = grandTotal.toLocaleString('ru-RU', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            document.getElementById('grandTotal').textContent = `${totalFormatted} ₽`;
-            document.getElementById('grandTotalPrint').textContent = totalFormatted;
-            document.getElementById('totalItemsCount').textContent = activeItems.length;
-            document.getElementById('totalAmountText').textContent = `${totalFormatted} руб.`;
-            document.getElementById('totalInWords').textContent = numberToWordsRu(grandTotal);
-        }
-
-        function makeCellEditable(cell, id, type, currentValue) {
-            if (cell.querySelector('input')) return;
-
-            const input = document.createElement('input');
-            input.type = type === 'name' ? 'text' : 'number';
-            input.className = type === 'name' ? 'table-input-text' : 'table-input';
-            input.value = currentValue;
-            if (type !== 'name') {
-                input.step = type === 'qty' ? '1' : '0.01';
-            }
-
-            cell.innerHTML = '';
-            cell.appendChild(input);
-            input.focus();
-            input.select();
-
-            function finishEdit() {
-                const val = input.value;
-                if (type === 'qty') {
-                    setQuantity(id, val);
-                    renderAll();
-                } else if (type === 'price') {
-                    setPrice(id, val);
-                } else if (type === 'name') {
-                    setName(id, val);
+            users.forEach(user => {
+                const tr = document.createElement('tr');
+                let actionsHtml = '';
+                
+                if (user.username !== 'Gazik0303' && user.username !== currentUser.username) {
+                    actionsHtml = `<button class="btn-danger" onclick="deleteUser('${user.username}')">Удалить</button>`;
+                } else {
+                    actionsHtml = `<span style="color: #71717a; font-size: 0.8rem;">Защищено</span>`;
                 }
-            }
 
-            input.addEventListener('blur', finishEdit);
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    input.blur();
-                }
+                tr.innerHTML = `
+                    <td>${user.username}</td>
+                    <td>${user.role === 'admin' ? 'Админ' : 'Пользователь'}</td>
+                    <td class="actions-cell">${actionsHtml}</td>
+                `;
+                tbody.appendChild(tr);
             });
         }
 
-        function copyList() {
-            const activeItems = items.filter(i => (i.quantity || 0) > 0);
-            if (activeItems.length === 0) {
-                alert('Таблица пуста');
+        function renderApplicationsList() {
+            const applications = JSON.parse(localStorage.getItem('volt_applications'));
+            const container = document.getElementById('applications-list');
+
+            if (applications.length === 0) {
+                container.innerHTML = '<p style="color: #71717a; font-size: 0.9rem;">Нет новых заявок.</p>';
                 return;
             }
 
-            let text = activeItems.map(item => `${item.name} - ${item.quantity} ${item.unit || 'шт'} x ${item.price} ₽ = ${item.quantity * item.price} ₽`).join('\n');
-            let grandTotal = activeItems.reduce((sum, item) => sum + (item.quantity * item.price), 0);
-            text += `\n\nИтого: ${grandTotal.toLocaleString('ru-RU', {minimumFractionDigits: 2})} ₽`;
+            let html = `
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Логин</th>
+                                <th>Комментарий</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
 
-            navigator.clipboard.writeText(text).then(() => showToast('Смета скопирована!'));
+            applications.forEach(app => {
+                html += `
+                    <tr>
+                        <td><strong>${app.username}</strong></td>
+                        <td>${app.comment || '-'}</td>
+                        <td class="actions-cell">
+                            <button class="btn-success" onclick="approveApplication(${app.id})">Одобрить</button>
+                            <button class="btn-danger" onclick="rejectApplication(${app.id})">Отклонить</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `</tbody></table></div>`;
+            container.innerHTML = html;
         }
 
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.style.display = 'block';
-            setTimeout(() => toast.style.display = 'none', 2000);
+        function handleAdminCreateUser(event) {
+            event.preventDefault();
+            const username = document.getElementById('admin-new-username').value.trim();
+            const password = document.getElementById('admin-new-password').value;
+
+            const users = JSON.parse(localStorage.getItem('volt_users'));
+            if (users.some(u => u.username === username)) {
+                showAlert('admin-alert', 'Пользователь уже существует!');
+                return;
+            }
+
+            users.push({ username, password, role: 'user' });
+            localStorage.setItem('volt_users', JSON.stringify(users));
+
+            showAlert('admin-alert', `Аккаунт "${username}" создан!`, 'success');
+            document.getElementById('create-user-form').reset();
+            renderUsersTable();
         }
 
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+        function deleteUser(username) {
+            if (confirm(`Удалить пользователя ${username}?`)) {
+                let users = JSON.parse(localStorage.getItem('volt_users'));
+                users = users.filter(u => u.username !== username);
+                localStorage.setItem('volt_users', JSON.stringify(users));
+                renderUsersTable();
+                showAlert('admin-alert', `Пользователь ${username} удален.`, 'success');
+            }
         }
 
-        function numberToWordsRu(num) {
-            if (num === 0) return 'Ноль рублей 00 копеек';
+        function approveApplication(appId) {
+            let applications = JSON.parse(localStorage.getItem('volt_applications'));
+            const appIndex = applications.findIndex(a => a.id === appId);
             
-            const rubles = Math.floor(num);
-            const kopecks = Math.round((num - rubles) * 100);
-            const kopStr = kopecks < 10 ? '0' + kopecks : kopecks;
+            if (appIndex !== -1) {
+                const app = applications[appIndex];
+                let users = JSON.parse(localStorage.getItem('volt_users'));
+                
+                users.push({ username: app.username, password: app.password, role: 'user' });
+                localStorage.setItem('volt_users', JSON.stringify(users));
 
-            const units = ['', 'один', 'два', 'три', 'четыре', 'пять', 'шесть', 'семь', 'восемь', 'девять'];
-            const teens = ['десять', 'одиннадцать', 'двенадцать', 'тринадцать', 'четырнадцать', 'пятнадцать', 'шестнадцать', 'семнадцать', 'восемнадцать', 'девятнадцать'];
-            const tens = ['', '', 'двадцать', 'тридцать', 'сорок', 'пятьдесят', 'шестьдесят', 'семьдесят', 'восемьдесят', 'девяносто'];
-            const hundreds = ['', 'сто', 'двести', 'триста', 'четыреста', 'пятьсот', 'шестьсот', 'семьсот', 'восемьсот', 'девятьсот'];
+                applications.splice(appIndex, 1);
+                localStorage.setItem('volt_applications', JSON.stringify(applications));
 
-            function convertGroup(n, isFemale) {
-                let res = '';
-                const h = Math.floor(n / 100);
-                const t = Math.floor((n % 100) / 10);
-                const u = n % 10;
-
-                if (h > 0) res += hundreds[h] + ' ';
-                if (t === 1) {
-                    res += teens[u] + ' ';
-                } else {
-                    if (t > 1) res += tens[t] + ' ';
-                    if (u > 0) {
-                        if (isFemale) {
-                            res += (u === 1 ? 'одна' : u === 2 ? 'две' : units[u]) + ' ';
-                        } else {
-                            res += units[u] + ' ';
-                        }
-                    }
-                }
-                return res;
+                loadAdminData();
+                showAlert('admin-alert', `Заявка ${app.username} одобрена!`, 'success');
             }
-
-            let result = '';
-            const thousands = Math.floor((rubles % 1000000) / 1000);
-            const remRub = rubles % 1000;
-
-            if (thousands > 0) {
-                result += convertGroup(thousands, true);
-                const lastTwo = thousands % 100;
-                const last = thousands % 10;
-                if (lastTwo >= 11 && lastTwo <= 19) result += 'тысяч ';
-                else if (last === 1) result += 'тысяча ';
-                else if (last >= 2 && last <= 4) result += 'тысячи ';
-                else result += 'тысяч ';
-            }
-
-            if (remRub > 0 || rubles === 0) {
-                result += convertGroup(remRub, false);
-            }
-
-            result = result.trim();
-            if (!result) result = 'ноль';
-
-            const lastTwoRub = rubles % 100;
-            const lastRub = rubles % 10;
-            let rubWord = 'рублей';
-            if (lastTwoRub < 11 || lastTwoRub > 19) {
-                if (lastRub === 1) rubWord = 'рубль';
-                else if (lastRub >= 2 && lastRub <= 4) rubWord = 'рубли';
-            }
-
-            result = result.charAt(0).toUpperCase() + result.slice(1);
-            return `${result} ${rubWord} ${kopStr} копеек`;
         }
 
-        loadDocMeta();
-        renderAll();
+        function rejectApplication(appId) {
+            let applications = JSON.parse(localStorage.getItem('volt_applications'));
+            applications = applications.filter(a => a.id !== appId);
+            localStorage.setItem('volt_applications', JSON.stringify(applications));
+            loadAdminData();
+            showAlert('admin-alert', 'Заявка отклонена.', 'success');
+        }
+
+        window.onload = function() {
+            const currentUser = JSON.parse(localStorage.getItem('volt_current_user'));
+            if (currentUser) {
+                routeUser(currentUser);
+            }
+        };
     </script>
 </body>
 </html>
